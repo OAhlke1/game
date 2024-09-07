@@ -1,0 +1,15 @@
+h1 {
+    font-family: Verdana, sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+}
+
+canvas {
+    display: block;
+    width: 90vw;
+    max-height: calc(100vh - 100px);
+    aspect-ratio: 16 / 9;
+    background-color: black;
+    margin: 30px auto 0 auto;
+}
