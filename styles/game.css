@@ -1,4 +1,14 @@
+@font-face {
+    font-family: 'super-legend-boy';
+    src: url('../fonts/SuperLegendBoy.ttf');
+}
+
+body {
+    margin: 0;
+}
+
 h1 {
+    display: none;
     font-family: Verdana, sans-serif;
     font-size: 32px;
     font-weight: bold;
@@ -7,9 +17,8 @@ h1 {
 
 canvas {
     display: block;
-    width: 90vw;
-    max-height: calc(100vh - 100px);
-    aspect-ratio: 16 / 9;
     background-color: black;
-    margin: 30px auto 0 auto;
+    /* margin: 30px auto 0 auto; */
+    width: 100vw;
+    height: calc(900vw/16);
 }
