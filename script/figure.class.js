@@ -17,6 +17,7 @@ class Figure {
     distanceCharMovingPlatformX;
     jumpFallStepHeight;
     maxJumpHeight;
+    isAlive = true;
     sleeps = false;
     gotHit = false;
     isImmune = false;
@@ -40,7 +41,7 @@ class Figure {
     }
 
     moveLeft(key) {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
                 if (this.checkPlatformEnd()) {
                     this.checkIfFalling();
@@ -61,7 +62,7 @@ class Figure {
     }
 
     moveRight(key) {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) { // this.y + this.height < canvas.height - wallBrickHeight
                 if (this.checkPlatformEnd()) {
                     this.checkIfFalling();
@@ -86,7 +87,7 @@ class Figure {
     }
 
     setMovingState(key) {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (key === "ArrowRight") {
                 this.movingDirection = 'right';
                 this.stepAmount++;
@@ -94,12 +95,14 @@ class Figure {
                 this.movingDirection = 'left';
                 this.stepAmount--;
             }
-            this.figImage.src = `graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 11}.png`;
+            if(this.isAlive) {
+                this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
+            }
         }
     }
 
     checkIfJumping() {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
                 this.jumps = true;
                 this.jump();
@@ -108,12 +111,12 @@ class Figure {
     }
 
     jump(i = this.maxJumpHeight / this.jumpFallStepHeight) {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             this.onMovingPlatform = false;
             this.jumps = true;
             this.falls = false;
             this.stepAmount = 0;
-            this.figImage.src = `graphics/main-char/jump/jump-${this.movingDirection}.png`;
+            this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
             if (!this.startingYPos) { this.startingYPos = this.y; }
             i--;
             this.y -= this.jumpFallStepHeight;
@@ -126,7 +129,7 @@ class Figure {
     }
 
     checkIfFalling() {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (!this.falls) {
                 this.falls = true;
                 this.fall();
@@ -135,9 +138,9 @@ class Figure {
     }
 
     fall() {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (this.checkPlatformXCords()) {
-                this.figImage.src = `graphics/main-char/run/run-${this.movingDirection}-0.png`;
+                this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-0.png`);
                 this.startingYPos = null;
                 this.jumps = false;
                 if (platforms[this.standingPlatformIndex].isMoving) {
@@ -154,7 +157,7 @@ class Figure {
                 this.standingPlatformIndex = -1;
                 this.startingYPos = canvas.height - wallBrickHeight - this.height;
                 this.y = canvas.height - wallBrickHeight - this.height;
-                this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-0.png`;
+                if(!this.gotHit) {this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);}
             }
             
             if (this.startingYPos && this.y === this.startingYPos) {
@@ -162,7 +165,7 @@ class Figure {
                 this.falls = false;
                 this.startingYPos = null;
                 this.stepAmount = 0;
-                if(!this.gotHit) {this.figImage.src = `graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 12}.png`;}
+                if(!this.gotHit) {this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);}
                 return;
             }
 
@@ -175,7 +178,7 @@ class Figure {
     }
 
     checkPlatformXCords() {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             for (let i = 0; i < platforms.length; i++) {
                 if (platforms[i].x - (this.x + this.width) >= 0 || this.x - (platforms[i].x + platforms[i].width) >= 0) {
                     if (i + 1 === platforms.length) {
@@ -193,7 +196,7 @@ class Figure {
     }
 
     checkPlatformYCords(i) {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (platforms[i].y - (this.y + this.height) <= this.jumpFallStepHeight && platforms[i].y - (this.y + this.height) >= 0) {
                 this.y = platforms[i].y - this.height;
                 return true;
@@ -204,7 +207,7 @@ class Figure {
     }
 
     movingWithPlatform() {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (this.onMovingPlatform) {
                 if(this.checkTrapXCords()) {
                     this.hitChar();
@@ -230,7 +233,7 @@ class Figure {
     }
 
     checkPlatformEnd() {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (this.movingDirection === 'left') {
                 if (platforms[this.standingPlatformIndex].x - this.x - this.width <= 0) {
                     return false;
@@ -250,7 +253,7 @@ class Figure {
     }
 
     checkTrapXCords() {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             for (let i = 0; i < traps.length; i++) {
                 if (traps[i].x - (this.x + this.width) >= 0 || this.x - (traps[i].x + traps[i].width) >= 0) {
                     if (i + 1 === traps.length) {
@@ -259,7 +262,6 @@ class Figure {
                     }
                 } else if (this.checkTrapYCords(i)) {
                     this.hitByTrap = i;
-                    this.gotHit = true;
                     return true;
                 }
             }
@@ -267,7 +269,7 @@ class Figure {
     }
 
     checkTrapYCords(i) {
-        if (!gamePaused) {
+        if (!gamePaused && this.isAlive) {
             if (this.y+this.height >= traps[i].y || this.y < traps[i].y+traps[i].height >= this.y) {
                 return true;
             } else {
@@ -277,38 +279,24 @@ class Figure {
     }
 
     hitChar() {
-        if(this.gotHit) {
-            this.gotHit = false;
-            this.decreaseHealth(this.decreaseHealth(traps[this.hitByTrap].trapType));
-            this.animateHit();
-            setTimeout(()=>{this.gotHit = true}, 1500);
-            this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 11}.png`;
-            /* i++;
-            if(this.x === traps[this.hitByTrap].x+traps[this.hitByTrap].width) {
-                this.x += 3;
-            }else {this.x -= 3;}
-            if(i === 7) {
-                if(this.checkPlatformEnd()) {
-                    this.checkPlatformEnd();
-                }
-                this.stepAmount = 0;
-                this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount}.png`;
-                return;
-            }
-            requestAnimationFrame(() => {
-                this.hitChar();
-            }); */
-        }
+        this.gotHit = true;
+        this.animateHit();
+        this.decreaseHealth(this.decreaseHealth(traps[this.hitByTrap].trapType));
+        setTimeout(()=>{this.gotHit = false}, 1500);
     }
 
     animateHit(i=0) {
-        if(!this.gotHit) {
-            this.figImage.src = `../graphics/main-char/hit/hit-${this.movingDirection}-${i}.png`;
+        if(this.gotHit) {
+            if(this.isAlive) {
+                this.setImagePath(`../graphics/main-char/hit/hit-${this.movingDirection}-${i}.png`);
+            }
             i++;
             if(i === 7) { i=0 }
             requestAnimationFrame(()=>{this.animateHit(i)});
         }else {
-            this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 12}.png`;
+            if(this.isAlive) {
+                this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
+            }
             if(this.checkTrapXCords()) {
                 this.hitChar();
             }
@@ -320,23 +308,28 @@ class Figure {
             this.isImmune = true;
             switch(type) {
                 case "saw":
-                    this.healthAmount -= 5;
-                    break;
-                case "jagged-saw":
                     this.healthAmount -= 10;
                     break;
+                case "jagged-saw":
+                    this.healthAmount -= 5;
+                    break;
+            }
+            if(this.healthAmount <= 0) {
+                this.healthAmount = 0;
+                this.isImmune = true;
+                this.isAlive = false;
+                this.setImagePath(`../graphics/main-char/dead/dead-${this.movingDirection}.png`);
+                return;
             }
             setTimeout(()=>{this.isImmune = false}, 1500);
         }
     }
 
-    resetFigImg(path) {
-        if (!gamePaused) {
-            if (this.sleeps) {
-                this.figImage.src = '';
-            } else {
-                this.figImage.src = path;
-            }
+    setImagePath(path) {
+        if(this.isAlive) {
+            this.figImage.src = path;
+        }else {
+            this.figImage.src = `../graphics/main-char/dead/dead-${this.movingDirection}.png`;
         }
     }
 }

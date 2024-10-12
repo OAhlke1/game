@@ -100,23 +100,15 @@ function createMovingPlatforms() {
 }
 
 function addMovingCommands() {
-    document.querySelector('body').addEventListener('keydown', (event)=>{
+    document.querySelector('body').addEventListener('keyup', (event)=>{
         figure.sleeps = false;
         t = 0;
-        if(event.key === "ArrowLeft") {
-            figure.moveLeft();
-        }else if(event.key === "ArrowRight") {
-            figure.moveRight(event.key);
-        }
         if(event.key === " ") {
             if(!figure.startingYPos) {
                 figure.startingYPos = figure.y;
                 figure.checkIfJumping(event.key);
             }
-        }
-    });
-    document.querySelector('body').addEventListener('keyup', (event)=>{
-        if(event.key === "p") {
+        }else if(event.key === "p") {
             if(!gamePaused) {
                 gamePaused = true;
             }else {
@@ -125,7 +117,16 @@ function addMovingCommands() {
                 redrawElements();
             }
         }
-    })
+    });
+    document.querySelector('body').addEventListener('keydown', (event)=>{
+        figure.sleeps = false;
+        t = 0;
+        if(event.key === "ArrowLeft") {
+            figure.moveLeft();
+        }else if(event.key === "ArrowRight") {
+            figure.moveRight(event.key);
+        }
+    });
 }
 
 function drawElements() {
@@ -180,7 +181,9 @@ function drawTraps() {
 }
 
 function drawFigure() {
-    ctx.drawImage(figure.figImage, figure.x, figure.y, figure.width, figure.height);
+    if(figure.isAlive) {
+        ctx.drawImage(figure.figImage, figure.x, figure.y, figure.width, figure.height);
+    }
 }
 
 function timer() {

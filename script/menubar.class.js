@@ -15,7 +15,7 @@ class Menubar {
         this.height = height;
         this.font = font;
         this.fontColor = fontColor;
-        this.defeatedEnemies = defeatedEnemies;
+        this.defeatedEnemies = figure.healthAmount;
     }
 
     writeMenuTexts() {
@@ -23,6 +23,6 @@ class Menubar {
         ctx.textBaseline = "top";
         ctx.direction = 'ltr';
         ctx.fillStyle = 'red';
-        ctx.fillText(this.defeatedEnemies, this.x+10, this.y);
+        ctx.fillText(figure.healthAmount, this.x+10, this.y);
     }
 }
