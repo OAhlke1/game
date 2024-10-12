@@ -39,7 +39,7 @@ function createBackground() {
 }
 
 function createFigure() {
-    figure = new Figure(50, 50, wallBrickWidth, canvas.height-wallBrickHeight-50, 'graphics/main-char/run/run-right-0.png', 10);
+    figure = new Figure(2*wallBrickWidth, 2*wallBrickHeight, wallBrickWidth, canvas.height-3*wallBrickHeight, 'graphics/main-char/run/run-right-0.png', 10);
 }
 
 function createWallsLeftRight() {
@@ -77,7 +77,7 @@ function createMenuBar() {
 }
 
 function createTraps() {
-    traps.push(new Traps(canvas.width/40, canvas.width/40, 50, 50, '../graphics/traps/chainsaws/round.png'));
+    traps.push(new Traps(10*wallBrickWidth, canvas.height-5.5*wallBrickHeight, canvas.width/40, canvas.width/40, '../graphics/traps/chainsaws/round.png', 'saw'));
 }
 
 function createPlatforms() {
@@ -86,15 +86,15 @@ function createPlatforms() {
 }
 
 function createNonMovingPlatforms() {
-    platforms.push(new Platform(200, 40, canvas.width/2-100, canvas.height/2-20, 'graphics/platforms/green-5.png'));
-    platforms.push(new Platform(100, 20, canvas.width/5-50, 4*canvas.height/5-10, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width/2-100, canvas.height - 20*wallBrickHeight, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width/5-50, canvas.height - 10*wallBrickHeight, 'graphics/platforms/green-5.png'));
     //platforms.push(new Platform(100, 20, canvas.width/4-50, 3*canvas.height/5-10, 'graphics/platforms/green-5.png'));
 }
 
 function createMovingPlatforms() {
     platforms.push(new MovingPlatform(20*wallBrickWidth, 30*wallBrickWidth, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
     platforms.push(new MovingPlatform(50*wallBrickWidth, 60*wallBrickWidth, 20*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-    platforms.push(new MovingPlatform(100, 100 + 20*wallBrickWidth, 3.25*canvas.height/5-10, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+    platforms.push(new MovingPlatform(5*wallBrickWidth,  20*wallBrickWidth, canvas.height - 5*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
     platforms.push(new MovingPlatform(100 + 20*wallBrickWidth, 400 + 20*wallBrickWidth, 3.25*canvas.height/5-10, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
 }
 

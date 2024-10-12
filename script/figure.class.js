@@ -17,11 +17,16 @@ class Figure {
     distanceCharMovingPlatformX;
     jumpFallStepHeight;
     maxJumpHeight;
-    sleeps = false;f
+    sleeps = false;
+    gotHit = false;
+    immune = false;
+    hitByTrap;
+    healthAmount = 100;
+    timeNextHit = 0;
 
     constructor(width, height, x, y, src, stepLength, maxJumpHeight = 10 * wallBrickHeight) {
         this.width = width;
-        this.height = height;
+        this.height = 27*width/23;
         this.x = x;
         this.y = y;
         this.src = src;
@@ -48,6 +53,10 @@ class Figure {
             } else {
                 this.x -= this.stepLength;
             }
+        
+            if(this.checkTrapXCords()) {
+                this.hitChar();
+            }
         }
     }
 
@@ -69,6 +78,10 @@ class Figure {
                     this.x += this.stepLength;
                 }
             }
+        }
+        
+        if(this.checkTrapXCords()) {
+            this.hitChar();
         }
     }
 
@@ -143,12 +156,13 @@ class Figure {
                 this.startingYPos = canvas.height - wallBrickHeight - this.height;
                 this.y = canvas.height - wallBrickHeight - this.height;
             }
+            
             if (this.startingYPos && this.y === this.startingYPos) {
                 this.jumps = false;
                 this.falls = false;
                 this.startingYPos = null;
                 this.stepAmount = 0;
-                this.resetFigImg(`graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount}.png`);
+                if(!this.gotHit) {this.resetFigImg(`graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount}.png`);}
                 return;
             }
             this.y += this.jumpFallStepHeight;
@@ -187,6 +201,32 @@ class Figure {
         }
     }
 
+    movingWithPlatform() {
+        if (!gamePaused) {
+            if (this.onMovingPlatform) {
+                if(this.checkTrapXCords()) {
+                    this.hitChar();
+                }
+                
+                if (this.checkPlatformEnd()) {
+                    this.checkIfFalling();
+                    return;
+                }
+
+                this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength; 
+                
+                requestAnimationFrame(() => {
+                    this.movingWithPlatform();
+                });
+            }
+            return;
+        }else {
+            requestAnimationFrame(() => {
+                this.movingWithPlatform();
+            });
+        }
+    }
+
     checkPlatformEnd() {
         if (!gamePaused) {
             if (this.movingDirection === 'left') {
@@ -207,23 +247,81 @@ class Figure {
         }
     }
 
-    movingWithPlatform() {
+    checkTrapXCords() {
         if (!gamePaused) {
-            if (this.onMovingPlatform) {
-                this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
-                if (this.checkPlatformEnd()) {
-                    this.checkIfFalling();
-                    return;
+            for (let i = 0; i < traps.length; i++) {
+                if (traps[i].x - (this.x + this.width) >= 0 || this.x - (traps[i].x + traps[i].width) >= 0) {
+                    if (i + 1 === traps.length) {
+                        this.startingYPos = null;
+                        return false;
+                    }
+                } else if (this.checkTrapYCords(i)) {
+                    this.hitByTrap = i;
+                    this.gotHit = true;
+                    return true;
                 }
-                requestAnimationFrame(() => {
-                    this.movingWithPlatform();
-                });
             }
-            return;
-        }else {
+        }
+    }
+
+    checkTrapYCords(i) {
+        if (!gamePaused) {
+            if (this.y+this.height >= traps[i].y || this.y < traps[i].y+traps[i].height >= this.y) {
+                return true;
+            } else {
+                if (i + 1 === traps.length) { return false; }
+            }
+        }
+    }
+
+    hitChar() {
+        if(this.gotHit) {
+            this.gotHit = false;
+            this.decreaseHealth(this.decreaseHealth(traps[this.hitByTrap].trapType));
+            this.animateHit();
+            setTimeout(()=>{this.gotHit = true}, 1500);
+            this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 11}.png`;
+            /* i++;
+            if(this.x === traps[this.hitByTrap].x+traps[this.hitByTrap].width) {
+                this.x += 3;
+            }else {this.x -= 3;}
+            if(i === 7) {
+                if(this.checkPlatformEnd()) {
+                    this.checkPlatformEnd();
+                }
+                this.stepAmount = 0;
+                this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount}.png`;
+                return;
+            }
             requestAnimationFrame(() => {
-                this.movingWithPlatform();
-            });
+                this.hitChar();
+            }); */
+        }
+    }
+
+    animateHit(i=0) {
+        if(!this.gotHit) {
+            this.figImage.src = `../graphics/main-char/hit/hit-${this.movingDirection}-${i}.png`;
+            i++;
+            if(i === 7) { i=0 }
+            requestAnimationFrame(()=>{this.animateHit(i)});
+        }else {
+            this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 11}.png`;
+            if(this.checkTrapXCords()) {
+                console.log(this.healthAmount);
+                this.hitChar();
+            }
+        }
+    }
+
+    decreaseHealth(type) {
+        if(!this.immune) {
+            this.immune = true;
+            switch(type) {
+                case "saw":
+                    this.healthAmount -= 5;
+            }
+            setTimeout(()=>{this.immune = false}, 1500);
         }
     }
 

@@ -3,7 +3,6 @@ class MenubarBackground extends Menubar {
 
     constructor(x, y, width, height) {
         super(x, y, width, height);
-        console.log(menuBar.x);
     }
 
     createBackground() {
