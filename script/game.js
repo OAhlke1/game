@@ -78,6 +78,7 @@ function createMenuBar() {
 
 function createTraps() {
     traps.push(new Traps(10*wallBrickWidth, canvas.height-5.5*wallBrickHeight, canvas.width/40, canvas.width/40, '../graphics/traps/chainsaws/round.png', 'saw'));
+    traps.push(new Traps(50*wallBrickWidth, canvas.height-3*wallBrickHeight, canvas.width/40, canvas.width/40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw'));
 }
 
 function createPlatforms() {
@@ -131,10 +132,10 @@ function drawElements() {
     timer();
     drawBackground();
     drawWalls();
+    drawTraps();
     drawPlatforms();
     drawFigure();
     redrawElements();
-    drawTraps();
     drawMenuBar();
 }
 
@@ -145,9 +146,9 @@ function clearCanvas() {
 function redrawElements() {
     drawBackground();
     drawWalls();
+    drawTraps();
     drawPlatforms();
     drawFigure();
-    drawTraps();
     drawMenuBar();
 }
 

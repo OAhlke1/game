@@ -19,7 +19,7 @@ class Figure {
     maxJumpHeight;
     sleeps = false;
     gotHit = false;
-    immune = false;
+    isImmune = false;
     hitByTrap;
     healthAmount = 100;
     timeNextHit = 0;
@@ -90,12 +90,11 @@ class Figure {
             if (key === "ArrowRight") {
                 this.movingDirection = 'right';
                 this.stepAmount++;
-                this.resetFigImg(`graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount) % 11}.png`);
             } else {
                 this.movingDirection = 'left';
                 this.stepAmount--;
-                this.resetFigImg(`graphics/main-char/run/run-${this.movingDirection}-${11 - (Math.abs(this.stepAmount) % 11)}.png`);
             }
+            this.figImage.src = `graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 11}.png`;
         }
     }
 
@@ -114,7 +113,7 @@ class Figure {
             this.jumps = true;
             this.falls = false;
             this.stepAmount = 0;
-            this.resetFigImg(`graphics/main-char/jump/jump-${this.movingDirection}.png`);
+            this.figImage.src = `graphics/main-char/jump/jump-${this.movingDirection}.png`;
             if (!this.startingYPos) { this.startingYPos = this.y; }
             i--;
             this.y -= this.jumpFallStepHeight;
@@ -138,7 +137,7 @@ class Figure {
     fall() {
         if (!gamePaused) {
             if (this.checkPlatformXCords()) {
-                this.resetFigImg(`graphics/main-char/run/run-${this.movingDirection}-0.png`);
+                this.figImage.src = `graphics/main-char/run/run-${this.movingDirection}-0.png`;
                 this.startingYPos = null;
                 this.jumps = false;
                 if (platforms[this.standingPlatformIndex].isMoving) {
@@ -155,6 +154,7 @@ class Figure {
                 this.standingPlatformIndex = -1;
                 this.startingYPos = canvas.height - wallBrickHeight - this.height;
                 this.y = canvas.height - wallBrickHeight - this.height;
+                this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-0.png`;
             }
             
             if (this.startingYPos && this.y === this.startingYPos) {
@@ -162,9 +162,11 @@ class Figure {
                 this.falls = false;
                 this.startingYPos = null;
                 this.stepAmount = 0;
-                if(!this.gotHit) {this.resetFigImg(`graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount}.png`);}
+                if(!this.gotHit) {this.figImage.src = `graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 12}.png`;}
                 return;
             }
+
+            if(this.checkTrapXCords()) { this.hitChar(); }
             this.y += this.jumpFallStepHeight;
         }
         requestAnimationFrame(() => {
@@ -306,22 +308,25 @@ class Figure {
             if(i === 7) { i=0 }
             requestAnimationFrame(()=>{this.animateHit(i)});
         }else {
-            this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 11}.png`;
+            this.figImage.src = `../graphics/main-char/run/run-${this.movingDirection}-${this.stepAmount % 12}.png`;
             if(this.checkTrapXCords()) {
-                console.log(this.healthAmount);
                 this.hitChar();
             }
         }
     }
 
     decreaseHealth(type) {
-        if(!this.immune) {
-            this.immune = true;
+        if(!this.isImmune) {
+            this.isImmune = true;
             switch(type) {
                 case "saw":
                     this.healthAmount -= 5;
+                    break;
+                case "jagged-saw":
+                    this.healthAmount -= 10;
+                    break;
             }
-            setTimeout(()=>{this.immune = false}, 1500);
+            setTimeout(()=>{this.isImmune = false}, 1500);
         }
     }
 
