@@ -99,36 +99,6 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(100 + 20*wallBrickWidth, 400 + 20*wallBrickWidth, 3.25*canvas.height/5-10, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
 }
 
-function addMovingCommands() {
-    document.querySelector('body').addEventListener('keyup', (event)=>{
-        figure.sleeps = false;
-        t = 0;
-        if(event.key === " ") {
-            if(!figure.startingYPos) {
-                figure.startingYPos = figure.y;
-                figure.checkIfJumping(event.key);
-            }
-        }else if(event.key === "p") {
-            if(!gamePaused) {
-                gamePaused = true;
-            }else {
-                gamePaused = false;
-                timer();
-                redrawElements();
-            }
-        }
-    });
-    document.querySelector('body').addEventListener('keydown', (event)=>{
-        figure.sleeps = false;
-        t = 0;
-        if(event.key === "ArrowLeft") {
-            figure.moveLeft();
-        }else if(event.key === "ArrowRight") {
-            figure.moveRight(event.key);
-        }
-    });
-}
-
 function drawElements() {
     timer();
     drawBackground();
@@ -184,6 +154,45 @@ function drawFigure() {
     if(figure.isAlive) {
         ctx.drawImage(figure.figImage, figure.x, figure.y, figure.width, figure.height);
     }
+}
+
+function addMovingCommands() {
+    document.querySelector('body').addEventListener('keyup', (event)=>{
+        figure.sleeps = false;
+        t = 0;
+        if(event.key === " ") {
+            if(!figure.startingYPos) {
+                figure.startingYPos = figure.y;
+                figure.checkIfJumping(event.key);
+            }
+        }else if(event.key === "p") {
+            if(!gamePaused) {
+                gamePaused = true;
+            }else {
+                gamePaused = false;
+                timer();
+                redrawElements();
+            }
+        }
+    });
+    document.querySelector('body').addEventListener('keydown', (event)=>{
+        figure.sleeps = false;
+        t = 0;
+        if(event.key === "ArrowLeft") {
+            figure.moveLeft();
+        }else if(event.key === "ArrowRight") {
+            figure.moveRight(event.key);
+        }
+    });
+    document.querySelector('body').addEventListener('click', ()=>{
+        document.querySelector('#bg-sound').play();
+    });
+}
+
+function playSound(path) {
+    document.querySelector('#audio-player').pause();
+    document.querySelector('#audio-player').src = path;
+    document.querySelector('#audio-player').play();
 }
 
 function timer() {

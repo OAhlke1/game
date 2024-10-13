@@ -63,7 +63,7 @@ class Figure {
 
     moveRight(key) {
         if (!gamePaused && this.isAlive) {
-            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) { // this.y + this.height < canvas.height - wallBrickHeight
+            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
                 if (this.checkPlatformEnd()) {
                     this.checkIfFalling();
                 }
@@ -104,6 +104,7 @@ class Figure {
     checkIfJumping() {
         if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
+                playSound('../sounds/jump.ogg');
                 this.jumps = true;
                 this.jump();
             }
@@ -281,7 +282,7 @@ class Figure {
     hitChar() {
         this.gotHit = true;
         this.animateHit();
-        this.decreaseHealth(this.decreaseHealth(traps[this.hitByTrap].trapType));
+        this.decreaseHealth(traps[this.hitByTrap].trapType);
         setTimeout(()=>{this.gotHit = false}, 1500);
     }
 
