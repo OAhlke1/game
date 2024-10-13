@@ -25,6 +25,7 @@ createMenuBar();
 function init() {
     drawElements();
     addMovingCommands();
+    playSound('sounds/background.ogg', 'bg-sound');
 }
 
 function createCanvas() {
@@ -189,10 +190,10 @@ function addMovingCommands() {
     });
 }
 
-function playSound(path) {
-    document.querySelector('#audio-player').pause();
-    document.querySelector('#audio-player').src = path;
-    document.querySelector('#audio-player').play();
+function playSound(path, playerId) {
+    document.querySelector(`#${playerId}`).pause();
+    document.querySelector(`#${playerId}`).src = path;
+    document.querySelector(`#${playerId}`).play();
 }
 
 function timer() {

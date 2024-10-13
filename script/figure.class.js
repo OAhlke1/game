@@ -104,7 +104,7 @@ class Figure {
     checkIfJumping() {
         if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
-                playSound('../sounds/jump.ogg');
+                playSound('../sounds/jump.ogg', 'gaming-sound');
                 this.jumps = true;
                 this.jump();
             }
