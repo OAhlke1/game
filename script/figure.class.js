@@ -25,9 +25,9 @@ class Figure {
     healthAmount = 100;
     timeNextHit = 0;
 
-    constructor(width, height, x, y, src, stepLength, maxJumpHeight = 10 * wallBrickHeight) {
+    constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * wallBrickHeight) {
         this.width = width;
-        this.height = 27*width/23;
+        this.height = 27 * width / 23;
         this.x = x;
         this.y = y;
         this.src = src;
@@ -41,48 +41,57 @@ class Figure {
     }
 
     moveLeft(key) {
-        if (!gamePaused && this.isAlive) {
-            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
-                if (this.checkPlatformEnd()) {
-                    this.checkIfFalling();
+        if (controller['left'].pressed) {
+            if (!gamePaused && this.isAlive) {
+                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
+                    if (this.checkPlatformEnd()) {
+                        this.checkIfFalling();
+                    }
+                }
+                this.setMovingState(key);
+                if (this.x <= this.stepLength + wallBrickWidth) {
+                    this.x = wallBrickWidth + 1;
+                    controller['left'].pressed = false;
+                    return;
+                } else {
+                    this.x -= this.stepLength;
+                }
+
+                if (this.checkTrapXCords()) {
+                    this.hitChar();
                 }
             }
-            this.setMovingState(key);
-            if (this.x <= this.stepLength + wallBrickWidth) {
-                this.x = wallBrickWidth + 1;
-                return;
-            } else {
-                this.x -= this.stepLength;
-            }
-        
-            if(this.checkTrapXCords()) {
-                this.hitChar();
-            }
+            requestAnimationFrame(() => { this.moveLeft(key) });
         }
     }
 
     moveRight(key) {
-        if (!gamePaused && this.isAlive) {
-            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
-                if (this.checkPlatformEnd()) {
-                    this.checkIfFalling();
+        if (controller['right'].pressed) {
+            console.log(key);
+            if (!gamePaused && this.isAlive) {
+                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
+                    if (this.checkPlatformEnd()) {
+                        this.checkIfFalling();
+                    }
                 }
-            }
-            this.setMovingState(key);
-            if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
-                this.x = canvas.width - this.width - wallBrickWidth;
-                return;
-            } else {
-                if (this.x + this.width - canvas.width >= 0) {
-                    this.x += (canvas.width - this.x - this.width);
+                this.setMovingState(key);
+                if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
+                    this.x = canvas.width - this.width - wallBrickWidth;
+                    controller['right'].pressed = false;
+                    return;
                 } else {
-                    this.x += this.stepLength;
+                    if (this.x + this.width - canvas.width >= 0) {
+                        this.x += (canvas.width - this.x - this.width);
+                    } else {
+                        this.x += this.stepLength;
+                    }
                 }
             }
-        }
-        
-        if(this.checkTrapXCords()) {
-            this.hitChar();
+
+            if (this.checkTrapXCords()) {
+                this.hitChar();
+            }
+            requestAnimationFrame(() => { this.moveRight(key) });
         }
     }
 
@@ -95,7 +104,7 @@ class Figure {
                 this.movingDirection = 'left';
                 this.stepAmount--;
             }
-            if(this.isAlive) {
+            if (this.isAlive) {
                 this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
             }
         }
@@ -104,7 +113,7 @@ class Figure {
     checkIfJumping() {
         if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
-                playSound('../sounds/jump.ogg', 'gaming-sound');
+                playSound('jump.ogg', 1);
                 this.jumps = true;
                 this.jump();
             }
@@ -112,7 +121,7 @@ class Figure {
     }
 
     jump(i = this.maxJumpHeight / this.jumpFallStepHeight) {
-        if (!gamePaused && this.isAlive) {
+        if (!gamePaused && this.isAlive && !this.falls) {
             this.onMovingPlatform = false;
             this.jumps = true;
             this.falls = false;
@@ -120,13 +129,14 @@ class Figure {
             this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
             if (!this.startingYPos) { this.startingYPos = this.y; }
             i--;
+            console.log(i);
             this.y -= this.jumpFallStepHeight;
-            if (i === 0 || this.y <= wallBrickHeight) {
+            if (i <= 0 || this.y <= wallBrickHeight) {
                 this.checkIfFalling(i);
                 return;
             }
+            requestAnimationFrame(() => { this.jump(i); });
         }
-        requestAnimationFrame(() => { this.jump(i); });
     }
 
     checkIfFalling() {
@@ -158,19 +168,19 @@ class Figure {
                 this.standingPlatformIndex = -1;
                 this.startingYPos = canvas.height - wallBrickHeight - this.height;
                 this.y = canvas.height - wallBrickHeight - this.height;
-                if(!this.gotHit) {this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);}
+                if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             }
-            
+
             if (this.startingYPos && this.y === this.startingYPos) {
                 this.jumps = false;
                 this.falls = false;
                 this.startingYPos = null;
                 this.stepAmount = 0;
-                if(!this.gotHit) {this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);}
+                if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
                 return;
             }
 
-            if(this.checkTrapXCords()) { this.hitChar(); }
+            if (this.checkTrapXCords()) { this.hitChar(); }
             this.y += this.jumpFallStepHeight;
         }
         requestAnimationFrame(() => {
@@ -210,23 +220,23 @@ class Figure {
     movingWithPlatform() {
         if (!gamePaused && this.isAlive) {
             if (this.onMovingPlatform) {
-                if(this.checkTrapXCords()) {
+                if (this.checkTrapXCords()) {
                     this.hitChar();
                 }
-                
+
                 if (this.checkPlatformEnd()) {
                     this.checkIfFalling();
                     return;
                 }
 
-                this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength; 
-                
+                this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
+
                 requestAnimationFrame(() => {
                     this.movingWithPlatform();
                 });
             }
             return;
-        }else {
+        } else {
             requestAnimationFrame(() => {
                 this.movingWithPlatform();
             });
@@ -234,20 +244,22 @@ class Figure {
     }
 
     checkPlatformEnd() {
-        if (!gamePaused && this.isAlive) {
-            if (this.movingDirection === 'left') {
-                if (platforms[this.standingPlatformIndex].x - this.x - this.width <= 0) {
-                    return false;
-                } else {
-                    this.startingYPos = null;
-                    return true;
-                }
-            } else if (this.movingDirection === 'right') {
-                if (platforms[this.standingPlatformIndex].x + platforms[this.standingPlatformIndex].width <= this.x) {
-                    this.startingYPos = null;
-                    return true;
-                } else {
-                    return false;
+        if(!this.jumps) {
+            if (!gamePaused && this.isAlive) {
+                if (this.movingDirection === 'left') {
+                    if (platforms[this.standingPlatformIndex].x - this.x - this.width <= 0) {
+                        return false;
+                    } else {
+                        this.startingYPos = null;
+                        return true;
+                    }
+                } else if (this.movingDirection === 'right') {
+                    if (platforms[this.standingPlatformIndex].x + platforms[this.standingPlatformIndex].width <= this.x) {
+                        this.startingYPos = null;
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             }
         }
@@ -271,7 +283,7 @@ class Figure {
 
     checkTrapYCords(i) {
         if (!gamePaused && this.isAlive) {
-            if (this.y+this.height >= traps[i].y || this.y < traps[i].y+traps[i].height >= this.y) {
+            if (this.y + this.height >= traps[i].y || this.y < traps[i].y + traps[i].height >= this.y) {
                 return true;
             } else {
                 if (i + 1 === traps.length) { return false; }
@@ -283,31 +295,32 @@ class Figure {
         this.gotHit = true;
         this.animateHit();
         this.decreaseHealth(traps[this.hitByTrap].trapType);
-        setTimeout(()=>{this.gotHit = false}, 1500);
+        setTimeout(() => { this.gotHit = false }, 1500);
     }
 
-    animateHit(i=0) {
-        if(this.gotHit) {
-            if(this.isAlive) {
+    animateHit(i = 0) {
+        if (this.gotHit) {
+            if (this.isAlive) {
                 this.setImagePath(`../graphics/main-char/hit/hit-${this.movingDirection}-${i}.png`);
             }
             i++;
-            if(i === 7) { i=0 }
-            requestAnimationFrame(()=>{this.animateHit(i)});
-        }else {
-            if(this.isAlive) {
+            if (i === 7) { i = 0 }
+            requestAnimationFrame(() => { this.animateHit(i) });
+        } else {
+            if (this.isAlive) {
                 this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
             }
-            if(this.checkTrapXCords()) {
+            if (this.checkTrapXCords()) {
                 this.hitChar();
             }
         }
     }
 
     decreaseHealth(type) {
-        if(!this.isImmune) {
+        if (!this.isImmune) {
+            playSound('hit.ogg', 1);
             this.isImmune = true;
-            switch(type) {
+            switch (type) {
                 case "saw":
                     this.healthAmount -= 10;
                     break;
@@ -315,21 +328,21 @@ class Figure {
                     this.healthAmount -= 5;
                     break;
             }
-            if(this.healthAmount <= 0) {
+            if (this.healthAmount <= 0) {
                 this.healthAmount = 0;
                 this.isImmune = true;
                 this.isAlive = false;
                 this.setImagePath(`../graphics/main-char/dead/dead-${this.movingDirection}.png`);
                 return;
             }
-            setTimeout(()=>{this.isImmune = false}, 1500);
+            setTimeout(() => { this.isImmune = false }, 1500);
         }
     }
 
     setImagePath(path) {
-        if(this.isAlive) {
+        if (this.isAlive) {
             this.figImage.src = path;
-        }else {
+        } else {
             this.figImage.src = `../graphics/main-char/dead/dead-${this.movingDirection}.png`;
         }
     }
