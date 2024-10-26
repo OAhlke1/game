@@ -94,7 +94,9 @@ function createTraps() {
 }
 
 function createEnemies() {
+    enemies.push(new Enemy(25*wallBrickWidth, canvas.height - 4*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green'));
     enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green'));
+    enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green'));
 }
 
 function createPlatforms() {
@@ -187,12 +189,12 @@ function addMovingCommands() {
     document.querySelector('body').addEventListener('keydown', (event) => {
         figure.sleeps = false;
         t = 0;
-        if (event.key === "ArrowLeft") {
+        if (event.key === "ArrowLeft" || event.key === "a") {
             if (!controller['left'].pressed) {
                 controller['left'].pressed = true;
                 controller['left'].func();
             }
-        } else if (event.key === "ArrowRight") {
+        } else if (event.key === "ArrowRight" || event.key === "d") {
             if(!controller['right'].pressed) {
                 controller["right"].pressed = true;
                 controller['right'].func();
@@ -200,7 +202,7 @@ function addMovingCommands() {
         } else if (event.key === " ") {
             controller['jump'].pressed = true;
             controller['jump'].func();
-        } else if (event.key === "s") {
+        } else if (event.key === "Shift") {
             controller['run'].pressed = true;
             controller['run'].func();
         } else if (event.key === "p") {
@@ -214,11 +216,11 @@ function addMovingCommands() {
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
-        if (event.key === "ArrowLeft") {
+        if (event.key === "ArrowLeft" || event.key === "a") {
             controller['left'].pressed = false;
-        } else if (event.key === "ArrowRight") {
+        } else if (event.key === "ArrowRight" || event.key === "d") {
             controller['right'].pressed = false;
-        } else if (event.key === "s") {
+        } else if (event.key === "Shift") {
             controller['run'].pressed = false;
             slowDownFigure();
         }
@@ -273,17 +275,15 @@ function speedUpFigure() {
     if(figure.stepLength === figure.basicStepLength) {
         figure.stepLength = figure.basicStepLength * 1.5;
     }
-    console.log('speedUpFigure:', figure.stepLength);
 }
 
 function slowDownFigure() {
     if(1.5 * figure.basicStepLength === figure.stepLength) {
         figure.stepLength = figure.basicStepLength;
     }
-    console.log('slowDownFigure:', figure.stepLength);
 }
 
-function playSound(fileName, playerIndex = 0) {
+function playSound(fileName) {
     let audio = new Audio();
     audio.src = fileName;
     audio.play();

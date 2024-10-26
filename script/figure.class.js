@@ -14,8 +14,7 @@ class Figure {
     distanceCharMovingPlatformX;
     jumpFallStepHeight;
     maxJumpHeight;
-    hitByEnemy;
-    hitByTrap;
+    hittingEnemyIndex;
     hittingTrapIndex;
     basicStepLength;
     healthAmount = 100;
@@ -174,7 +173,6 @@ class Figure {
             }
 
             if (this.checkTrapXCords()) { this.hitChar(); }
-
             if(this.checkEnemyXCords()) { this.hitChar() }
             this.y += this.jumpFallStepHeight;
         }
@@ -217,9 +215,8 @@ class Figure {
     movingWithPlatform() {
         if (!gamePaused && this.isAlive) {
             if (this.onMovingPlatform) {
-                if (this.checkTrapXCords()) {
-                    this.hitChar();
-                }
+                if (this.checkTrapXCords()) { this.hitChar(); }
+                if (this.checkEnemyXCords()) { this.hitChar(); }
 
                 if (this.checkPlatformEnd()) {
                     this.checkIfFalling();
@@ -265,8 +262,8 @@ class Figure {
                         return false;
                     }
                 } else if (this.checkTrapYCords(i)) {
-                    this.hitByTrap = i;
-                    this.hitByEnemy = null;
+                    this.hittingTrapIndex = i;
+                    this.hittingEnemyIndex = null;
                     return true;
                 }
             }
@@ -275,7 +272,7 @@ class Figure {
 
     checkTrapYCords(i) {
         if (!gamePaused && this.isAlive) {
-            if (this.y + this.height >= traps[i].y || this.y < traps[i].y + traps[i].height >= this.y) {
+            if (this.y + this.height > traps[i].y && traps[i].y + traps[i].height > this.y) {
                 return true;
             } else {
                 if (i + 1 === traps.length) { return false; }
@@ -293,8 +290,8 @@ class Figure {
                             return false;
                         }
                     } else if (this.checkEnemyYCords(i)) {
-                        this.hitByEnemy = i;
-                        this.hitByTrap = null;
+                        this.hittingEnemyIndex = i;
+                        this.hittingTrapIndex = null;
                         return true;
                     }
                 }
@@ -304,11 +301,10 @@ class Figure {
 
     checkEnemyYCords(i) {
         if (!gamePaused && this.isAlive) {
-            if(Math.abs(this.y + this.height - enemies[i].y) <= this.jumpFallStepHeight && this.y < enemies[i].y &&  this.falls) {
-                console.log('Hi!');
+            if(Math.abs(this.y + this.height - enemies[i].y) < this.jumpFallStepHeight && this.y < enemies[i].y && this.falls) {
                 enemies[i] = null;
                 return false;
-            }else if (enemies[i].y - (this.y + this.height) < 0 || enemies[i].y + enemies[i].height - this.y < 0) {
+            }else if (this.y + this.height > enemies[i].y && enemies[i].y + enemies[i].height > this.y) { // || enemies[i].y + enemies[i].height - this.y < 0
                 return true;
             } else {
                 if (i + 1 === enemies.length) { return false; }
@@ -319,10 +315,10 @@ class Figure {
     hitChar() {
         this.gotHit = true;
         this.animateHit();
-        if(this.hitByTrap != null) {
-            this.decreaseHealth(traps[this.hitByTrap].trapType);
-        }else if(this.hitByEnemy != null) {
-            this.decreaseHealth(enemies[this.hitByEnemy].enemyType);
+        if(this.hittingTrapIndex != null) {
+            this.decreaseHealth(traps[this.hittingTrapIndex].trapType);
+        }else if(this.hittingEnemyIndex != null) {
+            this.decreaseHealth(enemies[this.hittingEnemyIndex].enemyType);
         }
         setTimeout(() => { this.gotHit = false }, 1500);
     }
@@ -344,7 +340,7 @@ class Figure {
         if (!this.isImmune) {
             playSound('sounds/hit.ogg');
             this.isImmune = true;
-            if(this.hitByTrap) {
+            if(this.hittingTrapIndex) {
                 switch (type) {
                     case "saw":
                         this.healthAmount -= 10;
@@ -353,7 +349,7 @@ class Figure {
                         this.healthAmount -= 5;
                         break;
                 }
-            }else if(this.hitByEnemy) {
+            }else if(this.hittingEnemyIndex) {
                 switch (type) {
                     case "green":
                         this.healthAmount -= 20;
