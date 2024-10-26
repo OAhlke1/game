@@ -14,6 +14,7 @@ class Figure {
     onMovingPlatform;
     jumps;
     falls;
+    landedOnPlatform = false;
     distanceCharMovingPlatformX;
     jumpFallStepHeight;
     maxJumpHeight;
@@ -21,7 +22,7 @@ class Figure {
     sleeps = false;
     gotHit = false;
     isImmune = false;
-    hitByTrap;
+    hittingTrapIndex;
     healthAmount = 100;
     timeNextHit = 0;
 
@@ -57,9 +58,9 @@ class Figure {
                     this.x -= this.stepLength;
                 }
 
-                if (this.checkTrapXCords()) {
+                /* if (this.checkTrapXCords()) {
                     this.hitChar();
-                }
+                } */
             }
             requestAnimationFrame(() => { this.moveLeft(key) });
         }
@@ -67,9 +68,8 @@ class Figure {
 
     moveRight(key) {
         if (controller['right'].pressed) {
-            console.log(key);
             if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
+                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length) {
                     if (this.checkPlatformEnd()) {
                         this.checkIfFalling();
                     }
@@ -129,14 +129,13 @@ class Figure {
             this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
             if (!this.startingYPos) { this.startingYPos = this.y; }
             i--;
-            console.log(i);
             this.y -= this.jumpFallStepHeight;
             if (i <= 0 || this.y <= wallBrickHeight) {
                 this.checkIfFalling(i);
                 return;
             }
             requestAnimationFrame(() => { this.jump(i); });
-        }
+          }
     }
 
     checkIfFalling() {
@@ -157,7 +156,7 @@ class Figure {
                 if (platforms[this.standingPlatformIndex].isMoving) {
                     this.onMovingPlatform = true;
                     this.startingPointX = this.x;
-                    this.distanceCharMovingPlatformX = this.startingPointX - platforms[this.standingPlatformIndex].x;
+                    this.distanceCharMovingPlatformX = this.x - platforms[this.standingPlatformIndex].x;
                     this.movingWithPlatform();
                 }
                 this.falls = false;
@@ -171,7 +170,7 @@ class Figure {
                 if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             }
 
-            if (this.startingYPos && this.y === this.startingYPos) {
+            if (this.startingYPos === this.y) {
                 this.jumps = false;
                 this.falls = false;
                 this.startingYPos = null;
@@ -181,6 +180,10 @@ class Figure {
             }
 
             if (this.checkTrapXCords()) { this.hitChar(); }
+
+            if(this.checkEnemyXCords()) {
+                this.hitChar()
+            }
             this.y += this.jumpFallStepHeight;
         }
         requestAnimationFrame(() => {
@@ -199,6 +202,8 @@ class Figure {
                 } else {
                     if (this.checkPlatformYCords(i)) {
                         this.standingPlatformIndex = i;
+                        this.landed = true;
+                        this.stepAmount = 0;
                         return true;
                     }
                 }
@@ -228,6 +233,7 @@ class Figure {
                     this.checkIfFalling();
                     return;
                 }
+                console.log(this.distanceCharMovingPlatformX, platforms[this.standingPlatformIndex].x - this.x - this.width);
 
                 this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
 
@@ -236,10 +242,6 @@ class Figure {
                 });
             }
             return;
-        } else {
-            requestAnimationFrame(() => {
-                this.movingWithPlatform();
-            });
         }
     }
 
@@ -274,7 +276,7 @@ class Figure {
                         return false;
                     }
                 } else if (this.checkTrapYCords(i)) {
-                    this.hitByTrap = i;
+                    this.hittingTrapIndex = i;
                     return true;
                 }
             }
@@ -291,10 +293,41 @@ class Figure {
         }
     }
 
+    checkEnemyXCords() {
+        if (!gamePaused && this.isAlive) {
+            for (let i = 0; i < enemies.length; i++) {
+                console.log("Hallo Welt!");
+                if (enemies[i].x - (this.x + this.width) >= this.width || this.x - (enemies[i].x + enemies[i].width) >= this.width) {
+                    if (i + 1 === enemies.length) {
+                        this.startingYPos = null;
+                        return false;
+                    }
+                } else if (this.checkEnemyYCords(i)) {
+                    this.hittingEnemyIndex = i;
+                    return true;
+                }
+            }
+        }
+    }
+
+    checkEnemyYCords(i) {
+        if (!gamePaused && this.isAlive) {
+            if (this.y + this.height >= enemies[i].y || this.y < enemies[i].y + enemies[i].height >= this.y) {
+                return true;
+            } else {
+                if (i + 1 === enemies.length) { return false; }
+            }
+        }
+    }
+
     hitChar() {
         this.gotHit = true;
         this.animateHit();
-        this.decreaseHealth(traps[this.hitByTrap].trapType);
+        if(this.hitByTrap) {
+            this.decreaseHealth(traps[this.hitByTrap].trapType);
+        }else if(this.hitByEnemy) {
+            this.decreaseHealth(enemies[this.hitByEnemy].enemyType);
+        }
         setTimeout(() => { this.gotHit = false }, 1500);
     }
 

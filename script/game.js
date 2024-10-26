@@ -12,8 +12,8 @@ let walls = [];
 let platforms = [];
 let standables = [];
 let traps = [];
+let enemies = [];
 let audioPlayer = [];
-let sounds = {};
 let t = -1;
 let gamePaused = false;
 
@@ -24,6 +24,7 @@ createWallsTopBottom();
 createFigure();
 createPlatforms();
 createTraps();
+createEnemies();
 createMenuBar();
 
 loadPlayer();
@@ -110,6 +111,10 @@ function createTraps() {
     traps.push(new Traps(50*wallBrickWidth, canvas.height - 3*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw'));
 }
 
+function createEnemies() {
+    enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png'));
+}
+
 function createPlatforms() {
     createNonMovingPlatforms();
     createMovingPlatforms();
@@ -125,7 +130,7 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(20*wallBrickWidth, 30*wallBrickWidth, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
     platforms.push(new MovingPlatform(50*wallBrickWidth, 60*wallBrickWidth, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
     platforms.push(new MovingPlatform(5*wallBrickWidth, 20*wallBrickWidth, canvas.height - 5*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-    platforms.push(new MovingPlatform(50 + 20*wallBrickWidth, 200 + 20*wallBrickWidth, canvas.height - 0.25*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+    platforms.push(new MovingPlatform(50 + 20*wallBrickWidth, 200 + 20*wallBrickWidth, canvas.height - 0.30*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
 }
 
 function drawElements() {
@@ -134,6 +139,7 @@ function drawElements() {
     drawWalls();
     drawTraps();
     drawPlatforms();
+    drawEnemies();
     drawFigure();
     redrawElements();
     drawMenuBar();
@@ -148,6 +154,7 @@ function redrawElements() {
     drawWalls();
     drawTraps();
     drawPlatforms();
+    drawEnemies();
     drawFigure();
     drawMenuBar();
 }
@@ -176,6 +183,12 @@ function drawPlatforms() {
 function drawTraps() {
     traps.forEach((elem) => {
         ctx.drawImage(elem.trapImage, elem.x, elem.y, elem.width, elem.height);
+    })
+}
+
+function drawEnemies () {
+    enemies.forEach((elem) => {
+        ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
     })
 }
 
@@ -255,7 +268,6 @@ function addMovingCommands() {
             controller['jump'].pressed = true;
             controller['jump'].func();
         }
-        console.log('left: ' + controller['left'].pressed + "\n", 'right: ' + controller['right'].pressed + "\n", 'jump: ' + controller['jump'].pressed);
     })
     document.querySelector('body').addEventListener('keypress', () => {
         if (audioPlayer[0].paused) {

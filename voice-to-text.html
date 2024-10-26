@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text-to-voice-test</title>
+</head>
+
+<body onload="setupVoiceApi()">
+    <div class="textblocktext">
+        <p onclick="startReading(event)">
+            Über eine hölzerne Zugbrücke überquerten die damaligen Gesandten den etwa 25 bis 30 Meter breiten
+            Hauptgraben des Torhauses. Durch das prächtige Tor und durch ein mit Eisen beschlagenes Holztor ging es
+            vorbei an Wachposten. Die Würdenträger verhandelten mit dem militärisch sehr aktiven Fürstbischof Christoph
+            Bernhard von Galen über Fragen von Krieg und Frieden. Was trieb ihn an? Wen betrachtete er als Feinde? Wie
+            erfolgreich war er? Weitere Informationen geben Auskunft!
+        </p>
+    </div>
+    <button onclick="pauseReading()">Pause</button>
+    <button onclick="continueReading()">Continue</button>
+</body>
+
+<script>
+    let synth;
+    let text;
+    let speech;
+    let pitch;
+    let utterance;
+    function setupVoiceApi() {
+        text = document.querySelector('.textblocktext p').innerHTML;
+        speech = new SpeechSynthesisUtterance(text);
+        speech.lang = "german";
+        pitch = speech.pitch;
+        utterance = speech.utterance;
+        synth = window.speechSynthesis;
+    }
+
+    function startReading(event) {
+        synth.speak(speech);
+    }
+
+    function pauseReading() {
+        synth.pause();
+    }
+
+    function continueReading() {
+        synth.resume();
+    }
+</script>
+
+</html>
