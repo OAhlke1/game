@@ -4,17 +4,13 @@ class Figure {
     x;
     y;
     src;
-    figImage = new Image();
     notAtWall;
     stepLength;
     startingYPos;
-    stepAmount = 0;
-    movingDirection = 'right';
     standingPlatformIndex;
     onMovingPlatform;
     jumps;
     falls;
-    landedOnPlatform = false;
     distanceCharMovingPlatformX;
     jumpFallStepHeight;
     maxJumpHeight;
@@ -22,9 +18,15 @@ class Figure {
     sleeps = false;
     gotHit = false;
     isImmune = false;
+    landedOnPlatform = false;
+    hitByEnemy;
+    hitByTrap;
     hittingTrapIndex;
     healthAmount = 100;
     timeNextHit = 0;
+    stepAmount = 0;
+    movingDirection = 'right';
+    figImage = new Image();
 
     constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * wallBrickHeight) {
         this.width = width;
@@ -45,22 +47,16 @@ class Figure {
         if (controller['left'].pressed) {
             if (!gamePaused && this.isAlive) {
                 if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
-                    if (this.checkPlatformEnd()) {
-                        this.checkIfFalling();
-                    }
+                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
                 }
                 this.setMovingState(key);
                 if (this.x <= this.stepLength + wallBrickWidth) {
                     this.x = wallBrickWidth + 1;
                     controller['left'].pressed = false;
                     return;
-                } else {
-                    this.x -= this.stepLength;
-                }
-
-                /* if (this.checkTrapXCords()) {
-                    this.hitChar();
-                } */
+                } else { this.x -= this.stepLength; }
+                if (this.checkTrapXCords()) { this.hitChar(); }
+                if(this.checkEnemyXCords()) { this.hitChar() }
             }
             requestAnimationFrame(() => { this.moveLeft(key) });
         }
@@ -82,14 +78,10 @@ class Figure {
                 } else {
                     if (this.x + this.width - canvas.width >= 0) {
                         this.x += (canvas.width - this.x - this.width);
-                    } else {
-                        this.x += this.stepLength;
-                    }
+                    } else { this.x += this.stepLength; }
                 }
-            }
-
-            if (this.checkTrapXCords()) {
-                this.hitChar();
+                if(this.checkEnemyXCords()) { this.hitChar() }
+                if (this.checkTrapXCords()) { this.hitChar(); }
             }
             requestAnimationFrame(() => { this.moveRight(key) });
         }
@@ -113,7 +105,7 @@ class Figure {
     checkIfJumping() {
         if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
-                playSound('jump.ogg', 1);
+                playSound('sounds/jump.ogg');
                 this.jumps = true;
                 this.jump();
             }
@@ -181,9 +173,7 @@ class Figure {
 
             if (this.checkTrapXCords()) { this.hitChar(); }
 
-            if(this.checkEnemyXCords()) {
-                this.hitChar()
-            }
+            if(this.checkEnemyXCords()) { this.hitChar() }
             this.y += this.jumpFallStepHeight;
         }
         requestAnimationFrame(() => {
@@ -233,10 +223,7 @@ class Figure {
                     this.checkIfFalling();
                     return;
                 }
-                console.log(this.distanceCharMovingPlatformX, platforms[this.standingPlatformIndex].x - this.x - this.width);
-
                 this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
-
                 requestAnimationFrame(() => {
                     this.movingWithPlatform();
                 });
@@ -276,7 +263,8 @@ class Figure {
                         return false;
                     }
                 } else if (this.checkTrapYCords(i)) {
-                    this.hittingTrapIndex = i;
+                    this.hitByTrap = i;
+                    this.hitByEnemy = null;
                     return true;
                 }
             }
@@ -296,15 +284,17 @@ class Figure {
     checkEnemyXCords() {
         if (!gamePaused && this.isAlive) {
             for (let i = 0; i < enemies.length; i++) {
-                console.log("Hallo Welt!");
-                if (enemies[i].x - (this.x + this.width) >= this.width || this.x - (enemies[i].x + enemies[i].width) >= this.width) {
-                    if (i + 1 === enemies.length) {
-                        this.startingYPos = null;
-                        return false;
+                if(enemies[i]) {
+                    if (enemies[i].x - (this.x + this.width) >= 0 || this.x - (enemies[i].x + enemies[i].width) >= 0) {
+                        if (i + 1 === enemies.length) {
+                            this.startingYPos = null;
+                            return false;
+                        }
+                    } else if (this.checkEnemyYCords(i)) {
+                        this.hitByEnemy = i;
+                        this.hitByTrap = null;
+                        return true;
                     }
-                } else if (this.checkEnemyYCords(i)) {
-                    this.hittingEnemyIndex = i;
-                    return true;
                 }
             }
         }
@@ -312,7 +302,11 @@ class Figure {
 
     checkEnemyYCords(i) {
         if (!gamePaused && this.isAlive) {
-            if (this.y + this.height >= enemies[i].y || this.y < enemies[i].y + enemies[i].height >= this.y) {
+            if(Math.abs(this.y + this.height - enemies[i].y) <= this.jumpFallStepHeight && this.y < enemies[i].y &&  this.falls) {
+                console.log('Hi!');
+                enemies[i] = null;
+                return false;
+            }else if (enemies[i].y - (this.y + this.height) < 0 || enemies[i].y + enemies[i].height - this.y < 0) {
                 return true;
             } else {
                 if (i + 1 === enemies.length) { return false; }
@@ -323,9 +317,9 @@ class Figure {
     hitChar() {
         this.gotHit = true;
         this.animateHit();
-        if(this.hitByTrap) {
+        if(this.hitByTrap != null) {
             this.decreaseHealth(traps[this.hitByTrap].trapType);
-        }else if(this.hitByEnemy) {
+        }else if(this.hitByEnemy != null) {
             this.decreaseHealth(enemies[this.hitByEnemy].enemyType);
         }
         setTimeout(() => { this.gotHit = false }, 1500);
@@ -339,31 +333,33 @@ class Figure {
             i++;
             if (i === 7) { i = 0 }
             requestAnimationFrame(() => { this.animateHit(i) });
-        } else {
-            if (this.isAlive) {
-                this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
-            }
-            if (this.checkTrapXCords()) {
-                this.hitChar();
-            }
+        } else if (this.isAlive) {
+            this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
         }
     }
 
     decreaseHealth(type) {
         if (!this.isImmune) {
-            playSound('hit.ogg', 1);
+            playSound('sounds/hit.ogg');
             this.isImmune = true;
-            switch (type) {
-                case "saw":
-                    this.healthAmount -= 10;
-                    break;
-                case "jagged-saw":
-                    this.healthAmount -= 5;
-                    break;
+            if(this.hitByTrap) {
+                switch (type) {
+                    case "saw":
+                        this.healthAmount -= 10;
+                        break;
+                    case "jagged-saw":
+                        this.healthAmount -= 5;
+                        break;
+                }
+            }else if(this.hitByEnemy) {
+                switch (type) {
+                    case "green":
+                        this.healthAmount -= 20;
+                        break;
+                }
             }
             if (this.healthAmount <= 0) {
                 this.healthAmount = 0;
-                this.isImmune = true;
                 this.isAlive = false;
                 this.setImagePath(`../graphics/main-char/dead/dead-${this.movingDirection}.png`);
                 return;

@@ -17,6 +17,7 @@ let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
 
+loadPlayer();
 createCanvas();
 createBackground();
 createWallsLeftRight();
@@ -26,25 +27,7 @@ createPlatforms();
 createTraps();
 createEnemies();
 createMenuBar();
-
-loadPlayer();
-
-function setController() {
-    controller = {
-        "jump": {
-            pressed: false,
-            func: initJump
-        },
-        "left": {
-            pressed: false,
-            func: initStepLeft
-        },
-        "right": {
-            pressed: false,
-            func: initStepRight
-        }
-    }
-}
+addMovingCommands();
 
 function loadPlayer() {
     bgPlayer = new Audio();
@@ -54,7 +37,6 @@ function loadPlayer() {
     document.querySelectorAll('audio').forEach((elem) => {
         audioPlayer.push(elem);
     })
-    addMovingCommands();
 }
 
 function createCanvas() {
@@ -69,7 +51,7 @@ function createBackground() {
 }
 
 function createFigure() {
-    figure = new Figure(2*wallBrickWidth, 2*wallBrickHeight, wallBrickWidth, canvas.height - 3*wallBrickHeight, 'graphics/main-char/run/run-right-0.png', 3);
+    figure = new Figure(2*wallBrickWidth, 2*wallBrickHeight, wallBrickWidth, canvas.height - 3*wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth/3);
 }
 
 function createWallsLeftRight() {
@@ -112,7 +94,7 @@ function createTraps() {
 }
 
 function createEnemies() {
-    enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png'));
+    enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green'));
 }
 
 function createPlatforms() {
@@ -188,13 +170,81 @@ function drawTraps() {
 
 function drawEnemies () {
     enemies.forEach((elem) => {
-        ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
+        if(elem) {
+            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
+        }
     })
 }
 
 function drawFigure() {
     if (figure.isAlive) {
         ctx.drawImage(figure.figImage, figure.x, figure.y, figure.width, figure.height);
+    }
+}
+
+function addMovingCommands() {
+    setController();
+    document.querySelector('body').addEventListener('keydown', (event) => {
+        figure.sleeps = false;
+        t = 0;
+        if (event.key === "ArrowLeft") {
+            if (!controller['left'].pressed) {
+                controller['left'].pressed = true;
+                controller['left'].func();
+            }
+        } else if (event.key === "ArrowRight") {
+            if(!controller['right'].pressed) {
+                controller["right"].pressed = true;
+                controller['right'].func();
+            }
+        } else if (event.key === " ") {
+            controller['jump'].pressed = true;
+            controller['jump'].func();
+        } else if (event.key === "s") {
+            console.log(figure.stepLenght);
+            controller['run'].pressed = true;
+            controller['run'].func();
+        } else if (event.key === "p") {
+            if (!gamePaused) {
+                gamePaused = true;
+            } else {
+                gamePaused = false;
+                timer();
+                redrawElements();
+            }
+        }
+    });
+    document.querySelector('body').addEventListener('keyup', (event) => {
+        if (event.key === "ArrowLeft") {
+            controller['left'].pressed = false;
+        } else if (event.key === "ArrowRight") {
+            controller['right'].pressed = false;
+        } else if (event.key === "s") {
+            controller['run'].pressed = false;
+            slowDownFigure();
+        }
+    });
+    drawElements();
+}
+
+function setController() {
+    controller = {
+        "jump": {
+            pressed: false,
+            func: initJump
+        },
+        "left": {
+            pressed: false,
+            func: initStepLeft
+        },
+        "right": {
+            pressed: false,
+            func: initStepRight
+        },
+        "run": {
+            pressed: true,
+            func: speedUpFigure
+        }
     }
 }
 
@@ -220,66 +270,18 @@ function initStepRight() {
     }
 }
 
-function addMovingCommands() {
-    setController();
-    /* document.querySelector('body').addEventListener('keyup', (event)=>{
-        figure.sleeps = false;
-        t = 0;
-        if(event.key === " ") {
-        }else if(event.key === "p") {
-            if(!gamePaused) {
-                gamePaused = true;
-            }else {
-                gamePaused = false;
-                timer();
-                redrawElements();
-            }
-        }
-    }); */
-    document.querySelector('body').addEventListener('keydown', (event) => {
-        figure.sleeps = false;
-        t = 0;
-        if (event.key === "ArrowLeft") {
-            if (!controller['left'].pressed) {
-                controller['left'].pressed = true;
-                controller['left'].func();
-            }
-        } else if (event.key === "ArrowRight") {
-            if(!controller['right'].pressed) {
-                controller["right"].pressed = true;
-                controller['right'].func();
-            }
-        } else if (event.key === "p") {
-            if (!gamePaused) {
-                gamePaused = true;
-            } else {
-                gamePaused = false;
-                timer();
-                redrawElements();
-            }
-        }
-    });
-    document.querySelector('body').addEventListener('keyup', (event) => {
-        if (event.key === "ArrowLeft") {
-            controller['left'].pressed = false;
-        } else if (event.key === "ArrowRight") {
-            controller['right'].pressed = false;
-        } else if (event.key === " ") {
-            controller['jump'].pressed = true;
-            controller['jump'].func();
-        }
-    })
-    document.querySelector('body').addEventListener('keypress', () => {
-        if (audioPlayer[0].paused) {
-            playSound('background.ogg', 0);
-        }
-    });
-    drawElements();
+function speedUpFigure() {
+    figure.stepLenght *= 2;
+}
+
+function slowDownFigure() {
+    figure.stepLenght /= 2;
 }
 
 function playSound(fileName, playerIndex = 0) {
-    audioPlayer[playerIndex].src = `sounds/${fileName}`;
-    audioPlayer[playerIndex].play();
+    let audio = new Audio();
+    audio.src = fileName;
+    audio.play();
 }
 
 function timer() {
