@@ -201,7 +201,6 @@ function addMovingCommands() {
             controller['jump'].pressed = true;
             controller['jump'].func();
         } else if (event.key === "s") {
-            console.log(figure.stepLenght);
             controller['run'].pressed = true;
             controller['run'].func();
         } else if (event.key === "p") {
@@ -271,11 +270,17 @@ function initStepRight() {
 }
 
 function speedUpFigure() {
-    figure.stepLenght *= 2;
+    if(figure.stepLength === figure.basicStepLength) {
+        figure.stepLength = figure.basicStepLength * 1.5;
+    }
+    console.log('speedUpFigure:', figure.stepLength);
 }
 
 function slowDownFigure() {
-    figure.stepLenght /= 2;
+    if(1.5 * figure.basicStepLength === figure.stepLength) {
+        figure.stepLength = figure.basicStepLength;
+    }
+    console.log('slowDownFigure:', figure.stepLength);
 }
 
 function playSound(fileName, playerIndex = 0) {

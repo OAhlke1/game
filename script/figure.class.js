@@ -14,19 +14,20 @@ class Figure {
     distanceCharMovingPlatformX;
     jumpFallStepHeight;
     maxJumpHeight;
-    isAlive = true;
-    sleeps = false;
-    gotHit = false;
-    isImmune = false;
-    landedOnPlatform = false;
     hitByEnemy;
     hitByTrap;
     hittingTrapIndex;
+    basicStepLength;
     healthAmount = 100;
     timeNextHit = 0;
     stepAmount = 0;
     movingDirection = 'right';
     figImage = new Image();
+    isAlive = true;
+    sleeps = false;
+    gotHit = false;
+    isImmune = false;
+    landedOnPlatform = false;
 
     constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * wallBrickHeight) {
         this.width = width;
@@ -36,6 +37,7 @@ class Figure {
         this.src = src;
         this.figImage.src = this.src;
         this.stepLength = stepLength;
+        this.basicStepLength = stepLength;
         this.notAtWall = true;
         this.jumps = false;
         this.jumpFallStepHeight = wallBrickHeight / 3;
