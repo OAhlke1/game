@@ -116,7 +116,6 @@ class Figure {
     jump(i = this.maxJumpHeight / this.jumpFallStepHeight) {
         if (!gamePaused && this.isAlive && !this.falls) {
             this.onMovingPlatform = false;
-            this.jumps = true;
             this.falls = false;
             this.stepAmount = 0;
             this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
@@ -124,6 +123,7 @@ class Figure {
             i--;
             this.y -= this.jumpFallStepHeight;
             if (i <= 0 || this.y <= wallBrickHeight) {
+                this.maxJumpHeight = 5*wallBrickWidth;
                 this.checkIfFalling(i);
                 return;
             }
@@ -223,9 +223,7 @@ class Figure {
                     return;
                 }
                 this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
-                requestAnimationFrame(() => {
-                    this.movingWithPlatform();
-                });
+                requestAnimationFrame(() => {this.movingWithPlatform();});
             }
             return;
         }
@@ -263,7 +261,7 @@ class Figure {
                     }
                 } else if (this.checkTrapYCords(i)) {
                     this.hittingTrapIndex = i;
-                    this.hittingEnemyIndex = null;
+                    this.hittingEnemyIndex > -1;
                     return true;
                 }
             }
@@ -289,9 +287,9 @@ class Figure {
                             this.startingYPos = null;
                             return false;
                         }
-                    } else if (this.checkEnemyYCords(i)) {
+                    } else if (this.checkEnemyYCords(i) && enemies[i].isDangerous) {
                         this.hittingEnemyIndex = i;
-                        this.hittingTrapIndex = null;
+                        this.hittingTrapIndex > -1;
                         return true;
                     }
                 }
@@ -302,7 +300,11 @@ class Figure {
     checkEnemyYCords(i) {
         if (!gamePaused && this.isAlive) {
             if(Math.abs(this.y + this.height - enemies[i].y) < this.jumpFallStepHeight && this.y < enemies[i].y && this.falls) {
-                enemies[i] = null;
+                enemies[i].isDangerous = false;
+                enemies[i].animateHit();
+                this.startingYPos = this.y;
+                this.jumps = true;
+                this.checkIfJumping();
                 return false;
             }else if (this.y + this.height > enemies[i].y && enemies[i].y + enemies[i].height > this.y) { // || enemies[i].y + enemies[i].height - this.y < 0
                 return true;
@@ -315,15 +317,16 @@ class Figure {
     hitChar() {
         this.gotHit = true;
         this.animateHit();
-        if(this.hittingTrapIndex != null) {
+        if(this.hittingTrapIndex > -1) {
             this.decreaseHealth(traps[this.hittingTrapIndex].trapType);
-        }else if(this.hittingEnemyIndex != null) {
+        }else if(this.hittingEnemyIndex > -1) {
             this.decreaseHealth(enemies[this.hittingEnemyIndex].enemyType);
         }
-        setTimeout(() => { this.gotHit = false }, 1500);
+        setTimeout(() => { this.gotHit = false;
+         }, 1500);
     }
 
-    animateHit(i = 0) {
+    async animateHit(i = 0) {
         if (this.gotHit) {
             if (this.isAlive) {
                 this.setImagePath(`../graphics/main-char/hit/hit-${this.movingDirection}-${i}.png`);
@@ -340,21 +343,10 @@ class Figure {
         if (!this.isImmune) {
             playSound('sounds/hit.ogg');
             this.isImmune = true;
-            if(this.hittingTrapIndex) {
-                switch (type) {
-                    case "saw":
-                        this.healthAmount -= 10;
-                        break;
-                    case "jagged-saw":
-                        this.healthAmount -= 5;
-                        break;
-                }
-            }else if(this.hittingEnemyIndex) {
-                switch (type) {
-                    case "green":
-                        this.healthAmount -= 20;
-                        break;
-                }
+            if(this.hittingTrapIndex > -1) {
+                this.healthAmount -= traps[this.hittingTrapIndex].decreaseLifeAmount;
+            }else if(this.hittingEnemyIndex > -1) {
+                this.healthAmount -= enemies[this.hittingEnemyIndex].decreaseLifeAmount;
             }
             if (this.healthAmount <= 0) {
                 this.healthAmount = 0;
@@ -362,7 +354,7 @@ class Figure {
                 this.setImagePath(`../graphics/main-char/dead/dead-${this.movingDirection}.png`);
                 return;
             }
-            setTimeout(() => { this.isImmune = false }, 1500);
+            setTimeout(() => {this.isImmune = false }, 1500);
         }
     }
 

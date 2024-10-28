@@ -12,8 +12,8 @@ class MovingPlatform extends Platform {
         this.y = y;
         this.platformImage = new Image();
         this.platformImage.src = imgPath;
-        this.moveRight();
         this.isMoving = true;
+        this.moveRight();
     }
 
     moveRight() {
@@ -26,7 +26,7 @@ class MovingPlatform extends Platform {
             }
         }
         requestAnimationFrame(() => {
-            redrawElements();
+            drawElements();
             this.moveRight();
         });
     }
@@ -41,7 +41,7 @@ class MovingPlatform extends Platform {
             }
         }
         requestAnimationFrame(() => {
-            redrawElements();
+            drawElements();
             this.moveLeft();
         });
     }

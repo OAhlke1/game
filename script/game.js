@@ -47,7 +47,7 @@ function createCanvas() {
 }
 
 function createBackground() {
-    canvasBackground = new Background('graphics/background/giger.webp');
+    canvasBackground = new Background('graphics/background/black-bg.svg');
 }
 
 function createFigure() {
@@ -89,14 +89,14 @@ function createMenuBar() {
 }
 
 function createTraps() {
-    traps.push(new Traps(10*wallBrickWidth, canvas.height - 5.5*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/round.png', 'saw'));
-    traps.push(new Traps(50*wallBrickWidth, canvas.height - 3*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw'));
+    traps.push(new Traps(10*wallBrickWidth, canvas.height - 5.5*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/round.png', 'saw', 10));
+    traps.push(new Traps(50*wallBrickWidth, canvas.height - 3*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw', 20));
 }
 
 function createEnemies() {
-    enemies.push(new Enemy(25*wallBrickWidth, canvas.height - 4*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green'));
-    enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green'));
-    enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green'));
+    enemies.push(new Enemy(25*wallBrickWidth, canvas.height - 4*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10));
+    enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20));
+    enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30));
 }
 
 function createPlatforms() {
@@ -117,23 +117,11 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(50 + 20*wallBrickWidth, 200 + 20*wallBrickWidth, canvas.height - 0.30*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
 }
 
-function drawElements() {
-    timer();
-    drawBackground();
-    drawWalls();
-    drawTraps();
-    drawPlatforms();
-    drawEnemies();
-    drawFigure();
-    redrawElements();
-    drawMenuBar();
-}
-
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 }
 
-function redrawElements() {
+function drawElements() {
     drawBackground();
     drawWalls();
     drawTraps();
@@ -211,7 +199,7 @@ function addMovingCommands() {
             } else {
                 gamePaused = false;
                 timer();
-                redrawElements();
+                drawElements();
             }
         }
     });

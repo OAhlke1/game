@@ -3,7 +3,6 @@ class Background {
     y = 0;
     width = canvas.width;
     height = canvas.height;
-    image;
 
     constructor(imgPath) {
         this.image = new Image();
