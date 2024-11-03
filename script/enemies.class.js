@@ -4,11 +4,14 @@ class Enemy {
     width;
     height;
     enemyType;
-    runningDirection = 'left';
+    runningDirection;
     decreaseLifeAmount;
     isDangerous;
+    canShoot;
+    hitAnimationIndexI = 0;
+    gotBeat = false;
 
-    constructor(x, y, width, height, imgPath, enemyType, runningDirection = 'left', decreaseLifeAmount) {
+    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, runningDirection) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -18,17 +21,20 @@ class Enemy {
         this.enemyType = enemyType;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.isDangerous = true;
+        this.canShoot = canShoot;
         this.runningDirection = runningDirection;
     }
 
-    animateHit(i = 0, k = 0) {
-        this.image.src = `/graphics/enemies/${this.enemyType}/hit/hit-${this.runningDirection}-${k}.png`;
-        if((i+1) % 5 === 0 && i > 0) {
-            k++;
-            console.log(i, k);
+    animateHit() {
+        this.gotBeat = true;
+        this.hitAnimationIndexI++;
+        if(this.hitAnimationIndexI % 5 === 0) {
+            this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.runningDirection}-${(this.hitAnimationIndexI/5) % 5}.png`;
         }
-        i++;
-        if(k === 4) { return; }
-        requestAnimationFrame(()=>{this.animateHit(i, k)});
+        if(this.hitAnimationIndexI >= 75) {
+            this.image.src = '';
+            return;
+        }
+        requestAnimationFrame(()=>{this.animateHit()});
     }
 }

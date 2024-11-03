@@ -5,7 +5,6 @@ class Traps {
     y;
     imagePath;
     image;
-    trapImage = new Image();
     trapType;
     decreaseLifeAmount;
 
@@ -14,8 +13,8 @@ class Traps {
         this.height = height;
         this.x = x;
         this.y = y;
-        this.imagePath = imagePath;
-        this.trapImage.src = imagePath;
+        this.image = new Image();
+        this.image.src = imagePath;
         this.trapType = trapType;
         this.decreaseLifeAmount = decreaseLifeAmount;
     }

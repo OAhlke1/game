@@ -11,8 +11,13 @@ let bgPlayer;
 let walls = [];
 let platforms = [];
 let standables = [];
-let traps = [];
-let enemies = [];
+let hitables = {
+    traps: [],
+    enemies: [],
+    flyables: []
+};
+//let traps = [];
+//let enemies = [];
 let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
@@ -89,14 +94,20 @@ function createMenuBar() {
 }
 
 function createTraps() {
-    traps.push(new Traps(10*wallBrickWidth, canvas.height - 5.5*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/round.png', 'saw', 10));
-    traps.push(new Traps(50*wallBrickWidth, canvas.height - 3*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw', 20));
+    hitables.traps.push(new Traps(10*wallBrickWidth, canvas.height - 5.5*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/round.png', 'saw', 10));
+    hitables.traps.push(new Traps(50*wallBrickWidth, canvas.height - 3*wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw', 20));
 }
 
 function createEnemies() {
-    enemies.push(new Enemy(25*wallBrickWidth, canvas.height - 4*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10));
-    enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20));
-    enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30));
+    hitables.enemies.push(new Enemy(25*wallBrickWidth, canvas.height - 4*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10, false, 'left'));
+    hitables.enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left'));
+    hitables.enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left'));
+    hitables.enemies.push(new Shooter(canvas.width-3*wallBrickWidth, canvas.height-3*wallBrickHeight, 2*wallBrickWidth, 2*wallBrickHeight, 'shooter', 15, true, 'left'));
+}
+
+function createCannonBall(x, y, flyDirection) {
+    hitables.flyables.push(new Cannonball(x, y, flyDirection));
+    hitables.flyables[hitables.flyables.length-1].animateTrajectory();
 }
 
 function createPlatforms() {
@@ -105,16 +116,16 @@ function createPlatforms() {
 }
 
 function createNonMovingPlatforms() {
-    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width / 2 - 100, canvas.height - 20*wallBrickHeight, 'graphics/platforms/green-5.png'));
-    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width / 5 - 50, canvas.height - 10*wallBrickHeight, 'graphics/platforms/green-5.png'));
-    //platforms.push(new Platform(100, 20, canvas.width/4-50, 3*canvas.height/5-10, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width / 2, canvas.height - 20*wallBrickHeight, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width / 5, canvas.height - 10*wallBrickHeight, 'graphics/platforms/green-5.png'));
 }
 
 function createMovingPlatforms() {
     platforms.push(new MovingPlatform(20*wallBrickWidth, 30*wallBrickWidth, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
     platforms.push(new MovingPlatform(50*wallBrickWidth, 60*wallBrickWidth, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
     platforms.push(new MovingPlatform(5*wallBrickWidth, 20*wallBrickWidth, canvas.height - 5*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-    platforms.push(new MovingPlatform(50 + 20*wallBrickWidth, 200 + 20*wallBrickWidth, canvas.height - 0.30*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+    platforms.push(new MovingPlatform(25*wallBrickWidth, 200 + 20*wallBrickWidth, canvas.height - 0.30*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+    platforms.push(new MovingPlatform(canvas.width/2, 3*canvas.width/4, 25*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
 }
 
 function clearCanvas() {
@@ -124,11 +135,11 @@ function clearCanvas() {
 function drawElements() {
     drawBackground();
     drawWalls();
-    drawTraps();
     drawPlatforms();
-    drawEnemies();
+    drawHitables();
     drawFigure();
     drawMenuBar();
+    checkHitablesXCoords();
 }
 
 function drawBackground() {
@@ -152,18 +163,16 @@ function drawPlatforms() {
     }
 }
 
-function drawTraps() {
-    traps.forEach((elem) => {
-        ctx.drawImage(elem.trapImage, elem.x, elem.y, elem.width, elem.height);
+function drawHitables () {
+    hitables.traps.forEach((elem) => {
+        if(elem || elem.isDangerous) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
-}
-
-function drawEnemies () {
-    enemies.forEach((elem) => {
-        if(elem) {
-            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
-        }
+    hitables.enemies.forEach((elem) => {
+        if(elem || elem.isDangerous) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
+    if(hitables.flyables.length) {
+        hitables.flyables.forEach((elem)=>{ ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); })
+    }
 }
 
 function drawFigure() {
@@ -276,6 +285,128 @@ function playSound(fileName) {
     audio.src = fileName;
     audio.play();
 }
+
+function checkHitablesXCoords() {
+     if (checkTrapXCords()) { figure.hitChar(); }
+     if (checkEnemyXCords()) { figure.hitChar(); }
+     if(checkFlyableXCords()) { figure.hitChar(); }
+ }
+
+function checkTrapXCords() {
+     if (!gamePaused && figure.isAlive) {
+         for (let i = 0; i < hitables.traps.length; i++) {
+             if (hitables.traps[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.traps[i].x + hitables.traps[i].width) >= 0) {
+                 if (i + 1 === hitables.traps.length) {
+                     figure.startingYPos = null;
+                     return false;
+                 }
+             } else if (checkTrapYCords(i)) {
+                 figure.hittingTrapIndex = i;
+                 figure.hittingEnemyIndex = -1;
+                 figure.hittingFlyableIndex = -1;
+                 return true;
+             }
+         }
+     }
+ }
+
+function checkTrapYCords(i) {
+     if (!gamePaused && figure.isAlive) {
+         if (figure.y + figure.height > hitables.traps[i].y && hitables.traps[i].y + hitables.traps[i].height > figure.y) {
+             return true;
+         } else {
+             if (i + 1 === hitables.traps.length) { return false; }
+         }
+     }
+ }
+
+function checkEnemyXCords() {
+     if (!gamePaused && figure.isAlive) {
+         for (let i = 0; i < hitables.enemies.length; i++) {
+             if(hitables.enemies[i]) {
+                 if (hitables.enemies[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.enemies[i].x + hitables.enemies[i].width) >= 0) {
+                     if(hitables.enemies[i].canShoot) {
+                         if(hitables.enemies[i].checkIfTargeting() && !hitables.enemies[i].targeting) {
+                             hitables.enemies[i].targeting = true;
+                             hitables.enemies[i].shoots = true;
+                             hitables.enemies[i].setupCannonball();
+                         }else if(!hitables.enemies[i].checkIfTargeting()) {
+                             hitables.enemies[i].targeting = false;
+                             hitables.enemies[i].shoots = false;
+                         }
+                     }
+                     if (i + 1 === hitables.enemies.length) {
+                         figure.startingYPos = null;
+                         return false;
+                     }
+                 } else if (checkEnemyYCords(i) && hitables.enemies[i].isDangerous) {
+                     figure.hittingTrapIndex = -1;
+                     figure.hittingEnemyIndex = i;
+                     figure.hittingFlyableIndex = -1;
+                     return true;
+                 }                    
+             }
+         }
+     }
+ }
+
+function checkEnemyYCords(i) {
+     if (!gamePaused && figure.isAlive) {
+         if(Math.abs(figure.y + figure.height - hitables.enemies[i].y) < figure.jumpFallStepHeight && figure.y < hitables.enemies[i].y && figure.falls) {
+             if(hitables.enemies[i].isDangerous) {
+                 hitables.enemies[i].isDangerous = false;
+                 hitables.enemies[i].animateHit();
+             }
+             figure.startingYPos = figure.y;
+             figure.jumps = true;
+             figure.checkIfJumping();
+             return false;
+         }else if (figure.y + figure.height > hitables.enemies[i].y && hitables.enemies[i].y + hitables.enemies[i].height > figure.y) { // || hitables.enemies[i].y + hitables.enemies[i].height - figure.y < 0
+             return true;
+         } else {
+             if (i + 1 === hitables.enemies.length) { return false; }
+         }
+     }
+ }
+
+function checkFlyableXCords() {
+     if (!gamePaused && figure.isAlive) {
+         for (let i = 0; i < hitables.flyables.length; i++) {
+             if(hitables.flyables[i]) {
+                 if (hitables.flyables[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.flyables[i].x + hitables.flyables[i].width) >= 0) {
+                     if (i + 1 === hitables.flyables.length) {
+                         //figure.startingYPos = null;
+                         return false;
+                     }
+                 } else if (checkFlyableYCords(i) && hitables.flyables[i].isDangerous) {
+                     figure.hittingTrapIndex = -1;
+                     figure.hittingEnemyIndex = -1;
+                     figure.hittingFlyableIndex = i;
+                     return true;
+                 }                    
+             }
+         }
+     }
+ }
+
+function checkFlyableYCords(i) {
+     if (!gamePaused && figure.isAlive) {
+         if(Math.abs(figure.y + figure.height - hitables.flyables[i].y) < figure.jumpFallStepHeight && figure.y < hitables.flyables[i].y && figure.falls) {
+             if(hitables.flyables[i].isDangerous) {
+                 hitables.flyables[i].isDangerous = false;
+                 hitables.flyables[i].animateHit();
+             }
+             figure.startingYPos = figure.y;
+             figure.jumps = true;
+             figure.checkIfJumping();
+             return false;
+         }else if (figure.y + figure.height > hitables.flyables[i].y && hitables.flyables[i].y + hitables.flyables[i].height > figure.y) { // || hitables.flyables[i].y + hitables.flyables[i].height - this.y < 0
+             return true;
+         } else {
+             if (i + 1 === hitables.flyables.length) { return false; }
+         }
+     }
+ }
 
 function timer() {
     if (!gamePaused) {
