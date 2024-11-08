@@ -8,7 +8,7 @@ class MovingPlatform extends Platform {
     constructor(startingPointX, endingPointX, highestPoint, lowestPoint, y, imgPath,  sideways) {
         super();
         this.width = wallBrickWidth * 5;
-        this.height = walls[0].height;
+        this.height = wallBrickHeight;
         this.startingPointX = startingPointX;
         this.endingPointX = endingPointX;
         this.highestPoint = highestPoint;
@@ -73,7 +73,7 @@ class MovingPlatform extends Platform {
 
     moveUp() {
         if (!gamePaused) {
-            this.y -= walls[0].height / 10;
+            this.y -= wallBrickHeight / 10;
             if (this.y <= this.highestPoint) {
                 this.y = this.highestPoint;
                 this.moveDown();

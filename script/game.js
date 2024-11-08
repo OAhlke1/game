@@ -99,11 +99,11 @@ function createTraps() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new Enemy(25*wallBrickWidth, canvas.height - 4*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10, false, 'left'));
-    hitables.enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left'));
-    hitables.enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left'));
-    hitables.enemies.push(new Shooter(canvas.width-3*wallBrickWidth, canvas.height-3*wallBrickHeight, 2*wallBrickWidth, 2*wallBrickHeight, 'shooter', 15, true, 'left'));
-    hitables.enemies.push(new Shooter(canvas.width / 2 + 7*wallBrickWidth, canvas.height - 22*wallBrickHeight, 2*wallBrickWidth, 2*wallBrickHeight, 'shooter', 15, true, 'left'));
+    hitables.enemies.push(new Enemy(25*wallBrickWidth, canvas.height - 4*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10, false, 'left', 100));
+    hitables.enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left', 100));
+    hitables.enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left', 100));
+    hitables.enemies.push(new Shooter(canvas.width-3*wallBrickWidth, canvas.height-3*wallBrickHeight, 2*wallBrickWidth, 2*wallBrickHeight, 'shooter', 15, true, 'left', 100));
+    hitables.enemies.push(new Shooter(canvas.width / 2 + 7*wallBrickWidth, canvas.height - 22*wallBrickHeight, 2*wallBrickWidth, 2*wallBrickHeight, 'shooter', 15, true, 'left', 100));
 }
 
 function createCannonBall(x, y, flyDirection) {
@@ -128,7 +128,7 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(20*wallBrickWidth, 50*wallBrickWidth, 0, 0, canvas.height - 0.30*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     platforms.push(new MovingPlatform(canvas.width/2, 3*canvas.width/4, 0, 0, 25*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     //platforms.push(new MovingPlatform(canvas.width/2, 3*canvas.width/4, 0, 0, 25*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
-    platforms.push(new MovingPlatform(1*wallBrickWidth, 0, 6*wallBrickHeight, canvas.height/2, 6*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
+    platforms.push(new MovingPlatform(1*wallBrickWidth, 0, 6*wallBrickHeight, 60*wallBrickHeight, 6*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
 }
 
 function clearCanvas() {
@@ -290,9 +290,9 @@ function playSound(fileName) {
 }
 
 function checkHitablesXCoords() {
-     if (checkTrapXCords()) { figure.hitChar(); }
-     if (checkEnemyXCords()) { figure.hitChar(); }
-     if(checkFlyableXCords()) { figure.hitChar(); }
+     if(checkTrapXCords()) { figure.hitChar(); }
+     if(checkEnemyXCords()) { figure.hitChar(); }
+     //if(checkFlyableXCords()) { figure.hitChar(); }
 }
 
 function checkTrapXCords() {
@@ -357,7 +357,9 @@ function checkEnemyYCords(i) {
      if (!gamePaused && figure.isAlive) {
          if(Math.abs(figure.y + figure.height - hitables.enemies[i].y) < figure.jumpFallStepHeight && figure.y < hitables.enemies[i].y && figure.falls) {
              if(hitables.enemies[i].isDangerous) {
-                 hitables.enemies[i].isDangerous = false;
+                 if(hitables.enemies[i].lifeAmount > 0) { hitables.enemies[i].isDangerous = false; }
+                 setTimeout(() => {hitables.enemies[i].isDangerous = true}, 1500);
+                 hitables.enemies[i].lifeAmount -= 20;
                  hitables.enemies[i].animateHit();
              }
              figure.startingYPos = figure.y;

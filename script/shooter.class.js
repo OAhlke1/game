@@ -1,14 +1,14 @@
 class Shooter extends Enemy {
-    x;
+    /* x;
     y;
     width;
     height;
-    image;
+    image; */
     enemyType;
     targeting = false;
     shoots = false;
 
-    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, runningDirection) {
+    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, runningDirection, lifeAmount) {
         super();
         this.x = x;
         this.y = y;
@@ -20,6 +20,7 @@ class Shooter extends Enemy {
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.canShoot = canShoot;
         this.runningDirection = runningDirection;
+        this.lifeAmount = lifeAmount;
     }
 
     checkIfTargeting() {

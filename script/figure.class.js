@@ -128,7 +128,7 @@ class Figure {
                 return;
             }
             requestAnimationFrame(() => { this.jump(i); });
-          }
+        }
     }
 
     checkIfFalling() {
@@ -221,8 +221,6 @@ class Figure {
                         this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
                     }else {
                         this.y = platforms[this.standingPlatformIndex].y - this.height;
-                        this.startingYPos = platforms[this.standingPlatformIndex].y;
-                        //this.checkIfFalling();
                     }
                 }
                 requestAnimationFrame(() => {this.movingWithPlatform();});
