@@ -213,13 +213,18 @@ class Figure {
     movingWithPlatform() {
         if (!gamePaused && this.isAlive) {
             if (this.onMovingPlatform) {
-                //this.checkHitablesXCoords();
-
                 if (this.checkPlatformEnd()) {
                     this.checkIfFalling();
                     return;
+                }else {
+                    if(platforms[this.standingPlatformIndex].sideways) {
+                        this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
+                    }else {
+                        this.y = platforms[this.standingPlatformIndex].y - this.height;
+                        this.startingYPos = platforms[this.standingPlatformIndex].y;
+                        //this.checkIfFalling();
+                    }
                 }
-                this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
                 requestAnimationFrame(() => {this.movingWithPlatform();});
             }
             return;
@@ -247,128 +252,6 @@ class Figure {
             }
         }
     }
-
-    /* checkHitablesXCoords() {
-        if (this.checkTrapXCords()) { this.hitChar(); }
-        if (this.checkEnemyXCords()) { this.hitChar(); }
-        if(this.checkFlyableXCords()) { this.hitChar(); }
-    }
-
-    checkTrapXCords() {
-        if (!gamePaused && this.isAlive) {
-            for (let i = 0; i < hitables.traps.length; i++) {
-                if (hitables.traps[i].x - (this.x + this.width) >= 0 || this.x - (hitables.traps[i].x + hitables.traps[i].width) >= 0) {
-                    if (i + 1 === hitables.traps.length) {
-                        this.startingYPos = null;
-                        return false;
-                    }
-                } else if (this.checkTrapYCords(i)) {
-                    this.hittingTrapIndex = i;
-                    this.hittingEnemyIndex = -1;
-                    this.hittingFlyableIndex = -1;
-                    return true;
-                }
-            }
-        }
-    }
-
-    checkTrapYCords(i) {
-        if (!gamePaused && this.isAlive) {
-            if (this.y + this.height > hitables.traps[i].y && hitables.traps[i].y + hitables.traps[i].height > this.y) {
-                return true;
-            } else {
-                if (i + 1 === hitables.traps.length) { return false; }
-            }
-        }
-    }
-
-    checkEnemyXCords() {
-        if (!gamePaused && this.isAlive) {
-            for (let i = 0; i < hitables.enemies.length; i++) {
-                if(hitables.enemies[i]) {
-                    if (hitables.enemies[i].x - (this.x + this.width) >= 0 || this.x - (hitables.enemies[i].x + hitables.enemies[i].width) >= 0) {
-                        if(hitables.enemies[i].canShoot) {
-                            if(hitables.enemies[i].checkIfTargeting() && !hitables.enemies[i].targeting) {
-                                hitables.enemies[i].targeting = true;
-                                hitables.enemies[i].shoots = true;
-                                hitables.enemies[i].setupCannonball();
-                            }else if(!hitables.enemies[i].checkIfTargeting()) {
-                                hitables.enemies[i].targeting = false;
-                                hitables.enemies[i].shoots = false;
-                            }
-                        }
-                        if (i + 1 === hitables.enemies.length) {
-                            this.startingYPos = null;
-                            return false;
-                        }
-                    } else if (this.checkEnemyYCords(i) && hitables.enemies[i].isDangerous) {
-                        this.hittingTrapIndex = -1;
-                        this.hittingEnemyIndex = i;
-                        this.hittingFlyableIndex = -1;
-                        return true;
-                    }                    
-                }
-            }
-        }
-    }
-
-    checkEnemyYCords(i) {
-        if (!gamePaused && this.isAlive) {
-            if(Math.abs(this.y + this.height - hitables.enemies[i].y) < this.jumpFallStepHeight && this.y < hitables.enemies[i].y && this.falls) {
-                if(hitables.enemies[i].isDangerous) {
-                    hitables.enemies[i].isDangerous = false;
-                    hitables.enemies[i].animateHit();
-                }
-                this.startingYPos = this.y;
-                this.jumps = true;
-                this.checkIfJumping();
-                return false;
-            }else if (this.y + this.height > hitables.enemies[i].y && hitables.enemies[i].y + hitables.enemies[i].height > this.y) { // || hitables.enemies[i].y + hitables.enemies[i].height - this.y < 0
-                return true;
-            } else {
-                if (i + 1 === hitables.enemies.length) { return false; }
-            }
-        }
-    }
-
-    checkFlyableXCords() {
-        if (!gamePaused && this.isAlive) {
-            for (let i = 0; i < hitables.flyables.length; i++) {
-                if(hitables.flyables[i]) {
-                    if (hitables.flyables[i].x - (this.x + this.width) >= 0 || this.x - (hitables.flyables[i].x + hitables.flyables[i].width) >= 0) {
-                        if (i + 1 === hitables.flyables.length) {
-                            //this.startingYPos = null;
-                            return false;
-                        }
-                    } else if (this.checkFlyableYCords(i) && hitables.flyables[i].isDangerous) {
-                        this.hittingTrapIndex = -1;
-                        this.hittingEnemyIndex = -1;
-                        this.hittingFlyableIndex = i;
-                        return true;
-                    }                    
-                }
-            }
-        }
-    }
-
-    checkFlyableYCords(i) {
-        if (!gamePaused && this.isAlive) {
-            if(Math.abs(this.y + this.height - hitables.flyables[i].y) < this.jumpFallStepHeight && this.y < hitables.flyables[i].y && this.falls) {
-                if(hitables.flyables[i].isDangerous) {
-                    hitables.flyables[i].isDangerous = false;
-                    hitables.flyables[i].animateHit();
-                }
-                this.startingYPos = this.y;
-                this.jumps = true;
-                this.checkIfJumping();
-                return false;
-            }else if (this.y + this.height > hitables.flyables[i].y && hitables.flyables[i].y + hitables.flyables[i].height > this.y) { // || hitables.flyables[i].y + hitables.flyables[i].height - this.y < 0
-                return true;
-            } else {
-                if (i + 1 === hitables.flyables.length) { return false; }
-            }
-        }
-    } */
 
     hitChar() {
         this.gotHit = true;
@@ -407,7 +290,6 @@ class Figure {
             }else if(this.hittingEnemyIndex > -1) {
                 this.healthAmount -= hitables.enemies[this.hittingEnemyIndex].decreaseLifeAmount;
             }else if(this.hittingFlyableIndex > -1) {
-                console.log(this.hittingFlyableIndex);
                 this.healthAmount -= hitables.flyables[this.hittingFlyableIndex].decreaseLifeAmount;
             }
             if (this.healthAmount <= 0) {

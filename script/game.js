@@ -103,11 +103,12 @@ function createEnemies() {
     hitables.enemies.push(new Enemy(20*wallBrickWidth, canvas.height - 3*wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left'));
     hitables.enemies.push(new Enemy(10*wallBrickWidth, wallBrickWidth, 3*wallBrickWidth, 3*wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left'));
     hitables.enemies.push(new Shooter(canvas.width-3*wallBrickWidth, canvas.height-3*wallBrickHeight, 2*wallBrickWidth, 2*wallBrickHeight, 'shooter', 15, true, 'left'));
+    hitables.enemies.push(new Shooter(canvas.width / 2 + 7*wallBrickWidth, canvas.height - 22*wallBrickHeight, 2*wallBrickWidth, 2*wallBrickHeight, 'shooter', 15, true, 'left'));
 }
 
 function createCannonBall(x, y, flyDirection) {
     hitables.flyables.push(new Cannonball(x, y, flyDirection));
-    hitables.flyables[hitables.flyables.length-1].animateTrajectory();
+    hitables.flyables[hitables.flyables.length-1].animateTrajectory(hitables.flyables.length-1);
 }
 
 function createPlatforms() {
@@ -116,16 +117,18 @@ function createPlatforms() {
 }
 
 function createNonMovingPlatforms() {
-    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width / 2, canvas.height - 20*wallBrickHeight, 'graphics/platforms/green-5.png'));
-    platforms.push(new Platform(9*wallBrickWidth, 2*wallBrickHeight, canvas.width / 5, canvas.height - 10*wallBrickHeight, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(canvas.width / 2, canvas.height - 20*wallBrickHeight, 9*wallBrickWidth, 2*wallBrickHeight, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(canvas.width / 5, canvas.height - 10*wallBrickHeight, 9*wallBrickWidth, 2*wallBrickHeight, 'graphics/platforms/green-5.png'));
 }
 
 function createMovingPlatforms() {
-    platforms.push(new MovingPlatform(20*wallBrickWidth, 30*wallBrickWidth, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-    platforms.push(new MovingPlatform(50*wallBrickWidth, 60*wallBrickWidth, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-    platforms.push(new MovingPlatform(5*wallBrickWidth, 20*wallBrickWidth, canvas.height - 5*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-    platforms.push(new MovingPlatform(25*wallBrickWidth, 200 + 20*wallBrickWidth, canvas.height - 0.30*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-    platforms.push(new MovingPlatform(canvas.width/2, 3*canvas.width/4, 25*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+    platforms.push(new MovingPlatform(20*wallBrickWidth, 30*wallBrickWidth, 0, 0, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(50*wallBrickWidth, 60*wallBrickWidth, 0, 0, 10*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(5*wallBrickWidth, 20*wallBrickWidth, 0, 0, canvas.height - 5*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(20*wallBrickWidth, 50*wallBrickWidth, 0, 0, canvas.height - 0.30*canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(canvas.width/2, 3*canvas.width/4, 0, 0, 25*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    //platforms.push(new MovingPlatform(canvas.width/2, 3*canvas.width/4, 0, 0, 25*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
+    platforms.push(new MovingPlatform(1*wallBrickWidth, 0, 6*wallBrickHeight, canvas.height/2, 6*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
 }
 
 function clearCanvas() {
@@ -290,7 +293,7 @@ function checkHitablesXCoords() {
      if (checkTrapXCords()) { figure.hitChar(); }
      if (checkEnemyXCords()) { figure.hitChar(); }
      if(checkFlyableXCords()) { figure.hitChar(); }
- }
+}
 
 function checkTrapXCords() {
      if (!gamePaused && figure.isAlive) {
@@ -308,7 +311,7 @@ function checkTrapXCords() {
              }
          }
      }
- }
+}
 
 function checkTrapYCords(i) {
      if (!gamePaused && figure.isAlive) {
@@ -318,7 +321,7 @@ function checkTrapYCords(i) {
              if (i + 1 === hitables.traps.length) { return false; }
          }
      }
- }
+}
 
 function checkEnemyXCords() {
      if (!gamePaused && figure.isAlive) {
@@ -348,7 +351,7 @@ function checkEnemyXCords() {
              }
          }
      }
- }
+}
 
 function checkEnemyYCords(i) {
      if (!gamePaused && figure.isAlive) {
@@ -367,12 +370,12 @@ function checkEnemyYCords(i) {
              if (i + 1 === hitables.enemies.length) { return false; }
          }
      }
- }
+}
 
 function checkFlyableXCords() {
      if (!gamePaused && figure.isAlive) {
          for (let i = 0; i < hitables.flyables.length; i++) {
-             if(hitables.flyables[i]) {
+             if(hitables.flyables[i] && hitables.flyables[i].inCanvas) {
                  if (hitables.flyables[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.flyables[i].x + hitables.flyables[i].width) >= 0) {
                      if (i + 1 === hitables.flyables.length) {
                          //figure.startingYPos = null;
@@ -387,7 +390,7 @@ function checkFlyableXCords() {
              }
          }
      }
- }
+}
 
 function checkFlyableYCords(i) {
      if (!gamePaused && figure.isAlive) {
@@ -406,7 +409,7 @@ function checkFlyableYCords(i) {
              if (i + 1 === hitables.flyables.length) { return false; }
          }
      }
- }
+}
 
 function timer() {
     if (!gamePaused) {

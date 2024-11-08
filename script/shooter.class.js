@@ -31,7 +31,7 @@ class Shooter extends Enemy {
     }
 
     setupCannonball() {
-        if (!this.gotBeat && this.targeting) {
+        if (!this.gotBeat && this.targeting && !gamePaused) {
             switch (this.runningDirection) {
                 case "left":
                     createCannonBall(this.x - wallBrickWidth, this.y + 5, this.runningDirection);
@@ -41,7 +41,7 @@ class Shooter extends Enemy {
                     break;
             }
             //this.animateTrajectory();
-            setTimeout(()=>{this.setupCannonball();}, 2000);
+            setTimeout(()=>{this.setupCannonball();}, 5000);
         }else { return; }
     }
 }
