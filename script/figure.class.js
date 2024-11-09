@@ -18,7 +18,7 @@ class Figure {
     hittingTrapIndex;
     hittingFlyableIndex;
     basicStepLength;
-    healthAmount = 100;
+    healthAmount = 200;
     timeNextHit = 0;
     stepAmount = 0;
     movingDirection = 'right';
@@ -58,7 +58,6 @@ class Figure {
                     controller['left'].pressed = false;
                     return;
                 } else { this.x -= this.stepLength; }
-                //this.checkHitablesXCoords();
             }
             requestAnimationFrame(() => { this.moveLeft(key) });
         }
@@ -262,8 +261,7 @@ class Figure {
 
             this.decreaseHealth(hitables.flyables[this.hittingFlyableIndex].enemyType);
         }
-        setTimeout(() => { this.gotHit = false;
-         }, 1500);
+        setTimeout(() => { this.gotHit = false; }, 1500);
     }
 
     animateHit(i = 0) {

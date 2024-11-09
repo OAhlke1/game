@@ -1,8 +1,4 @@
 class Cannonball extends Enemy {
-    x;
-    y;
-    width = wallBrickWidth;
-    height = wallBrickWidth;
     flyingDirection;
     inCanvas;
     
@@ -10,6 +6,8 @@ class Cannonball extends Enemy {
         super();
         this.x = x;
         this.y = y;
+        this.width = wallBrickWidth;
+        this.height = wallBrickWidth;
         this.flyingDirection = flyingDirection;
         this.image = new Image();
         this.image.src = 'graphics/enemies/shooter/attack/cannonball.png';

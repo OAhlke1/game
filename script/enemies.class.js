@@ -9,9 +9,10 @@ class Enemy {
     isDangerous;
     canShoot;
     hitAnimationIndexI = 0;
-    gotBeat = false;
     standardImgPath;
-    
+    hitable = true;
+    audio;
+
     constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, runningDirection, lifeAmount) {
         this.x = x;
         this.y = y;
@@ -28,19 +29,31 @@ class Enemy {
         this.lifeAmount = lifeAmount;
     }
 
-    animateHit() {
-        this.gotBeat = true;
-        this.hitAnimationIndexI ++;
-        if(this.hitAnimationIndexI % 5 === 0) {
-            this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.runningDirection}-${(this.hitAnimationIndexI/5) % 5}.png`;
+    animateHit(hitAmount) {
+        if (this.hitable) {
+            this.hitAnimationIndexI++;
+            if (this.hitAnimationIndexI % 5 === 0) {
+                this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.runningDirection}-${(this.hitAnimationIndexI / 5) % 5}.png`;
+            }
+            if (this.hitAnimationIndexI === 75) {
+                this.lifeAmount = this.lifeAmount - hitAmount;
+                if (this.lifeAmount <= 0) {
+                    this.image.src = '';
+                    this.isDangerous = false;
+                    return;
+                } else { this.image.src = this.standardImgPath; }
+                this.hitable = false;
+                this.hitAnimationIndexI = 0;
+                setTimeout(() => { this.hitableAgain(); }, 1500);
+                return;
+            }
+            if(this.hitAnimationIndexI < 75) {requestAnimationFrame(() => { this.animateHit(hitAmount) });}
         }
-        if(this.hitAnimationIndexI >= 75) {
-            this.image.src = this.standardImgPath;
-            if(this.lifeAmount <= 0) {
-                this.image.src = '';
-            }else { this.image.src = this.standardImgPath; }
-            return;
-        }
-        requestAnimationFrame(()=>{this.animateHit()});
+        return;
+    }
+
+    hitableAgain() {
+        this.hitable = true;
+        this.isDangerous = true;
     }
 }
