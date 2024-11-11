@@ -13,7 +13,7 @@ class Cannonball extends Enemy {
         this.image.src = 'graphics/enemies/shooter/attack/cannonball.png';
         this.decreaseLifeAmount = 5;
         this.animateTrajectory();
-        this.enemyType = "canonball";
+        this.enemyType = "flyable";
     }
 
     animateTrajectory(i = 0) {
@@ -29,10 +29,7 @@ class Cannonball extends Enemy {
                     break;
             }
             this.checkIfCannonballLeftCanvas();
-            if(this.checkIfHittingChar()) {
-                figure.hitChar();
-                figure.decreaseHealth(this.enemyType);
-            };
+            this.checkIfHittingChar();
             requestAnimationFrame(()=>{ this.animateTrajectory(i) });
         }
     }

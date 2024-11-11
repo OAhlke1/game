@@ -1,4 +1,4 @@
-class Figure {
+class Char {
     width;
     height;
     x;
@@ -29,6 +29,7 @@ class Figure {
     isImmune = false;
     landedOnPlatform = false;
     targeted = false;
+    headJumpAmount;
 
     constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * wallBrickHeight) {
         this.width = width;
@@ -44,6 +45,7 @@ class Figure {
         this.jumpFallStepHeight = wallBrickHeight / 3;
         this.maxJumpHeight = maxJumpHeight;
         this.sleeps = false;
+        this.headJumpAmount = 50;
     }
 
     moveLeft(key) {
@@ -81,7 +83,6 @@ class Figure {
                         this.x += (canvas.width - this.x - this.width);
                     } else { this.x += this.stepLength; }
                 }
-                //this.checkHitablesXCoords();
             }
             requestAnimationFrame(() => { this.moveRight(key) });
         }
@@ -253,13 +254,6 @@ class Figure {
     hitChar() {
         this.gotHit = true;
         this.animateHit();
-        if(this.hittingTrapIndex > -1) {
-            this.decreaseHealth(hitables.traps[this.hittingTrapIndex].trapType);
-        }else if(this.hittingEnemyIndex > -1) {
-            this.decreaseHealth(hitables.enemies[this.hittingEnemyIndex].enemyType);
-        }else if(this.hittingFlyableIndex > -1) {
-            this.decreaseHealth(hitables.flyables[this.hittingFlyableIndex].enemyType);
-        }
         setTimeout(() => { this.gotHit = false; }, 1500);
     }
 
@@ -276,23 +270,15 @@ class Figure {
         }
     }
 
-    decreaseHealth(type) {
+    decreaseHealth(decreasingAmount) {
         if (!this.isImmune) {
             playSound('sounds/hit.ogg');
             this.isImmune = true;
-            switch(type) {
-                case "shooter":
-                    this.healthAmount -= 10;
-                    break;
-                case "saw":
-                    this.healthAmount -= 20;
-                    break;
-                case "canonball":
-                    this.healthAmount -= 15;
-            }
+            this.healthAmount -= decreasingAmount;
             if (this.healthAmount <= 0) {
                 this.healthAmount = 0;
                 this.isAlive = false;
+                gamePaused = true;
                 this.setImagePath(`../graphics/main-char/dead/dead-${this.movingDirection}.png`);
                 return;
             }

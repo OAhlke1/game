@@ -1,7 +1,7 @@
 let canvas;
 let canvasWidth;
 let ctx;
-let figure, wall;
+let char, wall;
 let wallBrickWidth;
 let menubarBackground;
 let menuBar;
@@ -54,7 +54,7 @@ function createBackground() {
 }
 
 function createFigure() {
-    figure = new Figure(2 * wallBrickWidth, 2 * wallBrickHeight, wallBrickWidth, canvas.height - 3 * wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth / 3);
+    char = new Char(2 * wallBrickWidth, 2 * wallBrickHeight, wallBrickWidth, canvas.height - 3 * wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth / 3);
 }
 
 function createWallsLeftRight() {
@@ -172,15 +172,15 @@ function drawHitables() {
 }
 
 function drawFigure() {
-    if (figure.isAlive) {
-        ctx.drawImage(figure.figImage, figure.x, figure.y, figure.width, figure.height);
+    if (char.isAlive) {
+        ctx.drawImage(char.figImage, char.x, char.y, char.width, char.height);
     }
 }
 
 function addMovingCommands() {
     setController();
     document.querySelector('body').addEventListener('keydown', (event) => {
-        figure.sleeps = false;
+        char.sleeps = false;
         t = 0;
         if (event.key === "ArrowLeft" || event.key === "a") {
             if (!controller['left'].pressed) {
@@ -244,35 +244,35 @@ function setController() {
 
 function initJump() {
     if (controller['jump'].pressed) {
-        if (!figure.startingYPos) {
-            figure.startingYPos = figure.y;
-            figure.jumps = false;
-            figure.checkIfJumping();
+        if (!char.startingYPos) {
+            char.startingYPos = char.y;
+            char.jumps = false;
+            char.checkIfJumping();
         }
     }
 }
 
 function initStepLeft() {
     if (controller['left'].pressed) {
-        figure.moveLeft("ArrowLeft");
+        char.moveLeft("ArrowLeft");
     }
 }
 
 function initStepRight() {
     if (controller['right'].pressed) {
-        figure.moveRight("ArrowRight");
+        char.moveRight("ArrowRight");
     }
 }
 
 function speedUpFigure() {
-    if (figure.stepLength === figure.basicStepLength) {
-        figure.stepLength = figure.basicStepLength * 1.5;
+    if (char.stepLength === char.basicStepLength) {
+        char.stepLength = char.basicStepLength * 1.5;
     }
 }
 
 function slowDownFigure() {
-    if (1.5 * figure.basicStepLength === figure.stepLength) {
-        figure.stepLength = figure.basicStepLength;
+    if (1.5 * char.basicStepLength === char.stepLength) {
+        char.stepLength = char.basicStepLength;
     }
 }
 
@@ -282,133 +282,12 @@ function playSound(fileName) {
     audio.play();
 }
 
-function checkHitablesXCoords() {
-    if (checkTrapXCords()) { figure.hitChar(); }
-    if (checkEnemyXCords()) { figure.hitChar(); }
-    if (checkFlyableXCords()) { figure.hitChar(); }
-}
-
-function checkTrapXCords() {
-    if (!gamePaused && figure.isAlive) {
-        for (let i = 0; i < hitables.traps.length; i++) {
-            if (hitables.traps[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.traps[i].x + hitables.traps[i].width) >= 0) {
-                if (i + 1 === hitables.traps.length) {
-                    figure.startingYPos = null;
-                    return false;
-                }
-            } else if (checkTrapYCords(i)) {
-                figure.hittingTrapIndex = i;
-                figure.hittingEnemyIndex = -1;
-                figure.hittingFlyableIndex = -1;
-                return true;
-            }
-        }
-    }
-}
-
-function checkTrapYCords(i) {
-    if (!gamePaused && figure.isAlive) {
-        if (figure.y + figure.height > hitables.traps[i].y && hitables.traps[i].y + hitables.traps[i].height > figure.y) {
-            return true;
-        } else {
-            if (i + 1 === hitables.traps.length) { return false; }
-        }
-    }
-}
-
-function checkEnemyXCords() {
-    if (!gamePaused && figure.isAlive) {
-        for (let i = 0; i < hitables.enemies.length; i++) {
-            if (hitables.enemies[i]) {
-                if (hitables.enemies[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.enemies[i].x + hitables.enemies[i].width) >= 0) {
-                    if (hitables.enemies[i].canShoot && !hitables.enemies[i].shoots) {
-                        /* if (hitables.enemies[i].checkIfTargeting() && !hitables.enemies[i].targeting) {
-                            hitables.enemies[i].shoots = true;
-                            hitables.enemies[i].setupCannonball();
-                        } else if (!hitables.enemies[i].checkIfTargeting()) {
-                            hitables.enemies[i].targeting = false;
-                            hitables.enemies[i].shoots = false;
-                        } */
-                       //hitables.enemies[i].checkCharPos();
-                    }
-                    if (i + 1 === hitables.enemies.length) {
-                        figure.startingYPos = null;
-                        return false;
-                    }
-                } else if (checkEnemyYCords(i) && hitables.enemies[i].isDangerous) {
-                    figure.hittingTrapIndex = -1;
-                    figure.hittingEnemyIndex = i;
-                    figure.hittingFlyableIndex = -1;
-                    return true;
-                }
-            }
-        }
-    }
-}
-
-function checkEnemyYCords(i) {
-    if (!gamePaused && figure.isAlive) {
-        if (Math.abs(figure.y + figure.height - hitables.enemies[i].y) < figure.jumpFallStepHeight && figure.y < hitables.enemies[i].y && figure.falls) {
-            return headJump(i);
-        } else if (figure.y + figure.height > hitables.enemies[i].y && hitables.enemies[i].y + hitables.enemies[i].height > figure.y) { // || hitables.enemies[i].y + hitables.enemies[i].height - figure.y < 0
-            return true;
-        } else {
-            if (i + 1 === hitables.enemies.length) { return false; }
-        }
-    }
-}
-
-function checkFlyableXCords() {
-    if (!gamePaused && figure.isAlive) {
-        for (let i = 0; i < hitables.flyables.length; i++) {
-            if(hitables.flyables[i]) {
-                if (hitables.flyables[i].inCanvas) {
-                    if (hitables.flyables[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.flyables[i].x + hitables.flyables[i].width) >= 0) {
-                        if (i + 1 === hitables.flyables.length) {
-                            //figure.startingYPos = null;
-                            return false;
-                        }
-                    } else if (checkFlyableYCords(i) && hitables.flyables[i].isDangerous) {
-                        figure.hittingTrapIndex = -1;
-                        figure.hittingEnemyIndex = -1;
-                        figure.hittingFlyableIndex = i;
-                        return true;
-                    }
-                }else if(!hitables.flyables[i].inCanvas) {
-                    hitables.flyables[i] = null;
-                }
-            }
-        }
-    }
-}
-
-function checkFlyableYCords(i) {
-    if (Math.abs(figure.y + figure.height - hitables.flyables[i].y) < figure.jumpFallStepHeight && figure.y < hitables.flyables[i].y && figure.falls) {
-        //if (hitables.enemies[i].isDangerous) { headJump(i); }
-        return false;
-    } else if (figure.y + figure.height > hitables.flyables[i].y && hitables.flyables[i].y + hitables.flyables[i].height > figure.y) { // || hitables.flyables[i].y + hitables.flyables[i].height - this.y < 0
-        return true;
-    } else {
-        if (i + 1 === hitables.flyables.length) { return false; }
-    }
-}
-
-function headJump(i) {
-    if (hitables.enemies[i].isDangerous) {
-        hitables.enemies[i].isDangerous = false;
-        hitables.enemies[i].animateHit(50);
-    }
-    figure.startingYPos = figure.y;
-    figure.jumps = true;
-    figure.checkIfJumping();
-}
-
 function timer() {
     if (!gamePaused) {
         t++;
         if (t === 10) {
             t = 0;
-            figure.sleeps = true;
+            char.sleeps = true;
         }
         setTimeout(timer, 1000);
     }
