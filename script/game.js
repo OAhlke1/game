@@ -20,17 +20,19 @@ let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
 
-loadPlayer();
-createCanvas();
-createBackground();
-createWallsLeftRight();
-createWallsTopBottom();
-createFigure();
-createPlatforms();
-createTraps();
-createEnemies();
-createMenuBar();
-addMovingCommands();
+function initFunctions() {
+    loadPlayer();
+    createCanvas();
+    createBackground();
+    createWallsLeftRight();
+    createWallsTopBottom();
+    createFigure();
+    createPlatforms();
+    createTraps();
+    createEnemies();
+    createMenuBar();
+    addMovingCommands();
+}
 
 function loadPlayer() {
     bgPlayer = new Audio();
