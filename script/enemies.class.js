@@ -1,21 +1,26 @@
 class Enemy {
     x;
     y;
+    minX;
+    maxX;
     width;
     height;
     enemyType;
-    runningDirection;
+    lookingDirection;
     decreaseLifeAmount;
     isDangerous;
     canShoot;
     hitAnimationIndexI = 0;
     standardImgPath;
     hitable = true;
-    audio;
+    walks;
+    animationId;
 
-    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, runningDirection, lifeAmount) {
+    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks) {
         this.x = x;
         this.y = y;
+        this.minX = x;
+        this.maxX = canvas.width-wallBrickWidth;
         this.width = width;
         this.height = height;
         this.image = new Image();
@@ -25,15 +30,56 @@ class Enemy {
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.isDangerous = true;
         this.canShoot = canShoot;
-        this.runningDirection = runningDirection;
+        this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
+        this.walks = walks;
+    }
+
+    checkCharPos() {
+        if(figure.y + figure.height > this.y && this.y + this.height > figure.y) {
+            if(Math.abs(figure.x + figure.width - this.x) <= this.distanceToSeeChar || Math.abs(this.x + this.width - figure.x) <= this.distanceToSeeChar) {
+                this.lookAtChar();
+                if(this.canShoot) { this.checkIfTargeting(); }
+            }
+        }else {
+            this.walks = false;
+            this.targeting = false;
+        }
+        requestAnimationFrame(()=>{this.checkCharPos()});
+    }
+
+    checkIfHittingChar() {
+        if(figure.x + figure.width > this.x && figure.x < this.x + this.width) {
+            if(figure.y + figure.height > this.y && figure.y < this.y + this.height) {
+                return true;
+            }
+        }else { return false; }
+    }
+
+    animateWalking(i = 0) {
+        if(!gamePaused && this.targeting && this.isDangerous) {
+            if(this.lookingDirection === "left") {
+                this.x -= wallBrickWidth/100;
+            }else if(this.lookingDirection === "right") {
+                this.x += wallBrickWidth/100;
+            }
+            if(this.x === wallBrickWidth) {
+                this.lookingDirection = "right";
+            }else if(this.x + this.width >= canvas.width - wallBrickWidth) {
+                this.lookingDirection = "left";
+            }
+            this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${i}.png`;
+            i++;
+            if(i === 7) { i = 0; }
+            requestAnimationFrame(()=>{ this.animateWalking(i) });
+        }
     }
 
     animateHit(hitAmount) {
         if (this.hitable) {
             this.hitAnimationIndexI++;
             if (this.hitAnimationIndexI % 5 === 0) {
-                this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.runningDirection}-${(this.hitAnimationIndexI / 5) % 5}.png`;
+                this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${(this.hitAnimationIndexI / 5) % 5}.png`;
             }
             if (this.hitAnimationIndexI === 75) {
                 this.lifeAmount = this.lifeAmount - hitAmount;

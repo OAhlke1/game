@@ -16,8 +16,6 @@ let hitables = {
     enemies: [],
     flyables: []
 };
-//let traps = [];
-//let enemies = [];
 let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
@@ -99,16 +97,11 @@ function createTraps() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new Enemy(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10, false, 'left', 100));
-    hitables.enemies.push(new Enemy(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left', 100));
-    hitables.enemies.push(new Enemy(10 * wallBrickWidth, wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left', 100));
-    hitables.enemies.push(new Shooter(canvas.width - 3 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth));
-    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth));
-}
-
-function createCannonBall(x, y, flyDirection) {
-    hitables.flyables.push(new Cannonball(x, y, flyDirection));
-    hitables.flyables[hitables.flyables.length - 1].animateTrajectory(hitables.flyables.length - 1);
+    hitables.enemies.push(new Enemy(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10, false, 'left', 100, false));
+    hitables.enemies.push(new Enemy(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left', 100, false));
+    hitables.enemies.push(new Enemy(10 * wallBrickWidth, wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left', 100, false));
+    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true));
+    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true));
 }
 
 function createPlatforms() {
@@ -142,7 +135,7 @@ function drawElements() {
     drawHitables();
     drawFigure();
     drawMenuBar();
-    checkHitablesXCoords();
+    //checkHitablesXCoords();
 }
 
 function drawBackground() {
@@ -174,7 +167,7 @@ function drawHitables() {
         if (elem || elem.isDangerous) { if (elem.image.src != '') { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); } }
     })
     if (hitables.flyables.length) {
-        hitables.flyables.forEach((elem) => { if (elem.image.src != '') { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); } })
+        hitables.flyables.forEach((elem) => { if (elem) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); } })
     }
 }
 
@@ -328,15 +321,15 @@ function checkEnemyXCords() {
         for (let i = 0; i < hitables.enemies.length; i++) {
             if (hitables.enemies[i]) {
                 if (hitables.enemies[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.enemies[i].x + hitables.enemies[i].width) >= 0) {
-                    if (hitables.enemies[i].canShoot) {
-                        if (hitables.enemies[i].checkIfTargeting() && !hitables.enemies[i].targeting) {
-                            hitables.enemies[i].targeting = true;
+                    if (hitables.enemies[i].canShoot && !hitables.enemies[i].shoots) {
+                        /* if (hitables.enemies[i].checkIfTargeting() && !hitables.enemies[i].targeting) {
                             hitables.enemies[i].shoots = true;
                             hitables.enemies[i].setupCannonball();
                         } else if (!hitables.enemies[i].checkIfTargeting()) {
                             hitables.enemies[i].targeting = false;
                             hitables.enemies[i].shoots = false;
-                        }
+                        } */
+                       //hitables.enemies[i].checkCharPos();
                     }
                     if (i + 1 === hitables.enemies.length) {
                         figure.startingYPos = null;
@@ -368,17 +361,21 @@ function checkEnemyYCords(i) {
 function checkFlyableXCords() {
     if (!gamePaused && figure.isAlive) {
         for (let i = 0; i < hitables.flyables.length; i++) {
-            if (hitables.flyables[i] && hitables.flyables[i].inCanvas) {
-                if (hitables.flyables[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.flyables[i].x + hitables.flyables[i].width) >= 0) {
-                    if (i + 1 === hitables.flyables.length) {
-                        //figure.startingYPos = null;
-                        return false;
+            if(hitables.flyables[i]) {
+                if (hitables.flyables[i].inCanvas) {
+                    if (hitables.flyables[i].x - (figure.x + figure.width) >= 0 || figure.x - (hitables.flyables[i].x + hitables.flyables[i].width) >= 0) {
+                        if (i + 1 === hitables.flyables.length) {
+                            //figure.startingYPos = null;
+                            return false;
+                        }
+                    } else if (checkFlyableYCords(i) && hitables.flyables[i].isDangerous) {
+                        figure.hittingTrapIndex = -1;
+                        figure.hittingEnemyIndex = -1;
+                        figure.hittingFlyableIndex = i;
+                        return true;
                     }
-                } else if (checkFlyableYCords(i) && hitables.flyables[i].isDangerous) {
-                    figure.hittingTrapIndex = -1;
-                    figure.hittingEnemyIndex = -1;
-                    figure.hittingFlyableIndex = i;
-                    return true;
+                }else if(!hitables.flyables[i].inCanvas) {
+                    hitables.flyables[i] = null;
                 }
             }
         }
@@ -386,22 +383,13 @@ function checkFlyableXCords() {
 }
 
 function checkFlyableYCords(i) {
-    if (!gamePaused && figure.isAlive) {
-        if (Math.abs(figure.y + figure.height - hitables.flyables[i].y) < figure.jumpFallStepHeight && figure.y < hitables.flyables[i].y && figure.falls) {
-            /* if(hitables.flyables[i].isDangerous) {
-                hitables.flyables[i].isDangerous = false;
-                hitables.flyables[i].animateHit(50);
-            }
-            figure.startingYPos = figure.y;
-            figure.jumps = true;
-            figure.checkIfJumping(); */
-            if (hitables.enemies[i].isDangerous) { headJump(); }
-            return false;
-        } else if (figure.y + figure.height > hitables.flyables[i].y && hitables.flyables[i].y + hitables.flyables[i].height > figure.y) { // || hitables.flyables[i].y + hitables.flyables[i].height - this.y < 0
-            return true;
-        } else {
-            if (i + 1 === hitables.flyables.length) { return false; }
-        }
+    if (Math.abs(figure.y + figure.height - hitables.flyables[i].y) < figure.jumpFallStepHeight && figure.y < hitables.flyables[i].y && figure.falls) {
+        //if (hitables.enemies[i].isDangerous) { headJump(i); }
+        return false;
+    } else if (figure.y + figure.height > hitables.flyables[i].y && hitables.flyables[i].y + hitables.flyables[i].height > figure.y) { // || hitables.flyables[i].y + hitables.flyables[i].height - this.y < 0
+        return true;
+    } else {
+        if (i + 1 === hitables.flyables.length) { return false; }
     }
 }
 

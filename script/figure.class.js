@@ -258,7 +258,6 @@ class Figure {
         }else if(this.hittingEnemyIndex > -1) {
             this.decreaseHealth(hitables.enemies[this.hittingEnemyIndex].enemyType);
         }else if(this.hittingFlyableIndex > -1) {
-
             this.decreaseHealth(hitables.flyables[this.hittingFlyableIndex].enemyType);
         }
         setTimeout(() => { this.gotHit = false; }, 1500);
@@ -281,12 +280,15 @@ class Figure {
         if (!this.isImmune) {
             playSound('sounds/hit.ogg');
             this.isImmune = true;
-            if(this.hittingTrapIndex > -1) {
-                this.healthAmount -= hitables.traps[this.hittingTrapIndex].decreaseLifeAmount;
-            }else if(this.hittingEnemyIndex > -1) {
-                this.healthAmount -= hitables.enemies[this.hittingEnemyIndex].decreaseLifeAmount;
-            }else if(this.hittingFlyableIndex > -1) {
-                this.healthAmount -= hitables.flyables[this.hittingFlyableIndex].decreaseLifeAmount;
+            switch(type) {
+                case "shooter":
+                    this.healthAmount -= 10;
+                    break;
+                case "saw":
+                    this.healthAmount -= 20;
+                    break;
+                case "canonball":
+                    this.healthAmount -= 15;
             }
             if (this.healthAmount <= 0) {
                 this.healthAmount = 0;
