@@ -28,16 +28,20 @@ class Cannonball extends Enemy {
                     this.x += 5;
                     break;
             }
-            this.checkIfCannonballLeftCanvas();
-            this.checkIfHittingChar();
+            if(this.checkIfCannonballLeftCanvas()) {
+                this.destroyCannonBall();
+            }
+            if(this.checkIfHittingChar()) { this.hittingChar(); }
             requestAnimationFrame(()=>{ this.animateTrajectory(i) });
-        }
+        }else { return; }
     }
     
     checkIfCannonballLeftCanvas () {
-        if(this.x + this.width <= 0 || this.x > canvas.width+wallBrickWidth) {
-            this.inCanvas = false;
-            this.image.src = '';
-        }
+        if(this.x + this.width <= 0 || this.x > canvas.width+wallBrickWidth) { return true; }
+    }
+
+    destroyCannonBall() {
+        this.inCanvas = false;
+        this.image.src = '';
     }
 }

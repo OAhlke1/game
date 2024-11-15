@@ -14,7 +14,6 @@ class Enemy {
     hitable = true;
     canWalk = true;
     walks;
-    gotHit = false;
     animationId;
 
     constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks) {
@@ -39,73 +38,86 @@ class Enemy {
 
     checkCharPos() {
         if(this.isDangerous) {
-            if(char.y + char.height >= this.y && this.y + this.height > char.y) {
-                this.checkIfTargeting();
-                this.checkIfHittingChar();
-                if(this.checkIfGotHit() && this.isDangerous) { this.animateHit(50); }
-            }else {
+            if(this.checkIfCanSeeChar()) { this.lookAtChar(); }
+            if(this.checkIfHittingChar()) { this.hittingChar(); }
+            if(this.checkIfGotHit()) { this.animateEnemyGotHit(); }
+            else {
                 this.walks = false;
                 this.targeting = false;
             }
-            requestAnimationFrame(()=>{this.checkCharPos()});
         }
+        requestAnimationFrame(()=>{this.checkCharPos()});
+    }
+
+    checkIfCanSeeChar() {
+        if(char.y + char.height > this.y && this.y + this.height > char.y) {
+            if(char.x + char.width <= this.x) {
+                if(Math.abs(char.x + char.width - this.x) <= this.distanceToSeeChar) {
+                    return true;
+                }else { return false; }
+            }else if(char.x >= this.x + this.width) {
+                if(Math.abs(this.x + this.width - char.x) <= this.distanceToSeeChar) {
+                    return true;
+                }else { return false; }
+            }
+        }else { return false; }
     }
 
     lookAtChar() {
-        if(this.isDangerous) {
-            if(this.x > char.x + char.width) {
-                if(this.lookingDirection === "right") {
-                    this.lookingDirection = "left";
-                    this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
-                }
-            }else if(this.x + this.width < char.x) {
-                if(this.lookingDirection === "left") {
-                    this.lookingDirection = "right";
-                    this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
-                }
+        if(this.x > char.x + char.width) {
+            if(this.lookingDirection === "right") {
+                this.lookingDirection = "left";
+                this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
+            }
+        }else if(this.x + this.width < char.x) {
+            if(this.lookingDirection === "left") {
+                this.lookingDirection = "right";
+                this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
             }
         }
+        this.atLookingAtChar();
     }
 
-    checkIfTargeting() {
-        if(Math.abs(char.x + char.width - this.x) <= this.distanceToSeeChar || Math.abs(this.x + this.width - char.x) <= this.distanceToSeeChar) {
-            this.lookAtChar();
-            if(Math.abs(char.x + char.width - this.x) <= this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) <= this.distanceToSeeChar/2) {
-                this.targeting = false;
-                if(this.canWalk) {
-                    this.walks = true;
-                    this.animateWalking();
-                }
-            }else if(Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar/2) {
-                this.targeting = true;
-                this.walks = false;
-                this.setupCannonball();
+    atLookingAtChar() {
+        if(Math.abs(char.x + char.width - this.x) <= this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) <= this.distanceToSeeChar/2) {
+            this.targeting = false;
+            if(this.canWalk) {
+                this.walks = true;
+                this.animateWalking();
             }
+        }else if(Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar/2) {
+            this.targeting = true;
+            this.walks = false;
+            this.setupCannonball();
         }
     }
 
     checkIfHittingChar() {
         if(char.x + char.width > this.x && char.x < this.x + this.width) {
-            if(this.enemyType === "flyable") {
-                if(char.y + char.height > this.y && char.y < this.y + this.height) {
-                    char.hitChar();
-                    char.decreaseHealth(this.decreaseLifeAmount);
-                }
-            }else {
-                if(char.y + char.height > this.y) {
-                    char.hitChar();
-                    char.decreaseHealth(this.decreaseLifeAmount);
-                }
+            return true;
+        }else { return false; }
+    }
+
+    hittingChar() {
+        if(this.enemyType === "flyable") {
+            if(char.y + char.height > this.y && this.y + this.height > char.y) {
+                char.hitChar();
+                char.decreaseHealth(this.decreaseLifeAmount);
+            }
+        }else {
+            if(char.y + char.height > this.y) {
+                char.hitChar();
+                char.decreaseHealth(this.decreaseLifeAmount);
             }
         }
     }
 
     checkIfGotHit() {
-        if(char.y + char.height >= this.y && Math.abs(this.y - (char.y + char.height)) < char.jumpFallStepHeight) {
+        if(char.y + char.height <= this.y && Math.abs(this.y - (char.y + char.height)) < char.jumpFallStepHeight) {
             if(char.x + char.width > this.x && this.x + this.width > char.x) {
-                return true;
-            }
-        }
+                return true; 
+            }else { return false; }
+        }else { return false; }
     }
 
     /* animateWalking(i = 0) {
@@ -128,8 +140,8 @@ class Enemy {
     } */
 
     animateWalking(i = 0) {
-        if(this.walks && !this.gotHit && this.isDangerous) {
-            this.x = this.lookingDirection === "right" ? this.x += wallBrickWidth/100 : this.x -= wallBrickWidth/100;
+        if(this.walks && this.isDangerous) {
+            this.x = this.lookingDirection === "right" ? this.x += wallBrickWidth/10 : this.x -= wallBrickWidth/10;
             this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${i}.png`;
             i++;
             if(i === 7) { i = 0; }
@@ -137,22 +149,23 @@ class Enemy {
         }
     }
 
-    animateHit(i = 0) {
+    animateEnemyGotHit(i = 0) {
+        if(i === 0) { this.isDangerous = false; }
         if (i % this.hitImagesAmount === 0) { this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${(i / this.hitImagesAmount) % this.hitImagesAmount}.png`; }
-        if (i === this.hitImagesAmount * (this.hitImagesAmount-1)) {
+        i++;
+        if(i < 10*this.hitImagesAmount) {
+            requestAnimationFrame(() => {this.animateEnemyGotHit(i)});
+        }else if (i === 10*this.hitImagesAmount) {
             this.lifeAmount -= char.headJumpAmount;
             if (this.lifeAmount <= 0) {
                 this.lifeAmount = 0;
                 this.image.src = '';
-                this.isDangerous = false;
                 return;
-            } else { this.image.src = this.standardImgPath; }
-            if(this.lifeAmount) { setTimeout(() => { this.isDangerous = true; }, 1500); }
+            }else { this.image.src = this.standardImgPath; }
+            setTimeout(() => { this.isDangerousAgain(); }, 1500);
+            //this.isDangerousAgain();
             return;
         }
-        //console.log(this.hitImagesAmount, i, i % this.hitImagesAmount === 0, this.image.src.includes('attack'));
-        i++;
-        if(i < 75) {requestAnimationFrame(() => { this.animateHit(i) });}
         return;
     }
 

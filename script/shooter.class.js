@@ -19,19 +19,9 @@ class Shooter extends Enemy {
         this.standardImgPath = `graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
         this.distanceToSeeChar = distanceToSeeChar;
         this.canWalk = canWalk;
-        this.hitImagesAmount = 6;
+        this.hitImagesAmount = 5;
         this.checkCharPos();
     }
-
-    /* animateWalking(i = 0) {
-        if(this.walks) {
-            this.x = this.lookingDirection === "right" ? this.x += wallBrickWidth/100 : this.x -= wallBrickWidth/100;
-            this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${i}.png`;
-            i++;
-            if(i === 7) { i = 0; }
-            requestAnimationFrame(()=>{ this.animateWalking(i); });
-        }
-    } */
 
     setupCannonball() {
         if (!gamePaused && this.targeting && this.isDangerous && !this.hasShot) {
