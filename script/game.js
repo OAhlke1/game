@@ -16,6 +16,9 @@ let hitables = {
     enemies: [],
     flyables: []
 };
+let items = {
+    lifeIncreasing: []
+}
 let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
@@ -26,10 +29,11 @@ function initFunctions() {
     createBackground();
     createWallsLeftRight();
     createWallsTopBottom();
-    createFigure();
+    createChar();
     createPlatforms();
     createTraps();
     createEnemies();
+    createItems();
     createMenuBar();
     addMovingCommands();
 }
@@ -47,7 +51,7 @@ function loadPlayer() {
 function createCanvas() {
     canvas = document.querySelector('canvas');
     canvas.width = window.innerWidth * 0.9;
-    canvas.height = window.innerWidth * 8.1 / 16; // because the ratio shall be 16 / 9
+    canvas.height = window.innerWidth * 8.1 / 16;
     ctx = canvas.getContext('2d');
 }
 
@@ -55,7 +59,7 @@ function createBackground() {
     canvasBackground = new Background('graphics/background/black-bg.svg');
 }
 
-function createFigure() {
+function createChar() {
     char = new Char(2 * wallBrickWidth, 2 * wallBrickHeight, wallBrickWidth, canvas.height - 3 * wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth / 3);
 }
 
@@ -106,6 +110,10 @@ function createEnemies() {
     hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true));
 }
 
+function createItems() {
+    items.lifeIncreasing.push(new LifeIncreaser(10*wallBrickWidth, canvas.height - 10*wallBrickHeight, 50, 50*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+}
+
 function createPlatforms() {
     createNonMovingPlatforms();
     createMovingPlatforms();
@@ -122,7 +130,6 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(5 * wallBrickWidth, 20 * wallBrickWidth, 0, 0, canvas.height - 5 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     platforms.push(new MovingPlatform(20 * wallBrickWidth, 50 * wallBrickWidth, 0, 0, canvas.height - 0.30 * canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     platforms.push(new MovingPlatform(canvas.width / 2, 3 * canvas.width / 4, 0, 0, 25 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    //platforms.push(new MovingPlatform(canvas.width/2, 3*canvas.width/4, 0, 0, 25*wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
     platforms.push(new MovingPlatform(1 * wallBrickWidth, 0, 6 * wallBrickHeight, 60 * wallBrickHeight, 6 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
 }
 
@@ -171,6 +178,14 @@ function drawHitables() {
     if (hitables.flyables.length) {
         hitables.flyables.forEach((elem) => { if (elem) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); } })
     }
+}
+
+function drawItems() {
+    items.lifeIncreaser.forEach((elem) => {
+        if(!elem.collected) {
+            ctx.drawImage(elem.x, elem.y, elem.width, elem.height, elem.imagePath);
+        }
+    })
 }
 
 function drawFigure() {

@@ -163,7 +163,6 @@ class Enemy {
                 return;
             }else { this.image.src = this.standardImgPath; }
             setTimeout(() => { this.isDangerousAgain(); }, 1500);
-            //this.isDangerousAgain();
             return;
         }
         return;

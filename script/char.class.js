@@ -171,7 +171,6 @@ class Char {
                 if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
                 return;
             }
-            //this.checkHitablesXCoords();
             this.y += this.jumpFallStepHeight;
         }
         requestAnimationFrame(() => {
