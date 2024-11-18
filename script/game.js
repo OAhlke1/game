@@ -11,6 +11,9 @@ let bgPlayer;
 let walls = [];
 let platforms = [];
 let standables = [];
+let charObjects = {
+    ammo: []
+};
 let hitables = {
     traps: [],
     enemies: [],
@@ -18,7 +21,7 @@ let hitables = {
 };
 let items = {
     lifeIncreasing: []
-}
+};
 let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
@@ -61,6 +64,11 @@ function createBackground() {
 
 function createChar() {
     char = new Char(2 * wallBrickWidth, 2 * wallBrickHeight, wallBrickWidth, canvas.height - 3 * wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth / 3);
+}
+
+function createAmmo(x, y, width, height, imagePath) {
+    //console.log(x);
+    charObjects.ammo.push(new Ammo(x, y, width, height, imagePath));
 }
 
 function createWallsLeftRight() {
@@ -111,7 +119,8 @@ function createEnemies() {
 }
 
 function createItems() {
-    items.lifeIncreasing.push(new LifeIncreaser(10*wallBrickWidth, canvas.height - 10*wallBrickHeight, 50, 50*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(canvas.width/2, canvas.height/2, 1*wallBrickWidth, 1*wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(canvas.width/4, 3*canvas.height/4, 1*wallBrickWidth, 1*wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
 }
 
 function createPlatforms() {
@@ -142,7 +151,9 @@ function drawElements() {
     drawWalls();
     drawPlatforms();
     drawHitables();
-    drawFigure();
+    drawChar();
+    drawItems();
+    drawCharObjects();
     drawMenuBar();
     //checkHitablesXCoords();
 }
@@ -181,17 +192,23 @@ function drawHitables() {
 }
 
 function drawItems() {
-    items.lifeIncreaser.forEach((elem) => {
+    items.lifeIncreasing.forEach((elem) => {
         if(!elem.collected) {
-            ctx.drawImage(elem.x, elem.y, elem.width, elem.height, elem.imagePath);
+            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
         }
     })
 }
 
-function drawFigure() {
+function drawChar() {
     if (char.isAlive) {
         ctx.drawImage(char.figImage, char.x, char.y, char.width, char.height);
     }
+}
+
+function drawCharObjects() {
+    charObjects.ammo.forEach((elem) => {
+        ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
+    })
 }
 
 function addMovingCommands() {
@@ -215,7 +232,7 @@ function addMovingCommands() {
         } else if (event.key === "Shift") {
             controller['run'].pressed = true;
             controller['run'].func();
-        } else if (event.key === "p") {
+        } else if (event.key === "p" || event.key === "P") {
             if (!gamePaused) {
                 gamePaused = true;
             } else {
@@ -223,6 +240,8 @@ function addMovingCommands() {
                 timer();
                 drawElements();
             }
+        } else if (event.key === "s") {
+            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, this.y+5, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {

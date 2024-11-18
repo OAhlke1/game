@@ -1,6 +1,7 @@
 class Cannonball extends Enemy {
     flyingDirection;
     inCanvas = true;
+    trajectoryIntervalId;
     
     constructor(x, y, flyingDirection) {
         super();
@@ -12,11 +13,11 @@ class Cannonball extends Enemy {
         this.image = new Image();
         this.image.src = 'graphics/enemies/shooter/attack/cannonball.png';
         this.decreaseLifeAmount = 5;
-        this.animateTrajectory();
         this.enemyType = "flyable";
+        this.trajectoryIntervalId = setInterval(()=>{ this.animateTrajectory() }, 10);
     }
 
-    animateTrajectory(i = 0) {
+    animateTrajectory() {
         if(!gamePaused && this.inCanvas) {
             switch(this.flyingDirection) {
                 case "left":
@@ -32,8 +33,10 @@ class Cannonball extends Enemy {
                 this.destroyCannonBall();
             }
             if(this.checkIfHittingChar()) { this.hittingChar(); }
-            requestAnimationFrame(()=>{ this.animateTrajectory(i) });
-        }else { return; }
+        }else {
+            clearInterval(this.trajectoryIntervalId);
+            return;
+        }
     }
     
     checkIfCannonballLeftCanvas () {

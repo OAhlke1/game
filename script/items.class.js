@@ -4,7 +4,7 @@ class Item {
     width;
     height;
     image;
-    collected = false;
+    collected;
     itemType;
 
     constructor(x, y, width, height, imagePath) {
@@ -14,7 +14,7 @@ class Item {
         this.height = height;
         this.image = new Image();
         this.image.src = imagePath;
-        this.checkCharPos();
+        requestAnimationFrame(()=>{ this.checkCharPos(); });   
     }
 
     checkCharPos() {
@@ -25,13 +25,18 @@ class Item {
                     return;
                 }
             }
-            requestAnimationFrame(this.checkCharPos());
+            requestAnimationFrame(() => { this.checkCharPos(); });
         }
     }
 
     collectItem() {
-        this.collected = true;
-        this.image.src = '';
-        if(this.itemType === "lifeIncreaser") { char.lifeAmount += increaseLifeAmount; }
+        if(this.itemType === "life-increaser" && !this.collected) {
+            if(char.healthAmount < char.maxHealthAmount) {
+                char.healthAmount += this.increaseLifeAmount;
+                if(char.healthAmount > char.maxHealthAmount) { char.healthAmount = 200; }
+                this.collected = true;
+                this.image.src = '';
+            }
+        }
     }
 }

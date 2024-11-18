@@ -18,7 +18,14 @@ class Char {
     hittingTrapIndex;
     hittingFlyableIndex;
     basicStepLength;
+    headJumpAmount;
+    movingAnimationId;
+    fallAnimationId;
+    hittingAnimationId;
+    hittingAnimationIndex = 0;
+    hittingAnimationStep = 0;
     healthAmount = 200;
+    maxHealthAmount;
     timeNextHit = 0;
     stepAmount = 0;
     movingDirection = 'right';
@@ -29,7 +36,8 @@ class Char {
     isImmune = false;
     landedOnPlatform = false;
     targeted = false;
-    headJumpAmount;
+    hitImagesAmount;
+    bulletAmount;   
 
     constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * wallBrickHeight) {
         this.width = width;
@@ -46,6 +54,9 @@ class Char {
         this.maxJumpHeight = maxJumpHeight;
         this.sleeps = false;
         this.headJumpAmount = 50;
+        this.hitImagesAmount = 8;
+        this.bulletAmount = 10;
+        this.maxHealthAmount = 200;
     }
 
     moveLeft(key) {
@@ -116,7 +127,7 @@ class Char {
     jump(i = this.maxJumpHeight / this.jumpFallStepHeight) {
         if (!gamePaused && this.isAlive && !this.falls) {
             this.onMovingPlatform = false;
-            this.falls = false;
+            this.stopFalling();
             this.stepAmount = 0;
             this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
             if (!this.startingYPos) { this.startingYPos = this.y; }
@@ -135,7 +146,7 @@ class Char {
         if (!gamePaused && this.isAlive) {
             if (!this.falls) {
                 this.falls = true;
-                this.fall();
+                this.fallAnimationId = setInterval(() => { this.fall(); }, 10);
             }
         }
     }
@@ -152,11 +163,11 @@ class Char {
                     this.distanceCharMovingPlatformX = this.x - platforms[this.standingPlatformIndex].x;
                     this.movingWithPlatform();
                 }
-                this.falls = false;
+                this.stopFalling();
                 return;
             } else if (canvas.height - wallBrickHeight - (this.y + this.height) <= this.jumpFallStepHeight) {
                 this.jumps = false;
-                this.falls = false;
+                this.stopFalling();
                 this.standingPlatformIndex = -1;
                 this.startingYPos = canvas.height - wallBrickHeight - this.height;
                 this.y = canvas.height - wallBrickHeight - this.height;
@@ -165,7 +176,7 @@ class Char {
 
             if (this.startingYPos === this.y) {
                 this.jumps = false;
-                this.falls = false;
+                this.stopFalling();
                 this.startingYPos = null;
                 this.stepAmount = 0;
                 if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
@@ -173,9 +184,11 @@ class Char {
             }
             this.y += this.jumpFallStepHeight;
         }
-        requestAnimationFrame(() => {
-            this.fall();
-        });
+    }
+
+    stopFalling() {
+        this.falls = false;
+        clearInterval(this.fallAnimationId);
     }
 
     checkPlatformXCords() {
@@ -252,18 +265,21 @@ class Char {
 
     hitChar() {
         this.gotHit = true;
-        this.animateHit();
+        this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 1500/this.hitImagesAmount);
         setTimeout(() => { this.gotHit = false; }, 1500);
     }
 
-    animateHit(i = 0) {
+    animateHit() {
         if (this.gotHit) {
-            if (this.isAlive) {
-                this.setImagePath(`../graphics/main-char/hit/hit-${this.movingDirection}-${i}.png`);
+            if (this.isAlive) { this.setImagePath(`../graphics/main-char/hit/hit-${this.movingDirection}-${this.hittingAnimationIndex}.png`); }
+            this.hittingAnimationIndex++;
+            if (this.hittingAnimationIndex === this.hitImagesAmount) {
+                this.hittingAnimationIndex = 0
+                this.hittingAnimationStep++;
+                if(this.hittingAnimationStep === 2) {
+                    clearInterval(this.hittingAnimationId);
+                }
             }
-            i++;
-            if (i === 7) { i = 0 }
-            requestAnimationFrame(() => { this.animateHit(i) });
         } else if (this.isAlive) {
             this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
         }
@@ -283,6 +299,10 @@ class Char {
             }
             setTimeout(() => {this.isImmune = false }, 1500);
         }
+    }
+
+    animateShooting() {
+        
     }
 
     setImagePath(path) {
