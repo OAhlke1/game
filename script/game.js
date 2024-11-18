@@ -119,8 +119,8 @@ function createEnemies() {
 }
 
 function createItems() {
-    items.lifeIncreasing.push(new LifeIncreaser(canvas.width/2, canvas.height/2, 1*wallBrickWidth, 1*wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(canvas.width/4, 3*canvas.height/4, 1*wallBrickWidth, 1*wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
 }
 
 function createPlatforms() {
@@ -151,11 +151,10 @@ function drawElements() {
     drawWalls();
     drawPlatforms();
     drawHitables();
-    drawChar();
     drawItems();
+    drawChar();
     drawCharObjects();
     drawMenuBar();
-    //checkHitablesXCoords();
 }
 
 function drawBackground() {
