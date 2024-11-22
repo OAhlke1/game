@@ -19,7 +19,7 @@ class Enemy {
     hittingIndex;
     walkingIndex;
 
-    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks) {
+    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount) {
         this.x = x;
         this.y = y;
         this.minX = x;
@@ -36,7 +36,7 @@ class Enemy {
         this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
         this.walks = walks;
-        this.hitImagesAmount = 12;
+        this.hitImagesAmount = hitImagesAmount;
         this.hittingIndex = 0;
         this.hittingAnimationIndex = 0;
         this.walkingIndex = 0;
@@ -150,8 +150,9 @@ class Enemy {
                 if (this.lifeAmount <= 0) {
                     this.lifeAmount = 0;
                     this.image.src = '';
+                    this.isDangerous = false;
                     clearInterval(this.hittingAnimationId);
-
+                    return;
                 }else if(this.lifeAmount > 0) {
                     this.isDangerous = true;
                     clearInterval(this.hittingAnimationId);

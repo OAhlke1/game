@@ -21,13 +21,9 @@ class Traps {
     }
 
     checkCharPos() {
-        if(char.y + char.height >= this.y && this.y + this.height > char.y) {
-            if(char.x + char.width > this.x && this.x + this.width > char.x) {
-                if(!char.gotHit) {
-                    char.hitChar();
-                    char.decreaseHealth(this.decreaseLifeAmount);
-                }
-            }
+        if(char.x + char.width > this.x && this.x + this.width > char.x && char.y + char.height > this.y && this.y + this.height > char.y && !char.gotHit) {
+            char.hitChar();
+            char.decreaseHealth(this.decreaseLifeAmount);
         }
         requestAnimationFrame(()=>{this.checkCharPos()});
     }

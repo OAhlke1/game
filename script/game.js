@@ -67,7 +67,6 @@ function createChar() {
 }
 
 function createAmmo(x, y, width, height, imagePath) {
-    //console.log(x);
     charObjects.ammo.push(new Ammo(x, y, width, height, imagePath));
 }
 
@@ -111,14 +110,23 @@ function createTraps() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new Enemy(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10, false, 'left', 100, false));
-    hitables.enemies.push(new Enemy(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left', 100, false));
-    hitables.enemies.push(new Enemy(10 * wallBrickWidth, wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left', 100, false));
-    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true));
-    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true));
+    hitables.enemies.push(new Enemy(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 10, false, 'left', 100, false, 5));
+    hitables.enemies.push(new Enemy(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 20, false, 'left', 100, false, 5));
+    hitables.enemies.push(new Enemy(10 * wallBrickWidth, wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'graphics/enemies/jump-left.png', 'green', 30, false, 'left', 100, false, 5));
+    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true, 12));
+    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true, 12));
 }
 
 function createItems() {
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
     items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
     items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
 }
@@ -147,12 +155,13 @@ function clearCanvas() {
 }
 
 function drawElements() {
+    //console.log('x:', char.x + char.width >= items.lifeIncreasing[0].x && items.lifeIncreasing[0].x + items.lifeIncreasing[0].width >= char.x, 'y:', char.y + char.height >= items.lifeIncreasing[0].y && items.lifeIncreasing[0].y + items.lifeIncreasing[0].height >= char.y);
     drawBackground();
     drawWalls();
     drawPlatforms();
     drawHitables();
-    drawItems();
     drawChar();
+    drawItems();
     drawCharObjects();
     drawMenuBar();
 }
@@ -205,9 +214,7 @@ function drawChar() {
 }
 
 function drawCharObjects() {
-    charObjects.ammo.forEach((elem) => {
-        ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
-    })
+    charObjects.ammo.forEach((elem) => { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); });
 }
 
 function addMovingCommands() {
@@ -239,8 +246,8 @@ function addMovingCommands() {
                 timer();
                 drawElements();
             }
-        } else if (event.key === "s") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, this.y+5, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
+        } else if (event.key === "s" || event.key === "S") {
+            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y+5, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
