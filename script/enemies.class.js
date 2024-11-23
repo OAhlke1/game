@@ -11,13 +11,13 @@ class Enemy {
     isDangerous;
     canShoot;
     standardImgPath;
-    hitable = true;
-    canWalk = true;
     walks;
     hittingAnimationId;
     hittingAnimationIndex;
     hittingIndex;
     walkingIndex;
+    hitable = true;
+    canWalk = true;
 
     constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount) {
         this.x = x;
@@ -40,6 +40,7 @@ class Enemy {
         this.hittingIndex = 0;
         this.hittingAnimationIndex = 0;
         this.walkingIndex = 0;
+        this.checkCharPos();
     }
 
     checkCharPos() {
@@ -90,9 +91,9 @@ class Enemy {
     atLookingAtChar() {
         if(Math.abs(char.x + char.width - this.x) <= this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) <= this.distanceToSeeChar/2) {
             this.targeting = false;
-            if(this.canWalk) {
+            if(this.canWalk && !this.walks) {
                 this.walks = true;
-                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 30);
+                this.animateWalking();
             }
         }else if(Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar/2) {
             this.targeting = true;
@@ -131,11 +132,13 @@ class Enemy {
     }
 
     animateWalking() {
+        console.log(this.animateWalkingId);
         if(this.walks && this.isDangerous) {
-            this.x = this.lookingDirection === "right" ? this.x += wallBrickWidth/10 : this.x -= wallBrickWidth/10;
+            this.x = this.lookingDirection === "right" ? this.x += wallBrickWidth/5 : this.x -= wallBrickWidth/5;
             this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
             this.walkingIndex++;
             if(this.walkingIndex === 7) { this.walkingIndex = 0; }
+            this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 30);
         }
     }
 

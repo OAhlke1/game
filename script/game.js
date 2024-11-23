@@ -118,7 +118,7 @@ function createEnemies() {
 }
 
 function createItems() {
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(5*wallBrickWidth, canvas.height-2*wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
     items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
     items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
     items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
@@ -195,7 +195,7 @@ function drawHitables() {
         if (elem || elem.isDangerous) { if (elem.image.src != '') { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); } }
     })
     if (hitables.flyables.length) {
-        hitables.flyables.forEach((elem) => { if (elem) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); } })
+        hitables.flyables.forEach((elem) => { if (!elem.leftCanvas) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); } })
     }
 }
 
@@ -214,7 +214,11 @@ function drawChar() {
 }
 
 function drawCharObjects() {
-    charObjects.ammo.forEach((elem) => { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); });
+    charObjects.ammo.forEach((elem) => {
+        if(!elem.leftCanvas) {
+            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
+        }
+    });
 }
 
 function addMovingCommands() {

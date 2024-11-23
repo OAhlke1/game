@@ -20,7 +20,6 @@ class Shooter extends Enemy {
         this.distanceToSeeChar = distanceToSeeChar;
         this.canWalk = canWalk;
         this.hitImagesAmount = 5;
-        this.checkCharPos();
     }
 
     setupCannonball() {
