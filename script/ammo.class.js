@@ -17,14 +17,16 @@ class Ammo extends Char {
     }
 
     animateTrajectory() {
-        if(!gamePaused && !this.leftCanvas) {
-            if(this.flyingDirection === "left") {
-                this.x -= wallBrickWidth;
-            }else if(this.flyingDirection === "right") {
-                this.x += wallBrickWidth;
+        if(!this.leftCanvas) {
+            if(!gamePaused) {
+                if(this.flyingDirection === "left") {
+                    this.x -= wallBrickWidth;
+                }else if(this.flyingDirection === "right") {
+                    this.x += wallBrickWidth;
+                }
+                this.checkForEnemies();
+                this.checkIfStillInCanvas();
             }
-            this.checkForEnemies();
-            this.checkIfStillInCanvas();
         }else {
             clearInterval(this.trajectoryAnimationId);
             return;
@@ -40,8 +42,8 @@ class Ammo extends Char {
                         elem.walks = false;
                         elem.lifeAmount -= this.decreaseLifeAmount;
                         elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
-                        clearInterval(this.trajectoryAnimationId);
                         this.leftCanvas = true;
+                        clearInterval(this.trajectoryAnimationId);
                     }
                 }
             }

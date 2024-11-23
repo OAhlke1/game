@@ -9,6 +9,7 @@ class Enemy {
     lookingDirection;
     decreaseLifeAmount;
     isDangerous;
+    isAlive;
     canShoot;
     standardImgPath;
     walks;
@@ -43,23 +44,26 @@ class Enemy {
         this.walkingIndex = 0;
         this.walks = walks;
         this.attackingImagesAmount = attackingImagesAmount;
+        this.isAlive = true;
         this.checkCharPos();
     }
 
     checkCharPos() {
-        if(this.isDangerous) {
-            if(this.checkIfCanSeeChar()) { this.lookAtChar(); }
-            if(this.checkIfHittingChar()) { this.hittingChar(); }
-            if(this.checkIfGotHit() && this.isDangerous) {
-                this.isDangerous = false;
-                this.lifeAmount -= char.headJumpAmount;
-                this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 500/this.hitImagesAmount);
-            }else {
-                this.walks = false;
-                this.targeting = false;
+        if(this.isAlive) {
+            if(this.isDangerous) {
+                if(this.checkIfCanSeeChar()) { this.lookAtChar(); }
+                if(this.checkIfHittingChar()) { this.hittingChar(); }
+                if(this.checkIfGotHit() && this.isDangerous) {
+                    this.isDangerous = false;
+                    this.lifeAmount -= char.headJumpAmount;
+                    this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 500/this.hitImagesAmount);
+                }else {
+                    this.walks = false;
+                    this.targeting = false;
+                }
             }
-        }
-        requestAnimationFrame(()=>{this.checkCharPos()});
+            requestAnimationFrame(()=>{this.checkCharPos()});
+        }else { return; }
     }
 
     checkIfCanSeeChar() {
@@ -96,7 +100,8 @@ class Enemy {
             this.targeting = false;
             if(this.canWalk && !this.walks) {
                 this.walks = true;
-                this.animateWalking();
+                if(this.enemyType != "flyable") { this.animateWalking(); }
+                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 30);
             }
         }else if(Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar/2) {
             this.targeting = true;
@@ -140,12 +145,11 @@ class Enemy {
             this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
             this.walkingIndex++;
             if(this.walkingIndex === this.attackingImagesAmount) { this.walkingIndex = 0; }
-            this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 30);
         }
     }
 
     animateEnemyGotHit() {
-        this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`;
+        if(this.enemyType != "flyable") { this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`; }
         this.hittingIndex++;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;
@@ -154,16 +158,14 @@ class Enemy {
                 this.hittingAnimationIndex = 0;
                 if (this.lifeAmount <= 0) {
                     this.lifeAmount = 0;
-                    this.image.src = '';
                     this.isDangerous = false;
-                    clearInterval(this.hittingAnimationId);
-                    return;
+                    this.isAlive = false;
                 }else if(this.lifeAmount > 0) {
                     this.isDangerous = true;
-                    clearInterval(this.hittingAnimationId);
-                    return;
                 }
-            }//else { this.image.src = this.standardImgPath; }
+                clearInterval(this.hittingAnimationId);
+                return;
+            }
         }
         return;
     }

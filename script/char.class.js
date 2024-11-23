@@ -43,7 +43,7 @@ class Char {
         this.width = width;
         this.height = 27 * width / 23;
         this.x = x;
-        this.y = y;
+        this.y = canvas.height - wallBrickHeight - this.height;
         this.src = src;
         this.figImage.src = this.src;
         this.stepLength = stepLength;
