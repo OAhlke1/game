@@ -216,7 +216,7 @@ function drawChar() {
 
 function drawCharObjects() {
     charObjects.ammo.forEach((elem) => {
-        if(elem.inCanvas) {
+        if(!elem.leftCanvas) {
             ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
         }
     });

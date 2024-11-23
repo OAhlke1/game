@@ -13,6 +13,7 @@ class Ammo extends Char {
         this.image.src = imagePath;
         this.flyingDirection = char.movingDirection;
         this.decreaseLifeAmount = 30;
+        this.leftCanvas = false;
         this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, 20);
     }
 
