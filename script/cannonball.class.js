@@ -30,7 +30,7 @@ class Cannonball extends Enemy {
                     break;
             }
             if(this.checkIfCannonballLeftCanvas()) {
-                this.destroyCannonBall();
+                this.inCanvas = false;
             }
             if(this.checkIfHittingChar()) { this.hittingChar(); }
         }else {
@@ -41,10 +41,5 @@ class Cannonball extends Enemy {
     
     checkIfCannonballLeftCanvas () {
         if(this.x + this.width <= 0 || this.x > canvas.width+wallBrickWidth) { return true; }
-    }
-
-    destroyCannonBall() {
-        this.inCanvas = false;
-        this.image.src = '';
     }
 }

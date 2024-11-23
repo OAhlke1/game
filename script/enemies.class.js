@@ -14,12 +14,14 @@ class Enemy {
     walks;
     hittingAnimationId;
     hittingAnimationIndex;
+    hitImagesAmount;
     hittingIndex;
     walkingIndex;
+    attackingImagesAmount;
     hitable = true;
     canWalk = true;
 
-    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount) {
+    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount) {
         this.x = x;
         this.y = y;
         this.minX = x;
@@ -35,11 +37,12 @@ class Enemy {
         this.canShoot = canShoot;
         this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
-        this.walks = walks;
         this.hitImagesAmount = hitImagesAmount;
         this.hittingIndex = 0;
         this.hittingAnimationIndex = 0;
         this.walkingIndex = 0;
+        this.walks = walks;
+        this.attackingImagesAmount = attackingImagesAmount;
         this.checkCharPos();
     }
 
@@ -99,7 +102,7 @@ class Enemy {
             this.targeting = true;
             this.walks = false;
             if(this.animateWalkingId) { clearInterval(this.animateWalkingId); }
-            this.setupCannonball();
+            if(this.canShoot) { this.setupCannonball(); }
         }
     }
 
@@ -132,12 +135,11 @@ class Enemy {
     }
 
     animateWalking() {
-        console.log(this.animateWalkingId);
         if(this.walks && this.isDangerous) {
             this.x = this.lookingDirection === "right" ? this.x += wallBrickWidth/5 : this.x -= wallBrickWidth/5;
             this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
             this.walkingIndex++;
-            if(this.walkingIndex === 7) { this.walkingIndex = 0; }
+            if(this.walkingIndex === this.attackingImagesAmount) { this.walkingIndex = 0; }
             this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 30);
         }
     }

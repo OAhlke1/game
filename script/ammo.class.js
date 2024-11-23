@@ -37,6 +37,7 @@ class Ammo extends Char {
                 if(this.x + this.width > elem.x && elem.x + elem.width > this.x) {
                     if(elem.isDangerous) {
                         elem.isDangerous = false;
+                        elem.walks = false;
                         elem.lifeAmount -= this.decreaseLifeAmount;
                         elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
                         clearInterval(this.trajectoryAnimationId);

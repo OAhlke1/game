@@ -3,7 +3,7 @@ class Shooter extends Enemy {
     hasShot = false;
     walks = false;
 
-    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk) {
+    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
         this.x = x;
         this.y = y;
@@ -19,7 +19,8 @@ class Shooter extends Enemy {
         this.standardImgPath = `graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
         this.distanceToSeeChar = distanceToSeeChar;
         this.canWalk = canWalk;
-        this.hitImagesAmount = 5;
+        this.hitImagesAmount = hitImagesAmount;
+        this.attackingImagesAmount = attackingImagesAmount;
     }
 
     setupCannonball() {
