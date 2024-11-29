@@ -22,6 +22,7 @@ class Traps {
 
     checkCharPos() {
         if(char.x + char.width > this.x && this.x + this.width > char.x && char.y + char.height > this.y && this.y + this.height > char.y && !char.gotHit) {
+            console.log('Hit by trap');
             char.hitChar();
             char.decreaseHealth(this.decreaseLifeAmount);
         }

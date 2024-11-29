@@ -1,7 +1,8 @@
 class Cannonball extends Enemy {
     flyingDirection;
-    inCanvas = true;
     trajectoryIntervalId;
+    inCanvas = true;
+    isDangerous = true;
     
     constructor(x, y, flyingDirection) {
         super();
@@ -32,9 +33,11 @@ class Cannonball extends Enemy {
                 }
                 if(this.checkIfCannonballLeftCanvas()) {
                     this.inCanvas = false;
+                    this.isDangerous = false;
                 }
-                if(this.checkIfHittingChar()) {
+                if(this.checkIfHittingChar() && this.isDangerous) {
                     this.inCanvas = false;
+                    this.isDangerous = false;
                     this.hittingChar();
                 }
             }

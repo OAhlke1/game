@@ -58,6 +58,9 @@ class MovingPlatform extends Platform {
 
     moveDown() {
         if (!gamePaused) {
+            if(char.onUpwardsMovingPlatform) {
+                char.startingYPos = this.y;
+            }
             this.y += wallBrickWidth / 10;
             if (this.y + this.height > this.lowestPoint) {
                 this.y = this.lowestPoint - this.height;
@@ -73,6 +76,10 @@ class MovingPlatform extends Platform {
 
     moveUp() {
         if (!gamePaused) {
+            if(!char.onUpwardsMovingPlatform) {
+                char.onUpwardsMovingPlatform = true;
+                char.startingYPos = this.y;
+            }
             this.y -= wallBrickHeight / 10;
             if (this.y <= this.highestPoint) {
                 this.y = this.highestPoint;

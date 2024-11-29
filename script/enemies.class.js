@@ -118,17 +118,21 @@ class Enemy {
     }
 
     hittingChar() {
-        if(this.enemyType === "flyable") {
+        /* if(this.enemyType === "flyable") {
             if(char.y + char.height > this.y && this.y + this.height > char.y) {
                 char.hitChar();
                 char.decreaseHealth(this.decreaseLifeAmount);
             }
         }else {
-            if(char.y + char.height > this.y) {
+            if(char.y + char.height > this.y && this.y + this.height > char.y) {
                 char.hitChar();
                 char.decreaseHealth(this.decreaseLifeAmount);
             }
-        }
+        } */
+            if(char.y + char.height > this.y && this.y + this.height > char.y) {
+                char.hitChar();
+                char.decreaseHealth(this.decreaseLifeAmount);
+            }
     }
 
     checkIfGotHit() {
@@ -159,6 +163,7 @@ class Enemy {
                 if (this.lifeAmount <= 0) {
                     this.lifeAmount = 0;
                     this.isDangerous = false;
+                    char.enemiesKilled++;
                     this.isAlive = false;
                 }else if(this.lifeAmount > 0) {
                     this.isDangerous = true;

@@ -291,11 +291,14 @@ function setController() {
 
 function initJump() {
     if (controller['jump'].pressed) {
-        if (!char.startingYPos) {
+        /* if (!char.startingYPos) {
             char.startingYPos = char.y;
             char.jumps = false;
             char.checkIfJumping();
-        }
+        } */
+        char.startingYPos = char.y;
+        char.jumps = false;
+        char.checkIfJumping();
     }
 }
 

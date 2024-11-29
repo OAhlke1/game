@@ -14,20 +14,20 @@ class Char {
     distanceCharMovingPlatformX;
     jumpFallStepHeight;
     maxJumpHeight;
-    hittingEnemyIndex;
-    hittingTrapIndex;
-    hittingFlyableIndex;
     basicStepLength;
     headJumpAmount;
     movingAnimationId;
     fallAnimationId;
     hittingAnimationId;
+    hitImagesAmount;
+    bulletAmount;
     hittingAnimationIndex = 0;
     hittingAnimationStep = 0;
     healthAmount = 200;
     maxHealthAmount;
     timeNextHit = 0;
     stepAmount = 0;
+    enemiesKilled = 0;
     movingDirection = 'right';
     figImage = new Image();
     isAlive = true;
@@ -36,8 +36,8 @@ class Char {
     isImmune = false;
     landedOnPlatform = false;
     targeted = false;
-    hitImagesAmount;
-    bulletAmount;   
+    onUpwardsMovingPlatform = false;
+
 
     constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * wallBrickHeight) {
         this.width = width;
@@ -153,6 +153,7 @@ class Char {
 
     fall() {
         if (!gamePaused && this.isAlive) {
+            if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             if (this.checkPlatformXCords()) {
                 this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-0.png`);
                 this.startingYPos = null;
@@ -171,7 +172,6 @@ class Char {
                 this.standingPlatformIndex = -1;
                 this.startingYPos = canvas.height - wallBrickHeight - this.height;
                 this.y = canvas.height - wallBrickHeight - this.height;
-                if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             }
 
             if (this.startingYPos === this.y) {
@@ -179,7 +179,6 @@ class Char {
                 this.stopFalling();
                 this.startingYPos = null;
                 this.stepAmount = 0;
-                if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
                 return;
             }
             this.y += this.jumpFallStepHeight;
@@ -232,6 +231,7 @@ class Char {
                     if(platforms[this.standingPlatformIndex].sideways) {
                         this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
                     }else {
+                        char.onUpwardsMovingPlatform = true;
                         this.y = platforms[this.standingPlatformIndex].y - this.height;
                     }
                 }
