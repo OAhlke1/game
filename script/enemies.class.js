@@ -129,10 +129,10 @@ class Enemy {
                 char.decreaseHealth(this.decreaseLifeAmount);
             }
         } */
-            if(char.y + char.height > this.y && this.y + this.height > char.y) {
-                char.hitChar();
-                char.decreaseHealth(this.decreaseLifeAmount);
-            }
+        if(char.y + char.height > this.y && this.y + this.height > char.y) {
+            char.hitChar();
+            char.decreaseHealth(this.decreaseLifeAmount);
+        }
     }
 
     checkIfGotHit() {

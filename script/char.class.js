@@ -176,9 +176,9 @@ class Char {
 
             if (this.startingYPos === this.y) {
                 this.jumps = false;
-                this.stopFalling();
                 this.startingYPos = null;
                 this.stepAmount = 0;
+                this.stopFalling();
                 return;
             }
             this.y += this.jumpFallStepHeight;
