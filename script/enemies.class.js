@@ -19,6 +19,8 @@ class Enemy {
     hittingIndex;
     walkingIndex;
     attackingImagesAmount;
+    lifeAmount;
+    maxLifeAmount;
     hitable = true;
     canWalk = true;
 
@@ -38,6 +40,7 @@ class Enemy {
         this.canShoot = canShoot;
         this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
+        this.maxLifeAmount = lifeAmount;
         this.hitImagesAmount = hitImagesAmount;
         this.hittingIndex = 0;
         this.hittingAnimationIndex = 0;
@@ -165,6 +168,7 @@ class Enemy {
                     this.isDangerous = false;
                     char.enemiesKilled++;
                     this.isAlive = false;
+                    checkIfAllEnemiesAreDead();
                 }else if(this.lifeAmount > 0) {
                     this.isDangerous = true;
                 }

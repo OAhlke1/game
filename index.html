@@ -6,9 +6,26 @@
     <title>Game-Test</title>
     <link rel="stylesheet" href="./styles/game.css">
     <link rel="icon" href="graphics/main-char/run/run-right-0.png" type="image/x-icon">
+
+    <style>
+        .canvas-cont {
+            width: 400px;
+            height: 450px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .canvas-cont canvas {
+            width: 800px;
+            height: 450px;
+            position: relative;
+        }
+    </style>
 </head>
 <body onload="initFunctions()">
-    <canvas></canvas>
+    <div class="canvas-cont">
+        <canvas width="800" height="450"></canvas>
+    </div>
     <audio src="" id="gaming-sound" volume="50"></audio>
 </body>
 <script src="script/char.class.js"></script>

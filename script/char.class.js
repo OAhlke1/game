@@ -27,6 +27,7 @@ class Char {
     maxHealthAmount;
     timeNextHit = 0;
     stepAmount = 0;
+    totalStepAmount = 0;
     enemiesKilled = 0;
     movingDirection = 'right';
     figImage = new Image();
@@ -85,6 +86,7 @@ class Char {
                     }
                 }
                 this.setMovingState(key);
+                checkForScrolling();
                 if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
                     this.x = canvas.width - this.width - wallBrickWidth;
                     controller['right'].pressed = false;
@@ -104,9 +106,11 @@ class Char {
             if (key === "ArrowRight") {
                 this.movingDirection = 'right';
                 this.stepAmount++;
+                checkForScrolling();
             } else {
                 this.movingDirection = 'left';
                 this.stepAmount--;
+                checkForScrolling();
             }
             if (this.isAlive) {
                 this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);

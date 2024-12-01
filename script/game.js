@@ -25,6 +25,7 @@ let items = {
 let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
+let canCont = document.querySelector('.canvas-cont');
 
 function initFunctions() {
     loadPlayer();
@@ -39,6 +40,15 @@ function initFunctions() {
     createItems();
     createMenuBar();
     addMovingCommands();
+    checkForScrolling();
+    //relativeToCanCont();
+}
+
+function relativeToCanCont() {
+    console.log(canvas.offsetLeft - document.querySelector('.canvas-cont').offsetLeft + char.x, char.width);
+    setTimeout(()=>{
+        relativeToCanCont();
+    }, 100);
 }
 
 function loadPlayer() {
@@ -53,8 +63,8 @@ function loadPlayer() {
 
 function createCanvas() {
     canvas = document.querySelector('canvas');
-    canvas.width = window.innerWidth * 0.9;
-    canvas.height = window.innerWidth * 8.1 / 16;
+    /* canvas.style.width = `${window.innerHeight * 16/9}px`;
+    canvas.style.height = `${window.innerHeight}px`; */
     ctx = canvas.getContext('2d');
 }
 
@@ -71,6 +81,8 @@ function createAmmo(x, y, width, height, imagePath) {
 }
 
 function createWallsLeftRight() {
+    wallBrickWidth = canvas.offsetWidth/100;
+    wallBrickHeight = canvas.offsetHeight/50;
     for (let i = 0; i < 100; i++) {
         for (let k = 0; k < 2; k++) {
             if (k === 1) {
@@ -91,9 +103,9 @@ function createWallsTopBottom() {
     for (let i = 0; i < canvas.width / wallBrickWidth; i++) {
         for (let k = 0; k < 2; k++) {
             if (k === 1) {
-                walls.push(new Wall(i * walls[i].width, k * canvas.height - canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
+                walls.push(new Wall(i * wallBrickWidth, k * canvas.height - canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
             } else {
-                walls.push(new Wall(i * walls[i].width, k * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
+                walls.push(new Wall(i * wallBrickWidth, k * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
             }
         }
     }
@@ -148,6 +160,7 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(20 * wallBrickWidth, 50 * wallBrickWidth, 0, 0, canvas.height - 0.30 * canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     platforms.push(new MovingPlatform(canvas.width / 2, 3 * canvas.width / 4, 0, 0, 25 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 * wallBrickHeight, 60 * wallBrickHeight, 6 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
+    platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 * wallBrickHeight, 30 * wallBrickHeight, 6 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
 }
 
 function clearCanvas() {
@@ -237,7 +250,7 @@ function addMovingCommands() {
                 controller["right"].pressed = true;
                 controller['right'].func();
             }
-        } else if (event.key === " ") {
+        } else if (event.key === " " && !char.jumps) {
             controller['jump'].pressed = true;
             controller['jump'].func();
         } else if (event.key === "Shift") {
@@ -252,7 +265,7 @@ function addMovingCommands() {
                 drawElements();
             }
         } else if (event.key === "Alt") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y+5, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
+            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005*canvas.height, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
@@ -330,6 +343,35 @@ function playSound(fileName) {
     let audio = new Audio();
     audio.src = fileName;
     audio.play();
+}
+
+function checkIfAllEnemiesAreDead() {
+    if(hitables.enemies.length === char.enemiesKilled) {
+        setTimeout(this.resetEnemies, 30000);
+    }
+}
+
+function resetEnemies() {
+    hitables.enemies.forEach((elem)=>{
+        elem.lifeAmount = elem.maxLifeAmount;
+        elem.isAlive = true;
+        elem.hitable = true;
+        elem.isDangerous = true;
+    })
+}
+
+function checkForScrolling() {
+    if(canvas.offsetLeft === canCont.offsetWidth - canvas.offsetWidth) {
+        canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
+    }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) >= 2*canCont.offsetWidth/3 && char.movingDirection === "right" && controller['right'].pressed) {
+        char.totalStepAmount++;
+        console.log(canvas.offsetLeft);
+    }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) <= canCont.offsetWidth/3 && char.movingDirection === "left" && controller['left'].pressed) {
+        char.totalStepAmount--;
+        console.log(canvas.offsetLeft);
+    }
+    canvas.style.left = `-${char.stepLength*char.totalStepAmount}px`;
+    //requestAnimationFrame(()=>{ checkForScrolling(); })
 }
 
 function timer() {
