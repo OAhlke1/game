@@ -20,12 +20,25 @@
             height: 450px;
             position: relative;
         }
+
+        .controls {
+            width: fit-content;
+            margin: 10px auto 0px auto;
+        }
     </style>
 </head>
 <body onload="initFunctions()">
     <div class="canvas-cont">
         <canvas width="800" height="450"></canvas>
     </div>
+    <p class="controls">
+        left: arrow-left
+        <br> right: arrow right
+        <br> shoot: ALT
+        <br> jump: SPACE
+        <br> run: SHIFT
+        <br> pause: p/P
+    </p>
     <audio src="" id="gaming-sound" volume="50"></audio>
 </body>
 <script src="script/char.class.js"></script>

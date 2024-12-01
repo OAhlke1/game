@@ -365,10 +365,8 @@ function checkForScrolling() {
         canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
     }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) >= 2*canCont.offsetWidth/3 && char.movingDirection === "right" && controller['right'].pressed) {
         char.totalStepAmount++;
-        console.log(canvas.offsetLeft);
     }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) <= canCont.offsetWidth/3 && char.movingDirection === "left" && controller['left'].pressed) {
         char.totalStepAmount--;
-        console.log(canvas.offsetLeft);
     }
     canvas.style.left = `-${char.stepLength*char.totalStepAmount}px`;
     //requestAnimationFrame(()=>{ checkForScrolling(); })
