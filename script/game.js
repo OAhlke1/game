@@ -73,7 +73,7 @@ function createBackground() {
 }
 
 function createChar() {
-    char = new Char(2 * wallBrickWidth, 2 * wallBrickHeight, wallBrickWidth, canvas.height - 3 * wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth / 3);
+    char = new Char(2 * wallBrickWidth, 2 * wallBrickHeight, wallBrickWidth, canvas.height - 1.5 * wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth / 3);
 }
 
 function createAmmo(x, y, width, height, imagePath) {
@@ -81,12 +81,12 @@ function createAmmo(x, y, width, height, imagePath) {
 }
 
 function createWallsLeftRight() {
-    wallBrickWidth = canvas.offsetWidth/100;
-    wallBrickHeight = canvas.offsetHeight/50;
+    wallBrickWidth = 10;
+    wallBrickHeight = wallBrickWidth;
     for (let i = 0; i < 100; i++) {
         for (let k = 0; k < 2; k++) {
             if (k === 1) {
-                walls.push(new Wall(k * canvas.width - canvas.height / 50, i * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
+                walls.push(new Wall(k * canvas.width - canvas.height / 50, i * canvas.height / 50, wallBrickWidth, wallBrickHeight, 'graphics/walls/grey-wallstone.png'));
             } else {
                 if (i < 6) {
                     continue;
@@ -122,11 +122,11 @@ function createTraps() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new GreenEnemey(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(10 * wallBrickWidth, wallBrickWidth, 3 * wallBrickWidth, 3 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true, 5, 7));
-    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true, 5, 7));
+    hitables.enemies.push(new GreenEnemey(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 2 * wallBrickWidth, 2 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20*wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 2 * wallBrickWidth, 2 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20*wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(10 * wallBrickWidth, wallBrickWidth, 2 * wallBrickWidth, 2 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20*wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 1 * wallBrickWidth, 1 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true, 5, 7));
+    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, wallBrickWidth, wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true, 5, 7));
 }
 
 function createItems() {
@@ -149,8 +149,8 @@ function createPlatforms() {
 }
 
 function createNonMovingPlatforms() {
-    platforms.push(new Platform(canvas.width / 2, canvas.height - 20 * wallBrickHeight, 9 * wallBrickWidth, 2 * wallBrickHeight, 'graphics/platforms/green-5.png'));
-    platforms.push(new Platform(canvas.width / 5, canvas.height - 10 * wallBrickHeight, 9 * wallBrickWidth, 2 * wallBrickHeight, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(canvas.width / 2, canvas.height - 20 * wallBrickHeight, 4.5 * wallBrickWidth, 1 * wallBrickHeight, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(canvas.width / 5, canvas.height - 10 * wallBrickHeight, 4.5 * wallBrickWidth, 1 * wallBrickHeight, 'graphics/platforms/green-5.png'));
 }
 
 function createMovingPlatforms() {
@@ -361,14 +361,17 @@ function resetEnemies() {
 }
 
 function checkForScrolling() {
-    if(canvas.offsetLeft === canCont.offsetWidth - canvas.offsetWidth) {
+    if(canvas.offsetLeft - canCont.offsetLeft <= canCont.offsetWidth - canvas.offsetWidth && char.movingDirection === "right") {
         canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
-    }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) >= 2*canCont.offsetWidth/3 && char.movingDirection === "right" && controller['right'].pressed) {
-        char.totalStepAmount++;
-    }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) <= canCont.offsetWidth/3 && char.movingDirection === "left" && controller['left'].pressed) {
-        char.totalStepAmount--;
+        return;
+    }else {
+        if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) >= 2*canCont.offsetWidth/3 - char.stepLength && char.movingDirection === "right" && controller['right'].pressed) {
+            char.totalStepAmount++;
+        }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) <= canCont.offsetWidth/3 + char.stepLength && char.movingDirection === "left" && controller['left'].pressed) {
+            char.totalStepAmount--;
+        }
+        canvas.style.left = `-${char.stepLength*char.totalStepAmount}px`;
     }
-    canvas.style.left = `-${char.stepLength*char.totalStepAmount}px`;
     //requestAnimationFrame(()=>{ checkForScrolling(); })
 }
 

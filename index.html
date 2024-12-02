@@ -8,15 +8,19 @@
     <link rel="icon" href="graphics/main-char/run/run-right-0.png" type="image/x-icon">
 
     <style>
+        * {
+            user-select: none;
+        }
+
         .canvas-cont {
-            width: 400px;
+            width: 800px;
             height: 450px;
             margin: 0 auto;
             overflow: hidden;
         }
 
         .canvas-cont canvas {
-            width: 800px;
+            width: 1600px;
             height: 450px;
             position: relative;
         }
@@ -29,7 +33,7 @@
 </head>
 <body onload="initFunctions()">
     <div class="canvas-cont">
-        <canvas width="800" height="450"></canvas>
+        <canvas width="1600" height="450"></canvas>
     </div>
     <p class="controls">
         left: arrow-left

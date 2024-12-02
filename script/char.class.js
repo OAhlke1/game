@@ -5,7 +5,6 @@ class Char {
     y;
     src;
     notAtWall;
-    stepLength;
     startingYPos;
     standingPlatformIndex;
     onMovingPlatform;
@@ -27,6 +26,8 @@ class Char {
     maxHealthAmount;
     timeNextHit = 0;
     stepAmount = 0;
+    stepLength;
+    standardStepLength;
     totalStepAmount = 0;
     enemiesKilled = 0;
     movingDirection = 'right';
@@ -48,6 +49,7 @@ class Char {
         this.src = src;
         this.figImage.src = this.src;
         this.stepLength = stepLength;
+        this.standardStepLength = stepLength;
         this.basicStepLength = stepLength;
         this.notAtWall = true;
         this.jumps = false;
