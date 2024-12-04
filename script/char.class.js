@@ -75,7 +75,7 @@ class Char {
                     return;
                 } else { this.x -= this.stepLength; }
             }
-            requestAnimationFrame(() => { this.moveLeft(key) });
+            setTimeout(() => { this.moveLeft(key) }, 10);
         }
     }
 
@@ -99,7 +99,7 @@ class Char {
                     } else { this.x += this.stepLength; }
                 }
             }
-            requestAnimationFrame(() => { this.moveRight(key) });
+            setTimeout(() => { this.moveRight(key) }, 10);
         }
     }
 
@@ -144,7 +144,7 @@ class Char {
                 this.checkIfFalling(i);
                 return;
             }
-            requestAnimationFrame(() => { this.jump(i); });
+            setTimeout(() => { this.jump(i); }, 10);
         }
     }
 
@@ -172,12 +172,13 @@ class Char {
                 }
                 this.stopFalling();
                 return;
-            } else if (canvas.height - wallBrickHeight - (this.y + this.height) <= this.jumpFallStepHeight) {
+            } else if (this.y >= canvas.height) {
                 this.jumps = false;
-                this.stopFalling();
-                this.standingPlatformIndex = -1;
+                //this.stopFalling();
+                gamePaused = true;
+                /* this.standingPlatformIndex = -1;
                 this.startingYPos = canvas.height - wallBrickHeight - this.height;
-                this.y = canvas.height - wallBrickHeight - this.height;
+                this.y = canvas.height - wallBrickHeight - this.height; */
             }
 
             if (this.startingYPos === this.y) {
@@ -241,7 +242,7 @@ class Char {
                         this.y = platforms[this.standingPlatformIndex].y - this.height;
                     }
                 }
-                requestAnimationFrame(() => {this.movingWithPlatform();});
+                setTimeout(() => {this.movingWithPlatform();}, 10);
             }
             return;
         }

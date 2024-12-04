@@ -4,7 +4,7 @@ class Platform extends Wall {
     blockAmount;
     isMoving;
 
-    constructor(x, y,width, height, imgPath, blockAmount = 1) {
+    constructor(x, y, width, height, imgPath, blockAmount = 1) {
         super();
         this.width = width;
         this.height = height;
@@ -12,6 +12,7 @@ class Platform extends Wall {
         this.y = y;
         this.imgPath = imgPath;
         this.platformImage = new Image();
+        this.platformImage.src = imgPath;
         this.blockAmount = blockAmount;
         this.setPlatformImageProps();
         this.isMoving = false;
@@ -20,6 +21,5 @@ class Platform extends Wall {
     setPlatformImageProps() {
         this.platformImage.width = this.width;
         this.platformImage.height = this.height;
-        this.platformImage.src = this.imgPath;
     }
 }

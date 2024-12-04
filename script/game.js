@@ -28,24 +28,24 @@ let gamePaused = false;
 let canCont = document.querySelector('.canvas-cont');
 
 function initFunctions() {
+    wallBrickWidth = 10;
+    wallBrickHeight = wallBrickWidth;
     loadPlayer();
     createCanvas();
     createBackground();
-    createWallsLeftRight();
-    createWallsTopBottom();
     createChar();
+    addMovingCommands();
+    createWallsLeftRight();
+    createBottomPlatforms();
     createPlatforms();
     createTraps();
     createEnemies();
     createItems();
     createMenuBar();
-    addMovingCommands();
-    checkForScrolling();
-    //relativeToCanCont();
+    //checkForScrolling();
 }
 
 function relativeToCanCont() {
-    console.log(canvas.offsetLeft - document.querySelector('.canvas-cont').offsetLeft + char.x, char.width);
     setTimeout(()=>{
         relativeToCanCont();
     }, 100);
@@ -69,7 +69,7 @@ function createCanvas() {
 }
 
 function createBackground() {
-    canvasBackground = new Background('graphics/background/black-bg.svg');
+    canvasBackground = new Background('graphics/background/rotating-galaxy.webp');
 }
 
 function createChar() {
@@ -81,32 +81,35 @@ function createAmmo(x, y, width, height, imagePath) {
 }
 
 function createWallsLeftRight() {
-    wallBrickWidth = 10;
-    wallBrickHeight = wallBrickWidth;
     for (let i = 0; i < 100; i++) {
         for (let k = 0; k < 2; k++) {
             if (k === 1) {
                 walls.push(new Wall(k * canvas.width - canvas.height / 50, i * canvas.height / 50, wallBrickWidth, wallBrickHeight, 'graphics/walls/grey-wallstone.png'));
             } else {
-                if (i < 6) {
-                    continue;
-                }
+                if (i < 6) { continue; }
                 walls.push(new Wall(k * canvas.width, i * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
             }
         }
     }
-    wallBrickWidth = walls[0].width;
-    wallBrickHeight = walls[0].height;
 }
 
-function createWallsTopBottom() {
-    for (let i = 0; i < canvas.width / wallBrickWidth; i++) {
+function createBottomPlatforms() {
+    /* for (let i = 0; i < canvas.width / wallBrickWidth; i++) {
         for (let k = 0; k < 2; k++) {
             if (k === 1) {
-                walls.push(new Wall(i * wallBrickWidth, k * canvas.height - canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
+                platforms.push(new Platform(5*i * wallBrickWidth, canvas.height - wallBrickHeight, 5*wallBrickWidth, wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'), 1);
             } else {
-                walls.push(new Wall(i * wallBrickWidth, k * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
+                walls.push(new Platform(i * wallBrickWidth, k * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
             }
+        }
+    } */
+    let createdMovingPlatformAtThisSpot = false;
+    for(let i=0; i < canvas.width / wallBrickWidth; i+=5) {
+        if(i != 25 && i != 30 && i != 35) {
+            platforms.push(new Platform(i*wallBrickWidth, canvas.height - wallBrickHeight, 5*wallBrickWidth, wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+        }else if(!createdMovingPlatformAtThisSpot) {
+            createdMovingPlatformAtThisSpot = true;
+            platforms.push(new MovingPlatform(i*wallBrickWidth, (i+15)*wallBrickWidth, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
         }
     }
 }
@@ -122,11 +125,11 @@ function createTraps() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new GreenEnemey(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 2 * wallBrickWidth, 2 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 2 * wallBrickWidth, 2 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(10 * wallBrickWidth, wallBrickWidth, 2 * wallBrickWidth, 2 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 1 * wallBrickWidth, 1 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true, 5, 7));
-    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, wallBrickWidth, wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true, 5, 7));
+    hitables.enemies.push(new GreenEnemey(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20*wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20*wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(10 * wallBrickWidth, wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20*wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true, 5, 7));
+    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true, 5, 7));
 }
 
 function createItems() {
@@ -262,7 +265,7 @@ function addMovingCommands() {
             } else {
                 gamePaused = false;
                 timer();
-                drawElements();
+                //drawElements();
             }
         } else if (event.key === "Alt") {
             createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005*canvas.height, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
@@ -278,7 +281,7 @@ function addMovingCommands() {
             slowDownFigure();
         }
     });
-    drawElements();
+    //drawElements();
 }
 
 function setController() {
@@ -360,17 +363,17 @@ function resetEnemies() {
     })
 }
 
-function checkForScrolling() {
-    if(canvas.offsetLeft - canCont.offsetLeft <= canCont.offsetWidth - canvas.offsetWidth && char.movingDirection === "right") {
+function checkForScrolling(movingDirection = char.movingDirection) {
+    if(canvas.offsetLeft - canCont.offsetLeft <= canCont.offsetWidth - canvas.offsetWidth && movingDirection === "right") {
         canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
         return;
     }else {
-        if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) >= 2*canCont.offsetWidth/3 - char.stepLength && char.movingDirection === "right" && controller['right'].pressed) {
+        if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) >= 2*canCont.offsetWidth/3 && movingDirection === "right" && controller['right'].pressed) {
             char.totalStepAmount++;
-        }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) <= canCont.offsetWidth/3 + char.stepLength && char.movingDirection === "left" && controller['left'].pressed) {
+        }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) <= canCont.offsetWidth/3 && movingDirection === "left" && controller['left'].pressed) {
             char.totalStepAmount--;
         }
-        canvas.style.left = `-${char.stepLength*char.totalStepAmount}px`;
+        canvas.style.left = `-${char.standardStepLength*char.totalStepAmount}px`;
     }
     //requestAnimationFrame(()=>{ checkForScrolling(); })
 }

@@ -10,14 +10,13 @@ class Menubar {
     lifeImage;
     enemyImage;
 
-    constructor(x, y, width, height, font, fontColor, defeatedEnemies = 0) {
+    constructor(x, y, width, height, font, fontColor) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.font = font;
         this.fontColor = fontColor;
-        this.defeatedEnemies = char.healthAmount;
         this.lifeImage = new Image();
         this.lifeImage.src = '/graphics/items/heart.png';
         this.enemyImage = new Image();

@@ -115,7 +115,7 @@ class Enemy {
     }
 
     checkIfHittingChar() {
-        if(char.x + char.width > this.x && char.x < this.x + this.width) {
+        if(char.x + char.width > this.x && char.x < this.x + this.width && char.y + char.height > this.y && char.y < this.y + this.height) {
             return true;
         }else { return false; }
     }
