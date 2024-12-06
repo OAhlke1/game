@@ -9,7 +9,7 @@ class MenubarBackground extends Menubar {
         this.height = height;
     }
 
-    createBackground() {
+    createMenubarBackground() {
         ctx.fillStyle = this.backgroundColor;
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }

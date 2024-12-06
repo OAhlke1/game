@@ -1,36 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game-Test</title>
     <link rel="stylesheet" href="./styles/game.css">
     <link rel="icon" href="graphics/main-char/run/run-right-0.png" type="image/x-icon">
-
-    <style>
-        * {
-            user-select: none;
-        }
-
-        .canvas-cont {
-            width: 800px;
-            height: 450px;
-            margin: 0 auto;
-            overflow: hidden;
-        }
-
-        .canvas-cont canvas {
-            width: 1600px;
-            height: 450px;
-            position: relative;
-        }
-
-        .controls {
-            width: fit-content;
-            margin: 10px auto 0px auto;
-        }
-    </style>
 </head>
+
 <body onload="initFunctions()">
     <div class="canvas-cont">
         <canvas width="1600" height="450"></canvas>
@@ -43,22 +21,54 @@
         <br> run: SHIFT
         <br> pause: p/P
     </p>
+    <div class="touch-controls">
+        <div class="touch-control jump" button-type="jump" onmousedown="addTouchMovingCommands(event)" onmouseup="removeClassPressed(event)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="80px" height="30" viewBox="0 0 100 30">
+                <!-- Rechteck -->
+                <rect width="100" height="30" fill="red" />
+                <!-- Text "Jump" zentriert (horizontal und vertikal) -->
+                <text x="50%" y="50%" font-size="14" fill="black" text-anchor="middle"
+                    alignment-baseline="central">Jump</text>
+            </svg>
+        </div>
+        <div class="touch-control left" button-type="left" onmousedown="addTouchMovingCommands(event)" onmouseup="removeClassPressed(event)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                <g transform="rotate(0, 20, 20)">
+                    <!-- Kreis -->
+                    <circle cx="20" cy="20" r="18" fill="red" />
+                    <!-- Pfeil nach links mit schwarzem Strich an der Spitze -->
+                    <polygon points="15,20 22,15 22,25" fill="none" stroke="black" stroke-width="2" />
+                </g>
+            </svg>
+        </div>
+        <div class="touch-control right" button-type="right" onmousedown="addTouchMovingCommands(event)" onmouseup="removeClassPressed(event)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                <g transform="rotate(180, 20, 20)">
+                    <!-- Kreis -->
+                    <circle cx="20" cy="20" r="18" fill="red" />
+                    <!-- Pfeil nach links mit schwarzem Strich an der Spitze -->
+                    <polygon points="15,20 22,15 22,25" fill="none" stroke="black" stroke-width="2" />
+                </g>
+            </svg>
+        </div>
+    </div>
     <audio src="" id="gaming-sound" volume="50"></audio>
 </body>
 <script src="script/char.class.js"></script>
-    <script src="script/ammo.class.js"></script>
+<script src="script/ammo.class.js"></script>
 <script src="script/wall.class.js"></script>
 <script src="script/menubar.class.js"></script>
-    <script src="script/menubar-background.class.js"></script>
+<script src="script/menubar-background.class.js"></script>
 <script src="script/platforms.class.js"></script>
-    <script src="script/moving-platform.class.js"></script>
+<script src="script/moving-platform.class.js"></script>
 <script src="script/enemies.class.js"></script>
-    <script src="script/shooter.class.js"></script>
-        <script src="script/cannonball.class.js"></script>
-    <script src="script/green.class.js"></script>
+<script src="script/shooter.class.js"></script>
+<script src="script/cannonball.class.js"></script>
+<script src="script/green.class.js"></script>
 <script src="script/background.class.js"></script>
 <script src="script/traps.class.js"></script>
 <script src="script/items.class.js"></script>
-    <script src="script/life-increaser.class.js"></script>
+<script src="script/life-increaser.class.js"></script>
 <script src="script/game.js"></script>
+
 </html>

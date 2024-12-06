@@ -21,9 +21,9 @@ class Ammo extends Char {
         if(!this.leftCanvas) {
             if(!gamePaused) {
                 if(this.flyingDirection === "left") {
-                    this.x -= wallBrickWidth;
+                    this.x -= 2*wallBrickWidth;
                 }else if(this.flyingDirection === "right") {
-                    this.x += wallBrickWidth;
+                    this.x += 2*wallBrickWidth;
                 }
                 this.checkForEnemies();
                 this.checkIfStillInCanvas();

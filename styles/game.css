@@ -3,8 +3,28 @@
     src: url('../fonts/SuperLegendBoy.ttf');
 }
 
+* {
+    user-select: none;
+}
+
 body {
     margin: 0;
+}
+
+.canvas-cont {
+    width: 80vw;
+    height: 45vw;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.canvas-cont canvas {
+    position: relative;
+}
+
+.controls {
+    width: fit-content;
+    margin: 10px auto 0px auto;
 }
 
 h1 {
@@ -18,11 +38,26 @@ h1 {
 canvas {
     display: block;
     background-color: black;
-    /* margin: 30px auto 0 auto; */
-    width: 100vw;
-    height: calc(900vw/16);
 }
 
 #audio-player {
     display: none;
+}
+
+.touch-controls {
+    display: none;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    margin: 30px auto;
+}
+
+@media only screen and (max-width: 800px) {
+    .touch-controls {
+        display: flex;
+    }
+
+    .controls {
+        display: none;
+    }
 }

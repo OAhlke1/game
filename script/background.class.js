@@ -3,9 +3,28 @@ class Background {
     y = 0;
     width = canvas.width;
     height = canvas.height;
+    image;
+    imgPath;
 
-    constructor(imgPath) {
+    constructor(x, y, width, height, imgPath) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
         this.image = new Image();
+        this.imgPath = imgPath;
         this.image.src = imgPath;
+    }
+
+    fadeOut() {
+        this.image.src = 'graphics/background/black-bg.svg';
+        setTimeout(this.fadeIn, 10000);
+        return;
+    }
+
+    fadeIn() {
+        this.image.src = this.imgPath;
+        setTimeout(this.fadeOut, 10000);
+        return;
     }
 }

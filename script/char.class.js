@@ -174,11 +174,8 @@ class Char {
                 return;
             } else if (this.y >= canvas.height) {
                 this.jumps = false;
-                //this.stopFalling();
+                this.healthAmount = 0;
                 gamePaused = true;
-                /* this.standingPlatformIndex = -1;
-                this.startingYPos = canvas.height - wallBrickHeight - this.height;
-                this.y = canvas.height - wallBrickHeight - this.height; */
             }
 
             if (this.startingYPos === this.y) {

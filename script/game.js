@@ -11,6 +11,7 @@ let bgPlayer;
 let walls = [];
 let platforms = [];
 let standables = [];
+let backgrounds = [];
 let charObjects = {
     ammo: []
 };
@@ -32,9 +33,11 @@ function initFunctions() {
     wallBrickHeight = wallBrickWidth;
     loadPlayer();
     createCanvas();
-    createBackground();
+    createBackgrounds();
     createChar();
-    addMovingCommands();
+    if(window.innerWidth > 800) {
+        addKeypressMovingCommands();
+    }else {addTouchMovingCommands();}
     createWallsLeftRight();
     createBottomPlatforms();
     createPlatforms();
@@ -66,10 +69,12 @@ function createCanvas() {
     /* canvas.style.width = `${window.innerHeight * 16/9}px`;
     canvas.style.height = `${window.innerHeight}px`; */
     ctx = canvas.getContext('2d');
+    setCanvasSize();
 }
 
-function createBackground() {
-    canvasBackground = new Background('graphics/background/rotating-galaxy.webp');
+function createBackgrounds() {
+    backgrounds.push(new Background(0, 0, canvas.width, canvas.height, 'graphics/background/rotating-galaxy.webp'));
+    //backgrounds.push(canvasBackground = new Background('graphics/background/rotating-galaxy.webp'));
 }
 
 function createChar() {
@@ -94,15 +99,6 @@ function createWallsLeftRight() {
 }
 
 function createBottomPlatforms() {
-    /* for (let i = 0; i < canvas.width / wallBrickWidth; i++) {
-        for (let k = 0; k < 2; k++) {
-            if (k === 1) {
-                platforms.push(new Platform(5*i * wallBrickWidth, canvas.height - wallBrickHeight, 5*wallBrickWidth, wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'), 1);
-            } else {
-                walls.push(new Platform(i * wallBrickWidth, k * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
-            }
-        }
-    } */
     let createdMovingPlatformAtThisSpot = false;
     for(let i=0; i < canvas.width / wallBrickWidth; i+=5) {
         if(i != 25 && i != 30 && i != 35) {
@@ -171,7 +167,7 @@ function clearCanvas() {
 }
 
 function drawElements() {
-    drawBackground();
+    drawBackgrounds();
     drawWalls();
     drawPlatforms();
     drawHitables();
@@ -181,8 +177,11 @@ function drawElements() {
     drawMenuBar();
 }
 
-function drawBackground() {
-    ctx.drawImage(canvasBackground.image, canvasBackground.x, canvasBackground.y, canvasBackground.width, canvasBackground.height);
+function drawBackgrounds() {
+    backgrounds.forEach((elem)=>{
+        ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
+    });
+    //setTimeout(()=>{backgrounds[backgrounds.length-1].fadeOut();}, 10000);
 }
 
 function drawWalls() {
@@ -192,7 +191,7 @@ function drawWalls() {
 }
 
 function drawMenuBar() {
-    menubarBackground.createBackground();
+    menubarBackground.createMenubarBackground();
     menuBar.writeMenuTexts();
 }
 
@@ -238,7 +237,7 @@ function drawCharObjects() {
     });
 }
 
-function addMovingCommands() {
+function addKeypressMovingCommands() {
     setController();
     document.querySelector('body').addEventListener('keydown', (event) => {
         char.sleeps = false;
@@ -284,7 +283,59 @@ function addMovingCommands() {
     //drawElements();
 }
 
+function addTouchMovingCommands(event = "") {
+    if(event === "") {
+        setTouchController();
+        return;
+    }
+    event.target.closest('.touch-control').classList.add('pressed');
+    switch (event.target.closest('.touch-control').getAttribute('button-type')) {
+        case "left": {
+            controller['left'].pressed = true;
+            controller['left'].func();
+            break;
+        }
+        case "right": {
+            controller['right'].pressed = true;
+            controller['right'].func();
+        }
+        case "jump": {
+            controller['jump'].pressed = true;
+            controller['jump'].func();
+        }
+    }
+}
+
+function removeClassPressed(event) {
+    if(event.target.closest('.touch-control').classList.contains('pressed')) {
+        event.target.closest('.touch-control').classList.remove('pressed');
+        console.log(event.target.closest('.touch-control').getAttribute('button-type'));
+        controller[event.target.closest('.touch-control').getAttribute('button-type')].pressed = false;
+    }
+}
+
 function setController() {
+    controller = {
+        "jump": {
+            pressed: false,
+            func: initJump
+        },
+        "left": {
+            pressed: false,
+            func: initStepLeft
+        },
+        "right": {
+            pressed: false,
+            func: initStepRight
+        },
+        "run": {
+            pressed: true,
+            func: speedUpFigure
+        }
+    }
+}
+
+function setTouchController() {
     controller = {
         "jump": {
             pressed: false,
@@ -368,14 +419,24 @@ function checkForScrolling(movingDirection = char.movingDirection) {
         canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
         return;
     }else {
-        if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) >= 2*canCont.offsetWidth/3 && movingDirection === "right" && controller['right'].pressed) {
+        if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) > 2*canCont.offsetWidth/3 && movingDirection === "right" && controller['right'].pressed) {
             char.totalStepAmount++;
-        }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) <= canCont.offsetWidth/3 && movingDirection === "left" && controller['left'].pressed) {
+        }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) < canCont.offsetWidth/3 && movingDirection === "left" && controller['left'].pressed) {
             char.totalStepAmount--;
         }
         canvas.style.left = `-${char.standardStepLength*char.totalStepAmount}px`;
     }
     //requestAnimationFrame(()=>{ checkForScrolling(); })
+}
+
+function setMenubarPosition() {
+    menubar.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+    menubarBackground.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+}
+
+function setCanvasSize() {
+    canvas.style.width = `${2*canCont.offsetWidth}px`;
+    canvas.style.height = `${canCont.offsetHeight}px`;
 }
 
 function timer() {
