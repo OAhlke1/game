@@ -11,6 +11,10 @@ body {
     margin: 0;
 }
 
+.disNone {
+    display: none !important;
+}
+
 .canvas-cont {
     width: 80vw;
     height: 45vw;
@@ -23,6 +27,10 @@ body {
 }
 
 .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 20px;
     width: fit-content;
     margin: 10px auto 0px auto;
 }
@@ -50,6 +58,82 @@ canvas {
     justify-content: space-evenly;
     width: 100%;
     margin: 30px auto;
+}
+
+.touch-controls .running-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 10px;
+}
+
+.touch-controls.run.pressed svg rect {
+    fill: blue !important;
+}
+
+.volumebar-cont {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 40px;
+}
+
+.volumebar-cont .volumebar {
+    width: 50px;
+    height: 30px;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    background-color: black;
+}
+
+.volumebar-cont .volumebar .volumebar-inner {
+    width: 50%;
+    height: 100%;
+    background-color: orange;
+}
+
+.mute-game {
+    width: 40px;
+    height: 40px;
+    background-image: url('../graphics/controls/speaker.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.mute-game.muted {
+    background-image: url('../graphics/controls/speaker-dashed.svg');
+}
+
+.turn-fullscreen-on, .turn-fullscreen-off {
+    width: 40px;
+    height: 40px;
+    background-image: url('../graphics/controls/fullscreen-on.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.turn-fullscreen-off {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    background-image: url('../graphics/controls/fullscreen-off.svg');
+    background-color: white;
+    border-radius: 100%;
+}
+
+.pause-game {
+    width: 30px;
+    height: 30px;
+    background-image: url('../graphics/controls/pause-game.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 100%;
+}
+
+.pause-game.paused {
+    background-image: url('../graphics/controls/play-game.svg');
 }
 
 @media only screen and (max-width: 800px) {

@@ -8,6 +8,7 @@ let menuBar;
 let canvasBackground;
 let controller;
 let bgPlayer;
+let gameVolume = 0.5;
 let walls = [];
 let platforms = [];
 let standables = [];
@@ -26,6 +27,7 @@ let items = {
 let audioPlayer = [];
 let t = -1;
 let gamePaused = false;
+let gameMuted = false;
 let canCont = document.querySelector('.canvas-cont');
 
 function initFunctions() {
@@ -35,9 +37,10 @@ function initFunctions() {
     createCanvas();
     createBackgrounds();
     createChar();
-    if(window.innerWidth > 800) {
+    /* if (window.innerWidth > 800) {
         addKeypressMovingCommands();
-    }else {addTouchMovingCommands();}
+    } else { addTouchMovingCommands(); } */
+    addKeypressMovingCommands();
     createWallsLeftRight();
     createBottomPlatforms();
     createPlatforms();
@@ -49,7 +52,7 @@ function initFunctions() {
 }
 
 function relativeToCanCont() {
-    setTimeout(()=>{
+    setTimeout(() => {
         relativeToCanCont();
     }, 100);
 }
@@ -57,16 +60,15 @@ function relativeToCanCont() {
 function loadPlayer() {
     bgPlayer = new Audio();
     bgPlayer.src = 'sounds/background.ogg';
+    bgPlayer.volume = gameVolume;
     bgPlayer.play();
     bgPlayer.loop = true;
-    document.querySelectorAll('audio').forEach((elem) => {
-        audioPlayer.push(elem);
-    })
+    audioPlayer.push(bgPlayer);
 }
 
 function createCanvas() {
     canvas = document.querySelector('canvas');
-    /* canvas.style.width = `${window.innerHeight * 16/9}px`;
+    /* canvas.style.width = `${window.innerHeight*16/9}px`;
     canvas.style.height = `${window.innerHeight}px`; */
     ctx = canvas.getContext('2d');
     setCanvasSize();
@@ -100,12 +102,12 @@ function createWallsLeftRight() {
 
 function createBottomPlatforms() {
     let createdMovingPlatformAtThisSpot = false;
-    for(let i=0; i < canvas.width / wallBrickWidth; i+=5) {
-        if(i != 25 && i != 30 && i != 35) {
-            platforms.push(new Platform(i*wallBrickWidth, canvas.height - wallBrickHeight, 5*wallBrickWidth, wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-        }else if(!createdMovingPlatformAtThisSpot) {
+    for (let i = 0; i < canvas.width / wallBrickWidth; i += 5) {
+        if (i != 25 && i != 30 && i != 35) {
+            platforms.push(new Platform(i * wallBrickWidth, canvas.height - wallBrickHeight, 5 * wallBrickWidth, wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+        } else if (!createdMovingPlatformAtThisSpot) {
             createdMovingPlatformAtThisSpot = true;
-            platforms.push(new MovingPlatform(i*wallBrickWidth, (i+15)*wallBrickWidth, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+            platforms.push(new MovingPlatform(i * wallBrickWidth, (i + 15) * wallBrickWidth, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
         }
     }
 }
@@ -121,18 +123,18 @@ function createTraps() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new GreenEnemey(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20*wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(10 * wallBrickWidth, wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20*wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20 * wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20 * wallBrickWidth, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(10 * wallBrickWidth, wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20 * wallBrickWidth, true, 5, 12));
     hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true, 5, 7));
     hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true, 5, 7));
 }
 
 function createItems() {
-    items.lifeIncreasing.push(new LifeIncreaser(5*wallBrickWidth, canvas.height-2*wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(5 * wallBrickWidth, canvas.height - 2 * wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random() * canvas.width - wallBrickWidth, Math.random() * canvas.height - wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random() * canvas.width - wallBrickWidth, Math.random() * canvas.height - wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random() * canvas.width - wallBrickWidth, Math.random() * canvas.height - wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
     /* items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
     items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
     items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
@@ -157,9 +159,9 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(50 * wallBrickWidth, 60 * wallBrickWidth, 0, 0, 10 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     platforms.push(new MovingPlatform(5 * wallBrickWidth, 20 * wallBrickWidth, 0, 0, canvas.height - 5 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
     platforms.push(new MovingPlatform(20 * wallBrickWidth, 50 * wallBrickWidth, 0, 0, canvas.height - 0.30 * canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(canvas.width / 2, 3 * canvas.width / 4, 0, 0, 25 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 * wallBrickHeight, 60 * wallBrickHeight, 6 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
-    platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 * wallBrickHeight, 30 * wallBrickHeight, 6 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
+    platforms.push(new MovingPlatform(canvas.width / 2, 3 * canvas.width / 4, 0, 0, 25 + wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 + wallBrickHeight, 60 + wallBrickHeight, 6 + wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
+    platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 + wallBrickHeight, 30 + wallBrickHeight, 6 + wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
 }
 
 function clearCanvas() {
@@ -178,7 +180,7 @@ function drawElements() {
 }
 
 function drawBackgrounds() {
-    backgrounds.forEach((elem)=>{
+    backgrounds.forEach((elem) => {
         ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
     });
     //setTimeout(()=>{backgrounds[backgrounds.length-1].fadeOut();}, 10000);
@@ -217,7 +219,7 @@ function drawHitables() {
 
 function drawItems() {
     items.lifeIncreasing.forEach((elem) => {
-        if(!elem.collected) {
+        if (!elem.collected) {
             ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
         }
     })
@@ -231,7 +233,7 @@ function drawChar() {
 
 function drawCharObjects() {
     charObjects.ammo.forEach((elem) => {
-        if(!elem.leftCanvas) {
+        if (!elem.leftCanvas) {
             ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
         }
     });
@@ -266,8 +268,9 @@ function addKeypressMovingCommands() {
                 timer();
                 //drawElements();
             }
-        } else if (event.key === "Alt") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005*canvas.height, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
+        } else if (event.key === "Alt" || document.querySelector('.touch-control.shoot').classList.contains('pressed')) {
+            console.log()
+            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005 + canvas.height, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
@@ -277,41 +280,10 @@ function addKeypressMovingCommands() {
             controller['right'].pressed = false;
         } else if (event.key === "Shift") {
             controller['run'].pressed = false;
-            slowDownFigure();
+            slowDownChar();
         }
     });
     //drawElements();
-}
-
-function addTouchMovingCommands(event = "") {
-    if(event === "") {
-        setTouchController();
-        return;
-    }
-    event.target.closest('.touch-control').classList.add('pressed');
-    switch (event.target.closest('.touch-control').getAttribute('button-type')) {
-        case "left": {
-            controller['left'].pressed = true;
-            controller['left'].func();
-            break;
-        }
-        case "right": {
-            controller['right'].pressed = true;
-            controller['right'].func();
-        }
-        case "jump": {
-            controller['jump'].pressed = true;
-            controller['jump'].func();
-        }
-    }
-}
-
-function removeClassPressed(event) {
-    if(event.target.closest('.touch-control').classList.contains('pressed')) {
-        event.target.closest('.touch-control').classList.remove('pressed');
-        console.log(event.target.closest('.touch-control').getAttribute('button-type'));
-        controller[event.target.closest('.touch-control').getAttribute('button-type')].pressed = false;
-    }
 }
 
 function setController() {
@@ -329,8 +301,55 @@ function setController() {
             func: initStepRight
         },
         "run": {
-            pressed: true,
-            func: speedUpFigure
+            pressed: false,
+            func: speedUpChar
+        },
+        "volume": {
+            pressed: false,
+            func: checkVolumeBarEvent
+        }
+    }
+}
+
+function addTouchMovingCommands(event = "") {
+    if (event === "") {
+        setTouchController();
+        return;
+    } else {
+        if (!event.target.closest('.touch-control').classList.contains('run')) { event.target.closest('.touch-control').classList.add('pressed'); }
+        switch (event.target.closest('.touch-control').getAttribute('button-type')) {
+            case "left": {
+                controller['left'].pressed = true;
+                controller['left'].func();
+                break;
+            }
+            case "right": {
+                controller['right'].pressed = true;
+                controller['right'].func();
+                break;
+            }
+            case "jump": {
+                controller['jump'].pressed = true;
+                controller['jump'].func();
+                break;
+            }
+            case "shoot": {
+                controller['shoot'].pressed = true;
+                controller['shoot'].func();
+                break;
+            }
+            case "run": {
+                //controller['run'].pressed = true;
+                if (setRunningCharTouch()) {
+                    controller['run'].func();
+                } else { slowDownChar(); }
+                break;
+            }
+            case "volume": {
+                pressed: true;
+                controller['volume'].func();
+                break;
+            }
         }
     }
 }
@@ -350,19 +369,44 @@ function setTouchController() {
             func: initStepRight
         },
         "run": {
-            pressed: true,
-            func: speedUpFigure
+            pressed: false,
+            func: speedUpChar
+        },
+        "shoot": {
+            pressed: false,
+            func: touchShooting
+        }
+    }
+}
+
+function removeClassPressed(event) {
+    switch (event.target.closest('.touch-control').getAttribute('button-type')) {
+        case "left": {
+            controller['left'].pressed = false;
+            break;
+        }
+        case "right": {
+            controller['right'].pressed = false;
+            break;
+        }
+        case "jump": {
+            controller['jump'].pressed = false;
+            break;
+        }
+        case "shoot": {
+            controller['shoot'].pressed = false;
+            break;
+        }
+        case "run": {
+            controller['run'].pressed = false;
+            break;
         }
     }
 }
 
 function initJump() {
     if (controller['jump'].pressed) {
-        /* if (!char.startingYPos) {
-            char.startingYPos = char.y;
-            char.jumps = false;
-            char.checkIfJumping();
-        } */
+        controller['jump'].pressed = false;
         char.startingYPos = char.y;
         char.jumps = false;
         char.checkIfJumping();
@@ -370,6 +414,7 @@ function initJump() {
 }
 
 function initStepLeft() {
+    controller['jump'].pressed = false;
     if (controller['left'].pressed) {
         char.moveLeft("ArrowLeft");
     }
@@ -377,36 +422,65 @@ function initStepLeft() {
 
 function initStepRight() {
     if (controller['right'].pressed) {
+        controller['jump'].pressed = false;
         char.moveRight("ArrowRight");
     }
 }
 
-function speedUpFigure() {
+function speedUpChar() {
     if (char.stepLength === char.basicStepLength) {
         char.stepLength = char.basicStepLength * 1.5;
     }
 }
 
-function slowDownFigure() {
+function setRunningCharTouch() {
+    if (!document.querySelector('.touch-control.run').classList.contains('pressed')) {
+        document.querySelector('.touch-control.run').classList.add('pressed');
+    } else { document.querySelector('.touch-control.run').classList.remove('pressed'); }
+    restyleRunningTouchButton();
+    return document.querySelector('.touch-control.run').classList.contains('pressed');
+}
+
+function restyleRunningTouchButton() {
+    document.querySelectorAll('.touch-control.run svg rect').forEach((elem) => {
+        if (elem.closest('.touch-control').classList.contains('pressed')) {
+            elem.setAttribute('fill', 'blue');
+        } else { elem.setAttribute('fill', 'red'); }
+    })
+}
+
+function touchShooting() {
+    if (controller['shoot'].pressed) {
+        createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005 * canvas.height, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
+        document.querySelector('.touch-control.shoot').classList.remove('pressed');
+        controller['shoot'].pressed = false;
+    }
+}
+
+function slowDownChar() {
     if (1.5 * char.basicStepLength === char.stepLength) {
         char.stepLength = char.basicStepLength;
     }
 }
 
 function playSound(fileName) {
-    let audio = new Audio();
-    audio.src = fileName;
-    audio.play();
+    if(!gameMuted) {
+        let audio = new Audio();
+        audio.src = fileName;
+        audio.volume = gameVolume;
+        audioPlayer.push(audio);
+        audio.play();
+    }
 }
 
 function checkIfAllEnemiesAreDead() {
-    if(hitables.enemies.length === char.enemiesKilled) {
+    if (hitables.enemies.length === char.enemiesKilled) {
         setTimeout(this.resetEnemies, 30000);
     }
 }
 
 function resetEnemies() {
-    hitables.enemies.forEach((elem)=>{
+    hitables.enemies.forEach((elem) => {
         elem.lifeAmount = elem.maxLifeAmount;
         elem.isAlive = true;
         elem.hitable = true;
@@ -415,18 +489,17 @@ function resetEnemies() {
 }
 
 function checkForScrolling(movingDirection = char.movingDirection) {
-    if(canvas.offsetLeft - canCont.offsetLeft <= canCont.offsetWidth - canvas.offsetWidth && movingDirection === "right") {
+    if (canvas.offsetLeft - canCont.offsetLeft <= canCont.offsetWidth - canvas.offsetWidth && movingDirection === "right") {
         canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
         return;
-    }else {
-        if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) > 2*canCont.offsetWidth/3 && movingDirection === "right" && controller['right'].pressed) {
+    } else {
+        if (Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) > 2 * canCont.offsetWidth / 3 && movingDirection === "right" && controller['right'].pressed) {
             char.totalStepAmount++;
-        }else if(Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) < canCont.offsetWidth/3 && movingDirection === "left" && controller['left'].pressed) {
+        } else if (Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) < canCont.offsetWidth / 3 && movingDirection === "left" && controller['left'].pressed) {
             char.totalStepAmount--;
         }
-        canvas.style.left = `-${char.standardStepLength*char.totalStepAmount}px`;
+        canvas.style.left = `-${char.standardStepLength * char.totalStepAmount}px`;
     }
-    //requestAnimationFrame(()=>{ checkForScrolling(); })
 }
 
 function setMenubarPosition() {
@@ -435,8 +508,73 @@ function setMenubarPosition() {
 }
 
 function setCanvasSize() {
+    canvas.style.width = `${2 * canCont.offsetWidth}px`;
+    canvas.style.height = `${canCont.offsetHeight}px`;
+}
+
+function checkVolumeBarEvent(event) {
+    if(event.type === "mousedown" || event.type === "touchstart") {
+        controller['volume'].pressed = true;
+        document.querySelector('.volumebar-cont').addEventListener('mousemove', setWholeVolume);
+    }else if(event.type === "mouseup" || event.type === "touchend") {
+        controller['volume'].pressed = false;
+        document.querySelector('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
+        document.querySelector('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
+    }
+}
+
+let setWholeVolume = function setWholeVolumeFunc(event) {
+    let index;
+    if(event.type === "mousedown" || "mouseup") {
+        index = event.type = 0;
+    }else { index = 1; }
+    let volumeBarInner = document.querySelectorAll('.volumebar .volumebar-inner')[index];
+    let volumeBarWidth = document.querySelectorAll('.volumebar')[index].offsetWidth;
+    let x = event.clientX;
+    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
+    gameVolume = gameVolume > 1 ? 1 : gameVolume;
+    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
+    if(!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem)=>{ elem.volume = gameVolume; }); }
+}
+
+function muteGame() {
+    if(!document.querySelector('.mute-game').classList.contains('muted')) {
+        document.querySelector('.mute-game').classList.add('muted');
+        audioPlayer.forEach((elem)=>{ elem.volume = 0; });
+        gameMuted = true;
+    }else {
+        document.querySelector('.mute-game').classList.remove('muted');
+        audioPlayer.forEach((elem)=>{ elem.volume = gameVolume; });
+        gameMuted = false;
+    }
+}
+
+function turnOnFullScreen() {
+    canCont.style.width = `${window.innerWidth}px`;
+    canCont.style.height = `${canCont.offsetHeight}px`;
     canvas.style.width = `${2*canCont.offsetWidth}px`;
     canvas.style.height = `${canCont.offsetHeight}px`;
+    document.querySelector('.turn-fullscreen-on').classList.add('disNone');
+    document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+}
+
+function turnOffFullScreen() {
+    canCont.style.width = `${0.8*window.innerWidth}px`;
+    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
+    canvas.style.width = `${2*canCont.offsetWidth}px`;
+    canvas.style.height = `${canCont.offsetHeight}px`;
+    document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
+    document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+}
+
+function pauseGame() {
+    if(gamePaused) {
+        document.querySelector('.pause-game').classList.remove('paused');
+        gamePaused = false;
+    }else {
+        document.querySelector('.pause-game').classList.add('paused');
+        gamePaused = true;
+    }
 }
 
 function timer() {

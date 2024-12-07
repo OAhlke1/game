@@ -20,14 +20,14 @@ class Char {
     hittingAnimationId;
     hitImagesAmount;
     bulletAmount;
+    stepLength;
+    standardStepLength;
+    maxHealthAmount;
     hittingAnimationIndex = 0;
     hittingAnimationStep = 0;
     healthAmount = 200;
-    maxHealthAmount;
     timeNextHit = 0;
     stepAmount = 0;
-    stepLength;
-    standardStepLength;
     totalStepAmount = 0;
     enemiesKilled = 0;
     movingDirection = 'right';
@@ -60,6 +60,7 @@ class Char {
         this.hitImagesAmount = 8;
         this.bulletAmount = 10;
         this.maxHealthAmount = 200;
+        this.standingPlatformIndex = 0;
     }
 
     moveLeft(key) {
@@ -69,6 +70,7 @@ class Char {
                     if (this.checkPlatformEnd()) { this.checkIfFalling(); }
                 }
                 this.setMovingState(key);
+                checkForScrolling();
                 if (this.x <= this.stepLength + wallBrickWidth) {
                     this.x = wallBrickWidth + 1;
                     controller['left'].pressed = false;
@@ -79,13 +81,27 @@ class Char {
         }
     }
 
+    moveLeftTouch(key) {
+        if (!gamePaused && this.isAlive) {
+            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
+                if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+            }
+            this.setMovingState(key);
+            checkForScrolling();
+            if (this.x <= this.stepLength + wallBrickWidth) {
+                this.x = wallBrickWidth + 1;
+                controller['left'].pressed = false;
+                return;
+            } else { this.x -= this.stepLength; }
+        }
+        setTimeout(() => { this.moveLeft(key) }, 10);
+    }
+
     moveRight(key) {
         if (controller['right'].pressed) {
             if (!gamePaused && this.isAlive) {
                 if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length) {
-                    if (this.checkPlatformEnd()) {
-                        this.checkIfFalling();
-                    }
+                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
                 }
                 this.setMovingState(key);
                 checkForScrolling();
@@ -101,6 +117,26 @@ class Char {
             }
             setTimeout(() => { this.moveRight(key) }, 10);
         }
+    }
+
+    moveRightTouch(key) {
+        if (!gamePaused && this.isAlive) {
+            if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length) {
+                if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+            }
+            this.setMovingState(key);
+            checkForScrolling();
+            if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
+                this.x = canvas.width - this.width - wallBrickWidth;
+                controller['right'].pressed = false;
+                return;
+            } else {
+                if (this.x + this.width - canvas.width >= 0) {
+                    this.x += (canvas.width - this.x - this.width);
+                } else { this.x += this.stepLength; }
+            }
+        }
+        setTimeout(() => { this.moveRight(key) }, 10);
     }
 
     setMovingState(key) {
