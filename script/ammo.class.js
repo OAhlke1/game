@@ -15,6 +15,7 @@ class Ammo extends Char {
         this.decreaseLifeAmount = 30;
         this.leftCanvas = false;
         this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, 20);
+        console.log("In ammo!");
     }
 
     animateTrajectory() {

@@ -82,19 +82,21 @@ class Char {
     }
 
     moveLeftTouch(key) {
-        if (!gamePaused && this.isAlive) {
-            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
-                if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+        if(controller['left'].pressed) {
+            if (!gamePaused && this.isAlive) {
+                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
+                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+                }
+                this.setMovingState(key);
+                checkForScrolling();
+                if (this.x <= this.stepLength + wallBrickWidth) {
+                    this.x = wallBrickWidth + 1;
+                    controller['left'].pressed = false;
+                    return;
+                } else { this.x -= this.stepLength; }
             }
-            this.setMovingState(key);
-            checkForScrolling();
-            if (this.x <= this.stepLength + wallBrickWidth) {
-                this.x = wallBrickWidth + 1;
-                controller['left'].pressed = false;
-                return;
-            } else { this.x -= this.stepLength; }
+            setTimeout(() => { this.moveLeft(key) }, 10);
         }
-        setTimeout(() => { this.moveLeft(key) }, 10);
     }
 
     moveRight(key) {
@@ -120,23 +122,25 @@ class Char {
     }
 
     moveRightTouch(key) {
-        if (!gamePaused && this.isAlive) {
-            if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length) {
-                if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+        if(controller['right'].pressed) {
+            if (!gamePaused && this.isAlive) {
+                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length) {
+                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+                }
+                this.setMovingState(key);
+                checkForScrolling();
+                if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
+                    this.x = canvas.width - this.width - wallBrickWidth;
+                    controller['right'].pressed = false;
+                    return;
+                } else {
+                    if (this.x + this.width - canvas.width >= 0) {
+                        this.x += (canvas.width - this.x - this.width);
+                    } else { this.x += this.stepLength; }
+                }
             }
-            this.setMovingState(key);
-            checkForScrolling();
-            if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
-                this.x = canvas.width - this.width - wallBrickWidth;
-                controller['right'].pressed = false;
-                return;
-            } else {
-                if (this.x + this.width - canvas.width >= 0) {
-                    this.x += (canvas.width - this.x - this.width);
-                } else { this.x += this.stepLength; }
-            }
+            setTimeout(() => { this.moveRight(key) }, 10);
         }
-        setTimeout(() => { this.moveRight(key) }, 10);
     }
 
     setMovingState(key) {

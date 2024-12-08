@@ -27,7 +27,7 @@ body {
 }
 
 .controls {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     column-gap: 20px;
@@ -53,7 +53,7 @@ canvas {
 }
 
 .touch-controls {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: space-evenly;
     width: 100%;

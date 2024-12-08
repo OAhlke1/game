@@ -31,8 +31,6 @@ let gameMuted = false;
 let canCont = document.querySelector('.canvas-cont');
 
 function initFunctions() {
-    wallBrickWidth = 10;
-    wallBrickHeight = wallBrickWidth;
     loadPlayer();
     createCanvas();
     createBackgrounds();
@@ -72,6 +70,8 @@ function createCanvas() {
     canvas.style.height = `${window.innerHeight}px`; */
     ctx = canvas.getContext('2d');
     setCanvasSize();
+    wallBrickWidth = window.innerWidth/192 < 10 ? 10 : window.innerWidth/192;
+    wallBrickHeight = wallBrickWidth;
 }
 
 function createBackgrounds() {
@@ -239,6 +239,26 @@ function drawCharObjects() {
     });
 }
 
+function dispatchKeypress(event) {
+    const keyPressEvent = new KeyboardEvent('keydown', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    document.querySelector('body').dispatchEvent(keyPressEvent);
+}
+
+function dispatchKeypressStop(event) {
+    const keyUpEvent = new KeyboardEvent('keyup', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    document.querySelector('body').dispatchEvent(keyUpEvent);
+}
+
 function addKeypressMovingCommands() {
     setController();
     document.querySelector('body').addEventListener('keydown', (event) => {
@@ -268,9 +288,8 @@ function addKeypressMovingCommands() {
                 timer();
                 //drawElements();
             }
-        } else if (event.key === "Alt" || document.querySelector('.touch-control.shoot').classList.contains('pressed')) {
-            console.log()
-            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005 + canvas.height, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
+        } else if (event.key.toLowerCase() === "w") {
+            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005*wallBrickWidth + canvas.height, wallBrickWidth, wallBrickWidth, '/graphics/enemies/shooter/attack/cannonball.png');
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
@@ -311,99 +330,6 @@ function setController() {
     }
 }
 
-function addTouchMovingCommands(event = "") {
-    if (event === "") {
-        setTouchController();
-        return;
-    } else {
-        if (!event.target.closest('.touch-control').classList.contains('run')) { event.target.closest('.touch-control').classList.add('pressed'); }
-        switch (event.target.closest('.touch-control').getAttribute('button-type')) {
-            case "left": {
-                controller['left'].pressed = true;
-                controller['left'].func();
-                break;
-            }
-            case "right": {
-                controller['right'].pressed = true;
-                controller['right'].func();
-                break;
-            }
-            case "jump": {
-                controller['jump'].pressed = true;
-                controller['jump'].func();
-                break;
-            }
-            case "shoot": {
-                controller['shoot'].pressed = true;
-                controller['shoot'].func();
-                break;
-            }
-            case "run": {
-                //controller['run'].pressed = true;
-                if (setRunningCharTouch()) {
-                    controller['run'].func();
-                } else { slowDownChar(); }
-                break;
-            }
-            case "volume": {
-                pressed: true;
-                controller['volume'].func();
-                break;
-            }
-        }
-    }
-}
-
-function setTouchController() {
-    controller = {
-        "jump": {
-            pressed: false,
-            func: initJump
-        },
-        "left": {
-            pressed: false,
-            func: initStepLeft
-        },
-        "right": {
-            pressed: false,
-            func: initStepRight
-        },
-        "run": {
-            pressed: false,
-            func: speedUpChar
-        },
-        "shoot": {
-            pressed: false,
-            func: touchShooting
-        }
-    }
-}
-
-function removeClassPressed(event) {
-    switch (event.target.closest('.touch-control').getAttribute('button-type')) {
-        case "left": {
-            controller['left'].pressed = false;
-            break;
-        }
-        case "right": {
-            controller['right'].pressed = false;
-            break;
-        }
-        case "jump": {
-            controller['jump'].pressed = false;
-            break;
-        }
-        case "shoot": {
-            controller['shoot'].pressed = false;
-            break;
-        }
-        case "run": {
-            controller['run'].pressed = false;
-            break;
-        }
-    }
-}
-
 function initJump() {
     if (controller['jump'].pressed) {
         controller['jump'].pressed = false;
@@ -414,16 +340,28 @@ function initJump() {
 }
 
 function initStepLeft() {
-    controller['jump'].pressed = false;
     if (controller['left'].pressed) {
+        //controller['left'].pressed = false;
         char.moveLeft("ArrowLeft");
+    }
+}
+
+function initStepLeftTouch() {
+    if(controller['left'].pressed) {
+        char.moveLeftTouch("ArrowLeft");
     }
 }
 
 function initStepRight() {
     if (controller['right'].pressed) {
-        controller['jump'].pressed = false;
+        //controller['right'].pressed = false;
         char.moveRight("ArrowRight");
+    }
+}
+
+function initStepRightTouch() {
+    if(controller['right'].pressed) {
+        char.moveRightTouch("ArrowRight");
     }
 }
 
@@ -520,6 +458,8 @@ function checkVolumeBarEvent(event) {
         controller['volume'].pressed = false;
         document.querySelector('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
         document.querySelector('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
+        document.querySelector('wallbrickwidth').value = wallBrickWidth;
+        document.querySelector('wallbrickheight').value = wallBrickHeight;
     }
 }
 
@@ -556,6 +496,10 @@ function turnOnFullScreen() {
     canvas.style.height = `${canCont.offsetHeight}px`;
     document.querySelector('.turn-fullscreen-on').classList.add('disNone');
     document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    document.querySelector('#canCont-width').value = canCont.offsetWidth;
+    document.querySelector('#canvas-width').value = canvas.offsetWidth;
+    document.querySelector('#wallbrickwidth').value = wallBrickWidth;
+    document.querySelector('#wallbrickheight').value = wallBrickHeight;
 }
 
 function turnOffFullScreen() {
@@ -565,6 +509,10 @@ function turnOffFullScreen() {
     canvas.style.height = `${canCont.offsetHeight}px`;
     document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
     document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+    document.querySelector('#canCont-width').value = canCont.offsetWidth;
+    document.querySelector('#canvas-width').value = canvas.offsetWidth;
+    document.querySelector('#wallbrickwidth').value = wallBrickWidth;
+    document.querySelector('#wallbrickheight').value = wallBrickHeight;
 }
 
 function pauseGame() {
