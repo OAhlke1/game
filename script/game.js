@@ -452,14 +452,13 @@ function setCanvasSize() {
 
 function checkVolumeBarEvent(event) {
     if(event.type === "mousedown" || event.type === "touchstart") {
+        console.log('hi');
         controller['volume'].pressed = true;
         document.querySelector('.volumebar-cont').addEventListener('mousemove', setWholeVolume);
     }else if(event.type === "mouseup" || event.type === "touchend") {
         controller['volume'].pressed = false;
         document.querySelector('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
         document.querySelector('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
-        document.querySelector('wallbrickwidth').value = wallBrickWidth;
-        document.querySelector('wallbrickheight').value = wallBrickHeight;
     }
 }
 

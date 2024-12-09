@@ -23,12 +23,16 @@ body {
     overflow: hidden;
 }
 
+.canvas-cont .touch-control.left, .canvas-cont .touch-control.right {
+    display: none;
+}
+
 .canvas-cont canvas {
     position: relative;
 }
 
 .controls {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     column-gap: 20px;
@@ -62,7 +66,7 @@ canvas {
 }
 
 .touch-controls .running-controls {
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
     column-gap: 10px;
@@ -160,5 +164,9 @@ canvas {
 
     .controls {
         display: none;
+    }
+
+    .canvas-cont .touch-control.left, .canvas-cont .touch-control.right {
+        display: block;
     }
 }
