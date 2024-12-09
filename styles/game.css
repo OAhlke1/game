@@ -68,7 +68,7 @@ canvas {
     column-gap: 10px;
 }
 
-.touch-controls .touch-control.left, .touch-controls .touch-control.right {
+.canvas-cont .touch-control.left, .canvas-cont .touch-control.right {
     width: 25%;
     height: 100%;
     position: absolute;
@@ -76,11 +76,11 @@ canvas {
     background-color: transparent;
 }
 
-.touch-controls .touch-control.left {
+.canvas-cont .touch-control.left {
     left: 0;
 }
 
-.touch-controls .touch-control.right {
+.canvas-cont .touch-control.right {
     right: 0;
 }
 
