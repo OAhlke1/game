@@ -46,7 +46,18 @@ function initFunctions() {
     createEnemies();
     createItems();
     createMenuBar();
+    //setScreenSize();
     //checkForScrolling();
+}
+
+function setScreenSize() {
+    if(localStorage.canContScales) {
+        let scales = JSON.parse(localStorage.canContScales);
+        canCont.offsetWidth = scales.canContScales.width;
+        canCont.offsetHeight = scales.canContScales.height;
+        canvas.style.width = 2*canCont.offsetWidth;
+        canvas.style.height = canCont.offsetHeight;
+    }
 }
 
 function relativeToCanCont() {
@@ -352,6 +363,18 @@ function initStepLeftTouch() {
     }
 }
 
+function showHideTouchControls() {
+    if(!document.querySelector('.touch-controls').classList.contains('shown') && !document.querySelector('.touch-controls').classList.contains('hidden')) {
+        document.querySelector('.touch-controls').classList.add('shown');
+    }else if(!document.querySelector('.touch-controls').classList.contains('shown')) {
+        document.querySelector('.touch-controls').classList.add('shown');
+        document.querySelector('.touch-controls').classList.remove('hidden');
+    }else if(!document.querySelector('.touch-controls').classList.contains('hidden')) {
+        document.querySelector('.touch-controls').classList.remove('shown');
+        document.querySelector('.touch-controls').classList.add('hidden');
+    }
+}
+
 function initStepRight() {
     if (controller['right'].pressed) {
         //controller['right'].pressed = false;
@@ -490,15 +513,12 @@ function muteGame() {
 
 function turnOnFullScreen() {
     canCont.style.width = `${window.innerWidth}px`;
-    canCont.style.height = `${canCont.offsetHeight}px`;
+    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
     canvas.style.width = `${2*canCont.offsetWidth}px`;
     canvas.style.height = `${canCont.offsetHeight}px`;
+    localStorage.setItem('canContScales', JSON.stringify({width: canCont.offsetWidth, height: canCont.offsetHeight}));
     document.querySelector('.turn-fullscreen-on').classList.add('disNone');
     document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
-    document.querySelector('#canCont-width').value = canCont.offsetWidth;
-    document.querySelector('#canvas-width').value = canvas.offsetWidth;
-    document.querySelector('#wallbrickwidth').value = wallBrickWidth;
-    document.querySelector('#wallbrickheight').value = wallBrickHeight;
 }
 
 function turnOffFullScreen() {

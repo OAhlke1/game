@@ -58,11 +58,24 @@ canvas {
 }
 
 .touch-controls {
-    display: flex;
+    display: none;
+    flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
     width: 100%;
     margin: 30px auto;
+    position: absolute;
+    top: -21%;
+    left: 0;
+    z-index: 10;
+}
+
+.touch-controls .touch-controls-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 100%;
+    background-color: white;
 }
 
 .touch-controls .running-controls {
@@ -72,12 +85,57 @@ canvas {
     column-gap: 10px;
 }
 
+.touch-controls.shown {
+    animation: show-touch-controls 0.5s linear;
+    top: -9%;
+}
+
+.touch-controls.hidden {
+    animation: hide-touch-controls 0.5s linear;
+    top: -21%;
+}
+
+.touch-controls .show-hide-touch-controls {
+    width: 100%;
+    height: 5px;
+    background-color: red;
+}
+
+@keyframes show-touch-controls {
+    0% {
+        top: -21%;
+    }
+
+    100% {
+        top: -9%;
+    }    
+}
+
+@keyframes hide-touch-controls {
+    0% {
+        top: -9%;
+    }
+
+    100% {
+        top: -21%;
+    }    
+}
+
 .canvas-cont .touch-control.left, .canvas-cont .touch-control.right {
     width: 25%;
     height: 100%;
     position: absolute;
     top: 0;
     background-color: transparent;
+}
+
+.canvas-cont .touch-control.jump {
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .canvas-cont .touch-control.left {
