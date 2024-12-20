@@ -364,12 +364,16 @@ function initStepLeftTouch() {
 }
 
 function showHideTouchControls() {
+    gamePaused = true;
+    document.querySelector('.touch-controls .pause-game').classList.add('paused');
     if(!document.querySelector('.touch-controls').classList.contains('shown') && !document.querySelector('.touch-controls').classList.contains('hidden')) {
         document.querySelector('.touch-controls').classList.add('shown');
     }else if(!document.querySelector('.touch-controls').classList.contains('shown')) {
         document.querySelector('.touch-controls').classList.add('shown');
         document.querySelector('.touch-controls').classList.remove('hidden');
     }else if(!document.querySelector('.touch-controls').classList.contains('hidden')) {
+        gamePaused = false;
+        document.querySelector('.touch-controls .pause-game').classList.remove('paused');
         document.querySelector('.touch-controls').classList.remove('shown');
         document.querySelector('.touch-controls').classList.add('hidden');
     }

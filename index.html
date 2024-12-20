@@ -18,37 +18,37 @@
         <div class="touch-controls">
             <div class="touch-controls-top">
                 <div class="running-controls"></div>
-            <div class="touch-control shoot" button-type="Alt" button-code="18" onclick="dispatchKeypress(event)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                    <rect x="10" y="12" width="20" height="6" fill="black" />
-                    <rect x="6" y="14" width="4" height="12" fill="black" />
-                    <rect x="28" y="14" width="4" height="12" fill="black" />
-                    <rect x="15" y="16" width="10" height="2" fill="black" />
-                    <rect x="19" y="10" width="2" height="6" fill="black" />
-                </svg>
-            </div>
-            <div class="touch-control run" button-type="Shift" button-code="16" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
-                    <rect x="10" y="12" width="20" height="6" fill="RED" />
-                    <rect x="6" y="14" width="4" height="12" fill="red" />
-                    <rect x="28" y="14" width="4" height="12" fill="red" />
-                    <rect x="15" y="16" width="10" height="2" fill="red" />
-                    <rect x="19" y="10" width="2" height="6" fill="red" />
-                </svg>
-            </div>
-            <div class="volumebar-cont" ontouchstart="checkVolumeBarEvent(event)" ontouchend="checkVolumeBarEvent(event)">
-                <div class="volumebar">
-                    <div class="volumebar-inner"></div>
+                <div class="touch-control shoot" button-type="Alt" button-code="18" onclick="dispatchKeypress(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                        <rect x="10" y="12" width="20" height="6" fill="black" />
+                        <rect x="6" y="14" width="4" height="12" fill="black" />
+                        <rect x="28" y="14" width="4" height="12" fill="black" />
+                        <rect x="15" y="16" width="10" height="2" fill="black" />
+                        <rect x="19" y="10" width="2" height="6" fill="black" />
+                    </svg>
                 </div>
+                <div class="touch-control run" button-type="Shift" button-code="16" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+                        <rect x="10" y="12" width="20" height="6" fill="RED" />
+                        <rect x="6" y="14" width="4" height="12" fill="red" />
+                        <rect x="28" y="14" width="4" height="12" fill="red" />
+                        <rect x="15" y="16" width="10" height="2" fill="red" />
+                        <rect x="19" y="10" width="2" height="6" fill="red" />
+                    </svg>
+                </div>
+                <div class="volumebar-cont" ontouchstart="checkVolumeBarEvent(event)" ontouchend="checkVolumeBarEvent(event)">
+                    <div class="volumebar">
+                        <div class="volumebar-inner"></div>
+                    </div>
+                </div>
+                <div class="mute-game" onclick="muteGame()"></div>
+                <div class="turn-fullscreen-on" onclick="turnOnFullScreen()"></div>
+                <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
+                <div class="pause-game" onclick="pauseGame()"></div>
+                </div>
+                <div class="show-hide-touch-controls" onclick="showHideTouchControls()"></div>
             </div>
-            <div class="mute-game" onclick="muteGame()"></div>
-            <div class="turn-fullscreen-on" onclick="turnOnFullScreen()"></div>
-            <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
-            <div class="pause-game" onclick="pauseGame()"></div>
-            </div>
-            <div class="show-hide-touch-controls" onclick="showHideTouchControls()"></div>
         </div>
-    </div>
     </div>
     <div class="controls">
         <p>left: arrow-left</p>

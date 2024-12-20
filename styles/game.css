@@ -23,7 +23,8 @@ body {
     overflow: hidden;
 }
 
-.canvas-cont .touch-control.left, .canvas-cont .touch-control.right {
+.canvas-cont .touch-control.left,
+.canvas-cont .touch-control.right {
     display: none;
 }
 
@@ -61,16 +62,14 @@ canvas {
     display: none;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
     width: 100%;
     margin: 30px auto;
     position: absolute;
     top: -21%;
     left: 0;
-    z-index: 10;
 }
 
-.touch-controls .touch-controls-top {
+.touch-controls-top {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
@@ -108,7 +107,7 @@ canvas {
 
     100% {
         top: -9%;
-    }    
+    }
 }
 
 @keyframes hide-touch-controls {
@@ -118,10 +117,11 @@ canvas {
 
     100% {
         top: -21%;
-    }    
+    }
 }
 
-.canvas-cont .touch-control.left, .canvas-cont .touch-control.right {
+.canvas-cont .touch-control.left,
+.canvas-cont .touch-control.right {
     width: 25%;
     height: 100%;
     position: absolute;
@@ -140,6 +140,22 @@ canvas {
 
 .canvas-cont .touch-control.left {
     left: 0;
+}
+
+.canvas-cont .touch-controls-top .shoot,
+.canvas-cont .touch-controls-top .run,
+.canvas-cont .touch-controls-top .volumebar,
+.canvas-cont .touch-controls-top .mute-game,
+.canvas-cont .touch-controls-top .turn-fullscreen-on,
+.canvas-cont .touch-controls-top .turn-fullscreen-off,
+.canvas-cont .touch-controls-top .pause-game {
+    width: calc(100%/6);
+    background-size: auto 100%;
+    align-items: center !important;
+}
+
+.canvas-cont .touch-controls svg {
+    width: 100% !important;
 }
 
 .canvas-cont .touch-control.right {
@@ -184,7 +200,8 @@ canvas {
     background-image: url('../graphics/controls/speaker-dashed.svg');
 }
 
-.turn-fullscreen-on, .turn-fullscreen-off {
+.turn-fullscreen-on,
+.turn-fullscreen-off {
     width: 40px;
     height: 40px;
     background-image: url('../graphics/controls/fullscreen-on.svg');
@@ -224,7 +241,8 @@ canvas {
         display: none;
     }
 
-    .canvas-cont .touch-control.left, .canvas-cont .touch-control.right {
+    .canvas-cont .touch-control.left,
+    .canvas-cont .touch-control.right {
         display: block;
     }
 }
