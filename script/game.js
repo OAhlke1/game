@@ -455,15 +455,16 @@ function resetEnemies() {
 
 function checkForScrolling(movingDirection = char.movingDirection) {
     if (canvas.offsetLeft - canCont.offsetLeft <= canCont.offsetWidth - canvas.offsetWidth && movingDirection === "right") {
-        canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
+        //char.totalStepAmount++;
+        //canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
         return;
-    } else {
-        if (Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) > 2 * canCont.offsetWidth / 3 && movingDirection === "right" && controller['right'].pressed) {
+    }else {
+        if ((canCont.offsetLeft + parseFloat(canvas.style.left) + char.x) >= 2 * canCont.offsetWidth / 3 && movingDirection === "right" && controller['right'].pressed) {
             char.totalStepAmount++;
-        } else if (Math.abs(canvas.offsetLeft - canCont.offsetLeft + char.x) < canCont.offsetWidth / 3 && movingDirection === "left" && controller['left'].pressed) {
+        } else if ((canCont.offsetLeft + parseFloat(canvas.style.left) + char.x) <= canCont.offsetWidth / 3 && movingDirection === "left" && controller['left'].pressed) {
             char.totalStepAmount--;
         }
-        canvas.style.left = `-${char.standardStepLength * char.totalStepAmount}px`;
+        canvas.style.left = `-${char.stepLength * char.totalStepAmount}px`;
     }
 }
 
