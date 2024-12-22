@@ -7,8 +7,8 @@ class MovingPlatform extends Platform {
 
     constructor(startingPointX, endingPointX, highestPoint, lowestPoint, y, imgPath, sideways) {
         super();
-        this.width = wallBrickWidth * 5;
-        this.height = wallBrickHeight;
+        this.width = widthUnit * 5;
+        this.height = heightUnit;
         this.startingPointX = startingPointX;
         this.endingPointX = endingPointX;
         this.highestPoint = highestPoint;
@@ -30,7 +30,7 @@ class MovingPlatform extends Platform {
         if (!gamePaused) {
             //char.movingDirection = "right";
             checkForScrolling("right");
-            this.x += wallBrickWidth / 10;
+            this.x += widthUnit / 10;
             if (this.x + this.width >= this.endingPointX) {
                 this.x = this.endingPointX - this.width;
                 this.moveLeft();
@@ -47,7 +47,7 @@ class MovingPlatform extends Platform {
         if (!gamePaused) {
             //char.movingDirection = "left";
             checkForScrolling("left");
-            this.x -= wallBrickWidth / 10;
+            this.x -= widthUnit / 10;
             if (this.x <= this.startingPointX) {
                 this.x = this.startingPointX;
                 this.moveRight();
@@ -65,7 +65,7 @@ class MovingPlatform extends Platform {
             if(char.onUpwardsMovingPlatform) {
                 char.startingYPos = this.y;
             }
-            this.y += wallBrickWidth / 10;
+            this.y += widthUnit / 10;
             if (this.y + this.height > this.lowestPoint) {
                 this.y = this.lowestPoint - this.height;
                 this.moveUp();
@@ -84,7 +84,7 @@ class MovingPlatform extends Platform {
                 char.onUpwardsMovingPlatform = true;
                 char.startingYPos = this.y;
             }
-            this.y -= wallBrickHeight / 10;
+            this.y -= heightUnit / 10;
             if (this.y <= this.highestPoint) {
                 this.y = this.highestPoint;
                 this.moveDown();

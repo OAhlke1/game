@@ -27,10 +27,10 @@ class Shooter extends Enemy {
         if (!gamePaused && this.targeting && this.isDangerous && !this.hasShot) {
             switch (this.lookingDirection) {
                 case "left":
-                    this.createCannonBall(this.x - wallBrickWidth, this.y + 5, this.lookingDirection);
+                    this.createCannonBall(this.x - widthUnit, this.y + 5, this.lookingDirection);
                     break;
                 case "right":
-                    this.createCannonBall(this.x + wallBrickWidth, this.y + 5, this.lookingDirection);
+                    this.createCannonBall(this.x + widthUnit, this.y + 5, this.lookingDirection);
                     break;
             }
             this.hasShot = true;

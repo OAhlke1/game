@@ -2,13 +2,17 @@ let canvas;
 let canvasWidth;
 let ctx;
 let char, wall;
-let wallBrickWidth;
+let widthUnit;
 let menubarBackground;
 let menuBar;
 let canvasBackground;
 let controller;
 let bgPlayer;
 let gameVolume = 0.5;
+let t = -1;
+let gamePaused = false;
+let gameMuted = false;
+let canCont = document.querySelector('.canvas-cont');
 let walls = [];
 let platforms = [];
 let standables = [];
@@ -22,48 +26,40 @@ let hitables = {
     flyables: []
 };
 let items = {
-    lifeIncreasing: []
+    lifeIncreasing: [],
+    specialAmmo: []
 };
 let audioPlayer = [];
-let t = -1;
-let gamePaused = false;
-let gameMuted = false;
-let canCont = document.querySelector('.canvas-cont');
 
 function initFunctions() {
     loadPlayer();
     createCanvas();
+    setScreenSize();
     createBackgrounds();
     createChar();
     /* if (window.innerWidth > 800) {
         addKeypressMovingCommands();
     } else { addTouchMovingCommands(); } */
     addKeypressMovingCommands();
-    createWallsLeftRight();
     createBottomPlatforms();
     createPlatforms();
     createTraps();
     createEnemies();
     createItems();
     createMenuBar();
-    //setScreenSize();
-    //checkForScrolling();
 }
 
 function setScreenSize() {
-    if(localStorage.canContScales) {
+    if(!localStorage.canContScales) {
         let scales = JSON.parse(localStorage.canContScales);
         canCont.offsetWidth = scales.canContScales.width;
         canCont.offsetHeight = scales.canContScales.height;
         canvas.style.width = 2*canCont.offsetWidth;
         canvas.style.height = canCont.offsetHeight;
+    }else {
+        canvas.setAttribute("width", 2*canCont.offsetWidth);
+        canvas.setAttribute("height", canCont.offsetHeight);
     }
-}
-
-function relativeToCanCont() {
-    setTimeout(() => {
-        relativeToCanCont();
-    }, 100);
 }
 
 function loadPlayer() {
@@ -77,102 +73,72 @@ function loadPlayer() {
 
 function createCanvas() {
     canvas = document.querySelector('canvas');
-    /* canvas.style.width = `${window.innerHeight*16/9}px`;
-    canvas.style.height = `${window.innerHeight}px`; */
     ctx = canvas.getContext('2d');
-    setCanvasSize();
-    wallBrickWidth = window.innerWidth/192 < 10 ? 10 : window.innerWidth/192;
-    wallBrickHeight = wallBrickWidth;
+    widthUnit = canCont.offsetWidth/96;
+    heightUnit = canCont.offsetHeight/54;
 }
 
 function createBackgrounds() {
-    backgrounds.push(new Background(0, 0, canvas.width, canvas.height, 'graphics/background/rotating-galaxy.webp'));
+    backgrounds.push(new Background(0, 0, canvas.offsetWidth, canvas.offsetHeight, 'graphics/background/rotating-galaxy.webp'));
     //backgrounds.push(canvasBackground = new Background('graphics/background/rotating-galaxy.webp'));
 }
 
 function createChar() {
-    char = new Char(2 * wallBrickWidth, 2 * wallBrickHeight, wallBrickWidth, canvas.height - 1.5 * wallBrickHeight, 'graphics/main-char/run/run-right-0.png', wallBrickWidth / 3);
+    char = new Char(2*widthUnit, 2*heightUnit, widthUnit, canvas.offsetHeight-2*heightUnit, 'graphics/main-char/run/run-right-0.png', widthUnit/3);
 }
 
 function createAmmo(x, y, width, height, imagePath) {
     charObjects.ammo.push(new Ammo(x, y, width, height, imagePath));
 }
 
-function createWallsLeftRight() {
-    for (let i = 0; i < 100; i++) {
-        for (let k = 0; k < 2; k++) {
-            if (k === 1) {
-                walls.push(new Wall(k * canvas.width - canvas.height / 50, i * canvas.height / 50, wallBrickWidth, wallBrickHeight, 'graphics/walls/grey-wallstone.png'));
-            } else {
-                if (i < 6) { continue; }
-                walls.push(new Wall(k * canvas.width, i * canvas.height / 50, canvas.height / 50, canvas.height / 50, 'graphics/walls/grey-wallstone.png'));
-            }
-        }
-    }
-}
-
 function createBottomPlatforms() {
     let createdMovingPlatformAtThisSpot = false;
-    for (let i = 0; i < canvas.width / wallBrickWidth; i += 5) {
+    for (let i = 0; i < canvas.offsetWidth/widthUnit; i += 5) {
         if (i != 25 && i != 30 && i != 35) {
-            platforms.push(new Platform(i * wallBrickWidth, canvas.height - wallBrickHeight, 5 * wallBrickWidth, wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
+            platforms.push(new Platform(i*widthUnit, canvas.offsetHeight-heightUnit, 5*widthUnit, heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
         } else if (!createdMovingPlatformAtThisSpot) {
             createdMovingPlatformAtThisSpot = true;
-            platforms.push(new MovingPlatform(i * wallBrickWidth, (i + 15) * wallBrickWidth, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, canvas.height - wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+            platforms.push(new MovingPlatform(i*widthUnit, (i+15)*widthUnit, canvas.offsetHeight-heightUnit, canvas.offsetHeight-heightUnit, canvas.offsetHeight-heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
         }
     }
 }
 
 function createMenuBar() {
-    menuBar = new Menubar(0.75 * canvas.width, canvas.height - walls[0].height, 0.25 * canvas.width, walls[0].height, `${2400 / 1920}vw SuperLegendBoy`, 'red', 0);
+    menuBar = new Menubar(0.75*canvas.offsetWidth, canvas.offsetHeight-heightUnit, 0.25*canvas.offsetWidth, heightUnit, `${2400/1920}vw SuperLegendBoy`, 'red', 0);
     menubarBackground = new MenubarBackground(menuBar.x, menuBar.y, menuBar.width, menuBar.height);
 }
 
 function createTraps() {
-    hitables.traps.push(new Traps(10 * wallBrickWidth, canvas.height - 5.5 * wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/round.png', 'saw', 10));
-    hitables.traps.push(new Traps(50 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, canvas.width / 40, canvas.width / 40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw', 20));
+    hitables.traps.push(new Traps(10*widthUnit, canvas.offsetHeight-5.5*heightUnit, 4.8*widthUnit, 4.8*heightUnit, '../graphics/traps/chainsaws/round.png', 'saw', 10));
+    hitables.traps.push(new Traps(50*widthUnit, canvas.offsetHeight-3*heightUnit, canvas.offsetWidth/40, canvas.offsetWidth/40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw', 20));
 }
 
 function createEnemies() {
-    hitables.enemies.push(new GreenEnemey(25 * wallBrickWidth, canvas.height - 4 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20 * wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(20 * wallBrickWidth, canvas.height - 3 * wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20 * wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(10 * wallBrickWidth, wallBrickWidth, 2.5 * wallBrickWidth, 2.5 * wallBrickHeight, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20 * wallBrickWidth, true, 5, 12));
-    hitables.enemies.push(new Shooter(canvas.width - 23 * wallBrickWidth, canvas.height - 3 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 10 * wallBrickWidth, true, 5, 7));
-    hitables.enemies.push(new Shooter(canvas.width / 2 + 7 * wallBrickWidth, canvas.height - 22 * wallBrickHeight, 2 * wallBrickWidth, 2 * wallBrickHeight, 'shooter', 15, true, 'left', 100, 2 * wallBrickWidth, true, 5, 7));
+    hitables.enemies.push(new GreenEnemey(25*widthUnit, canvas.offsetHeight-4*widthUnit, 2.5*widthUnit, 2.5*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(20*widthUnit, canvas.offsetHeight-3*widthUnit, 2.5*widthUnit, 2.5*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemey(10*widthUnit, widthUnit, 2.5*widthUnit, 2.5*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20*widthUnit, true, 5, 12));
+    hitables.enemies.push(new Shooter(canvas.offsetWidth-23*widthUnit, canvas.offsetHeight-3*heightUnit, 2*widthUnit, 2*heightUnit, 'shooter', 15, true, 'left', 100, 10*widthUnit, true, 5, 7));
+    hitables.enemies.push(new Shooter(canvas.offsetWidth/2+7*widthUnit, canvas.offsetHeight-22*heightUnit, 2*widthUnit, 2*heightUnit, 'shooter', 15, true, 'left', 100, 2*widthUnit, true, 5, 7));
 }
 
 function createItems() {
-    items.lifeIncreasing.push(new LifeIncreaser(5 * wallBrickWidth, canvas.height - 2 * wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random() * canvas.width - wallBrickWidth, Math.random() * canvas.height - wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random() * canvas.width - wallBrickWidth, Math.random() * canvas.height - wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random() * canvas.width - wallBrickWidth, Math.random() * canvas.height - wallBrickHeight, wallBrickWidth, wallBrickWidth * 800 / 646, 'graphics/items/heart.png', 'life-increaser', 30));
-    /* items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.width-wallBrickWidth, Math.random()*canvas.height-wallBrickHeight, wallBrickWidth, wallBrickWidth*800/646, 'graphics/items/heart.png', 'life-increaser', 30)); */
+    items.lifeIncreasing.push(new LifeIncreaser(5*widthUnit, canvas.offsetHeight-2*heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.offsetWidth-widthUnit, Math.random()*canvas.offsetHeight-heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.offsetWidth-widthUnit, Math.random()*canvas.offsetHeight-heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.offsetWidth-widthUnit, Math.random()*canvas.offsetHeight-heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
+    items.specialAmmo.push(new SpecialAmmoKit(10*widthUnit, 50*heightUnit, 2*widthUnit, 2.4*heightUnit, 'graphics/items/special-ammo/rotation-0.png'));
 }
 
 function createPlatforms() {
-    createNonMovingPlatforms();
-    createMovingPlatforms();
-}
-
-function createNonMovingPlatforms() {
-    platforms.push(new Platform(canvas.width / 2, canvas.height - 20 * wallBrickHeight, 4.5 * wallBrickWidth, 1 * wallBrickHeight, 'graphics/platforms/green-5.png'));
-    platforms.push(new Platform(canvas.width / 5, canvas.height - 10 * wallBrickHeight, 4.5 * wallBrickWidth, 1 * wallBrickHeight, 'graphics/platforms/green-5.png'));
-}
-
-function createMovingPlatforms() {
-    platforms.push(new MovingPlatform(20 * wallBrickWidth, 30 * wallBrickWidth, 0, 0, 10 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(50 * wallBrickWidth, 60 * wallBrickWidth, 0, 0, 10 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(5 * wallBrickWidth, 20 * wallBrickWidth, 0, 0, canvas.height - 5 * wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(20 * wallBrickWidth, 50 * wallBrickWidth, 0, 0, canvas.height - 0.30 * canvas.height, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(canvas.width / 2, 3 * canvas.width / 4, 0, 0, 25 + wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 + wallBrickHeight, 60 + wallBrickHeight, 6 + wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
-    platforms.push(new MovingPlatform(wallBrickWidth, 0, 6 + wallBrickHeight, 30 + wallBrickHeight, 6 + wallBrickHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
+    platforms.push(new Platform(canvas.offsetWidth/2, 20*heightUnit, 4.5*widthUnit, heightUnit, 'graphics/platforms/green-5.png'));
+    platforms.push(new Platform(canvas.offsetWidth/5, 10*heightUnit, 4.5*widthUnit, heightUnit, 'graphics/platforms/green-5.png'));
+    platforms.push(new MovingPlatform(20*widthUnit, 30*widthUnit, 0, 0, 10*heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(50*widthUnit, 60*widthUnit, 0, 0, 10*heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(5*widthUnit, 20*widthUnit, 0, 0, canvas.offsetHeight-5*heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(20*widthUnit, 50*widthUnit, 0, 0, canvas.offsetHeight-0.30*canvas.offsetHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(canvas.offsetWidth/2, 3*canvas.offsetWidth/4, 0, 0, 25+heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
+    platforms.push(new MovingPlatform(widthUnit, 0, 6+heightUnit, 60+heightUnit, 6+heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
+    platforms.push(new MovingPlatform(widthUnit, 0, 6+heightUnit, 30+heightUnit, 6+heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
 }
 
 function clearCanvas() {
@@ -186,8 +152,8 @@ function drawElements() {
     drawHitables();
     drawItems();
     drawChar();
-    drawCharObjects();
     drawMenuBar();
+    drawCharObjects();
 }
 
 function drawBackgrounds() {
@@ -218,7 +184,7 @@ function drawHitables() {
     hitables.traps.forEach((elem) => {
         if (elem || elem.isDangerous) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
-    hitables.enemies.forEach((elem, index) => {
+    hitables.enemies.forEach((elem) => {
         if (elem && elem.isAlive) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
     if (hitables.flyables.length) {
@@ -230,6 +196,11 @@ function drawHitables() {
 
 function drawItems() {
     items.lifeIncreasing.forEach((elem) => {
+        if (!elem.collected) {
+            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
+        }
+    })
+    items.specialAmmo.forEach((elem) => {
         if (!elem.collected) {
             ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
         }
@@ -275,12 +246,12 @@ function addKeypressMovingCommands() {
     document.querySelector('body').addEventListener('keydown', (event) => {
         char.sleeps = false;
         t = 0;
-        if (event.key === "ArrowLeft" || event.key === "a") {
+        if (event.key === "ArrowLeft") {
             if (!controller['left'].pressed) {
                 controller['left'].pressed = true;
                 controller['left'].func();
             }
-        } else if (event.key === "ArrowRight" || event.key === "d") {
+        } else if (event.key === "ArrowRight") {
             if (!controller['right'].pressed) {
                 controller["right"].pressed = true;
                 controller['right'].func();
@@ -291,7 +262,7 @@ function addKeypressMovingCommands() {
         } else if (event.key === "Shift") {
             controller['run'].pressed = true;
             controller['run'].func();
-        } else if (event.key === "p" || event.key === "P") {
+        } else if (event.key.toLowerCase() === "p") {
             if (!gamePaused) {
                 gamePaused = true;
             } else {
@@ -300,7 +271,9 @@ function addKeypressMovingCommands() {
                 //drawElements();
             }
         } else if (event.key.toLowerCase() === "w") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005*wallBrickWidth + canvas.height, wallBrickWidth, wallBrickWidth, '/graphics/enemies/shooter/attack/cannonball.png');
+            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*widthUnit+canvas.offsetHeight, widthUnit*10, heightUnit*10, '/graphics/enemies/shooter/attack/cannonball.png');
+        } else if (event.key.toLowerCase() === "m") {
+            gameSoundOnOffToggle();
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
@@ -394,7 +367,7 @@ function initStepRightTouch() {
 
 function speedUpChar() {
     if (char.stepLength === char.basicStepLength) {
-        char.stepLength = char.basicStepLength * 1.5;
+        char.stepLength = char.basicStepLength*1.5;
     }
 }
 
@@ -416,14 +389,14 @@ function restyleRunningTouchButton() {
 
 function touchShooting() {
     if (controller['shoot'].pressed) {
-        createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005 * canvas.height, wallBrickWidth, wallBrickWidth, 'graphics/enemies/shooter/attack/cannonball.png');
+        createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*canvas.offsetHeight, widthUnit, widthUnit, 'graphics/enemies/shooter/attack/cannonball.png');
         document.querySelector('.touch-control.shoot').classList.remove('pressed');
         controller['shoot'].pressed = false;
     }
 }
 
 function slowDownChar() {
-    if (1.5 * char.basicStepLength === char.stepLength) {
+    if (1.5*char.basicStepLength === char.stepLength) {
         char.stepLength = char.basicStepLength;
     }
 }
@@ -454,33 +427,49 @@ function resetEnemies() {
 }
 
 function checkForScrolling(movingDirection = char.movingDirection) {
-    if (canvas.offsetLeft - canCont.offsetLeft <= canCont.offsetWidth - canvas.offsetWidth && movingDirection === "right") {
+    /* if (canvas.offsetLeft-canCont.offsetLeft <= canCont.offsetWidth-canvas.offsetWidth && movingDirection === "right") {
         //char.totalStepAmount++;
-        //canvas.style.left = `-${canvas.offsetWidth - canCont.offsetWidth}px`;
+        //canvas.style.left = `-${canvas.offsetWidth-canCont.offsetWidth}px`;
         return;
     }else {
-        if ((canCont.offsetLeft + parseFloat(canvas.style.left) + char.x) >= 2 * canCont.offsetWidth / 3 && movingDirection === "right" && controller['right'].pressed) {
+        if ((canCont.offsetLeft+parseFloat(canvas.style.left)+char.x) >= 2*canCont.offsetWidth/3 && movingDirection === "right" && controller['right'].pressed) {
             char.totalStepAmount++;
-        } else if ((canCont.offsetLeft + parseFloat(canvas.style.left) + char.x) <= canCont.offsetWidth / 3 && movingDirection === "left" && controller['left'].pressed) {
+        } else if ((canCont.offsetLeft+parseFloat(canvas.style.left)+char.x) <= canCont.offsetWidth/3 && movingDirection === "left" && controller['left'].pressed) {
             char.totalStepAmount--;
         }
-        canvas.style.left = `-${char.stepLength * char.totalStepAmount}px`;
+        console.log(char.stepLength);
+        canvas.style.left = `-${char.stepLength*char.totalStepAmount}px`;
+    } */
+   if(parseFloat(canvas.style.left) === 0 && char.x < 2*canCont.offsetWidth/3) {
+        return;
+   } else {
+    if(movingDirection === "right" && canCont.offsetLeft+parseFloat(canvas.style.left)+char.x >= 2*canCont.offsetWidth/3) {
+        if(canvas.offsetLeft+canCont.offsetWidth <= 0) {
+            return;
+        }
+        char.scrollingStepAmount++;
+    }else if(movingDirection === "left" && canCont.offsetLeft+parseFloat(canvas.style.left)+char.x <= canCont.offsetWidth/3) {
+        if(parseFloat(canvas.style.left) >= 0) {
+            return;
+        }
+        char.scrollingStepAmount--;
     }
+    canvas.style.left = `-${char.standardStepLength*char.scrollingStepAmount}px`;
+   }
 }
 
 function setMenubarPosition() {
-    menubar.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
-    menubarBackground.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+    menubar.x = canvas.offsetLeft-canCont.offsetLeft+canCont.offsetWidth;
+    menubarBackground.x = canvas.offsetLeft-canCont.offsetLeft+canCont.offsetWidth;
 }
 
 function setCanvasSize() {
-    canvas.style.width = `${2 * canCont.offsetWidth}px`;
+    canvas.style.width = `${2*canCont.offsetWidth}px`;
     canvas.style.height = `${canCont.offsetHeight}px`;
 }
 
 function checkVolumeBarEvent(event) {
     if(event.type === "mousedown" || event.type === "touchstart") {
-        console.log('hi');
         controller['volume'].pressed = true;
         document.querySelector('.volumebar-cont').addEventListener('mousemove', setWholeVolume);
     }else if(event.type === "mouseup" || event.type === "touchend") {
@@ -498,13 +487,13 @@ let setWholeVolume = function setWholeVolumeFunc(event) {
     let volumeBarInner = document.querySelectorAll('.volumebar .volumebar-inner')[index];
     let volumeBarWidth = document.querySelectorAll('.volumebar')[index].offsetWidth;
     let x = event.clientX;
-    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
+    gameVolume = ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) >= 0 ? ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) : 0;
     gameVolume = gameVolume > 1 ? 1 : gameVolume;
-    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
+    volumeBarInner.style.width = `${100*(x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth}%`;
     if(!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem)=>{ elem.volume = gameVolume; }); }
 }
 
-function muteGame() {
+function gameSoundOnOffToggle() {
     if(!document.querySelector('.mute-game').classList.contains('muted')) {
         document.querySelector('.mute-game').classList.add('muted');
         audioPlayer.forEach((elem)=>{ elem.volume = 0; });
@@ -535,8 +524,8 @@ function turnOffFullScreen() {
     document.querySelector('.turn-fullscreen-off').classList.add('disNone');
     document.querySelector('#canCont-width').value = canCont.offsetWidth;
     document.querySelector('#canvas-width').value = canvas.offsetWidth;
-    document.querySelector('#wallbrickwidth').value = wallBrickWidth;
-    document.querySelector('#wallbrickheight').value = wallBrickHeight;
+    document.querySelector('#wallbrickwidth').value = widthUnit;
+    document.querySelector('#wallbrickheight').value = heightUnit;
 }
 
 function pauseGame() {

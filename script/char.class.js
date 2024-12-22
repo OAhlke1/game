@@ -22,38 +22,38 @@ class Char {
     bulletAmount;
     stepLength;
     standardStepLength;
+    scrollingStepAmount;
     maxHealthAmount;
-    hittingAnimationIndex = 0;
-    hittingAnimationStep = 0;
-    healthAmount = 200;
-    timeNextHit = 0;
-    stepAmount = 0;
-    totalStepAmount = 0;
-    enemiesKilled = 0;
-    movingDirection = 'right';
-    figImage = new Image();
-    isAlive = true;
-    sleeps = false;
-    gotHit = false;
-    isImmune = false;
-    landedOnPlatform = false;
-    targeted = false;
-    onUpwardsMovingPlatform = false;
+    hittingAnimationIndex;
+    hittingAnimationStep;
+    healthAmount;
+    timeNextHit;
+    stepAmount;
+    totalStepAmount;
+    enemiesKilled;
+    movingDirection;
+    figImage;
+    isAlive;
+    sleeps;
+    gotHit;
+    isImmune;
+    landedOnPlatform;
+    targeted;
+    onUpwardsMovingPlatform;
+    specialAmmoParts;
 
-
-    constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * wallBrickHeight) {
+    constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * heightUnit) {
         this.width = width;
         this.height = 27 * width / 23;
         this.x = x;
-        this.y = canvas.height - wallBrickHeight - this.height;
+        this.y = canvas.offsetHeight - heightUnit - this.height;
         this.src = src;
-        this.figImage.src = this.src;
         this.stepLength = stepLength;
         this.standardStepLength = stepLength;
         this.basicStepLength = stepLength;
         this.notAtWall = true;
         this.jumps = false;
-        this.jumpFallStepHeight = wallBrickHeight / 3;
+        this.jumpFallStepHeight = heightUnit / 3;
         this.maxJumpHeight = maxJumpHeight;
         this.sleeps = false;
         this.headJumpAmount = 50;
@@ -61,6 +61,25 @@ class Char {
         this.bulletAmount = 10;
         this.maxHealthAmount = 200;
         this.standingPlatformIndex = 0;
+        this.scrollingStepAmount = 0;
+        this.hittingAnimationIndex = 0;
+        this.hittingAnimationStep = 0;
+        this.healthAmount = 200;
+        this.timeNextHit = 0;
+        this.stepAmount = 0;
+        this.totalStepAmount = 0;
+        this.enemiesKilled = 0;
+        this.movingDirection = 'right';
+        this.figImage = new Image();
+        this.figImage.src = this.src;
+        this.isAlive = true;
+        this.sleeps = false;
+        this.gotHit = false;
+        this.isImmune = false;
+        this.landedOnPlatform = false;
+        this.targeted = false;
+        this.onUpwardsMovingPlatform = false;
+        this.specialAmmoParts = 0;
     }
 
     moveLeft(key) {
@@ -71,8 +90,8 @@ class Char {
                 }
                 this.setMovingState(key);
                 checkForScrolling();
-                if (this.x <= this.stepLength + wallBrickWidth) {
-                    this.x = wallBrickWidth + 1;
+                if (this.x <= this.stepLength + widthUnit) {
+                    this.x = widthUnit + 1;
                     controller['left'].pressed = false;
                     return;
                 } else { this.x -= this.stepLength; }
@@ -89,8 +108,8 @@ class Char {
                 }
                 this.setMovingState(key);
                 checkForScrolling();
-                if (this.x <= this.stepLength + wallBrickWidth) {
-                    this.x = wallBrickWidth + 1;
+                if (this.x <= this.stepLength + widthUnit) {
+                    this.x = widthUnit + 1;
                     controller['left'].pressed = false;
                     return;
                 } else { this.x -= this.stepLength; }
@@ -107,13 +126,13 @@ class Char {
                 }
                 this.setMovingState(key);
                 checkForScrolling();
-                if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
-                    this.x = canvas.width - this.width - wallBrickWidth;
+                if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
+                    this.x = canvas.offsetWidth - this.width - widthUnit;
                     controller['right'].pressed = false;
                     return;
                 } else {
-                    if (this.x + this.width - canvas.width >= 0) {
-                        this.x += (canvas.width - this.x - this.width);
+                    if (this.x + this.width - canvas.offsetWidth >= 0) {
+                        this.x += (canvas.offsetWidth - this.x - this.width);
                     } else { this.x += this.stepLength; }
                 }
             }
@@ -129,13 +148,13 @@ class Char {
                 }
                 this.setMovingState(key);
                 checkForScrolling();
-                if (canvas.width - this.x - this.width - wallBrickWidth <= this.stepLength) {
-                    this.x = canvas.width - this.width - wallBrickWidth;
+                if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
+                    this.x = canvas.offsetWidth - this.width - widthUnit;
                     controller['right'].pressed = false;
                     return;
                 } else {
-                    if (this.x + this.width - canvas.width >= 0) {
-                        this.x += (canvas.width - this.x - this.width);
+                    if (this.x + this.width - canvas.offsetWidth >= 0) {
+                        this.x += (canvas.offsetWidth - this.x - this.width);
                     } else { this.x += this.stepLength; }
                 }
             }
@@ -179,8 +198,8 @@ class Char {
             if (!this.startingYPos) { this.startingYPos = this.y; }
             i--;
             this.y -= this.jumpFallStepHeight;
-            if (i <= 0 || this.y <= wallBrickHeight) {
-                this.maxJumpHeight = 5*wallBrickWidth;
+            if (i <= 0 || this.y <= heightUnit) {
+                this.maxJumpHeight = 5*widthUnit;
                 this.checkIfFalling(i);
                 return;
             }
@@ -212,7 +231,7 @@ class Char {
                 }
                 this.stopFalling();
                 return;
-            } else if (this.y >= canvas.height) {
+            } else if (this.y >= canvas.offsetHeight) {
                 this.jumps = false;
                 this.healthAmount = 0;
                 gamePaused = true;

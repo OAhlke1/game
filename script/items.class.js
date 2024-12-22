@@ -20,6 +20,9 @@ class Item {
     checkCharPos() {
         if(!this.collected) {
             if(char.x + char.width >= this.x && this.x + this.width >= char.x && char.y + char.height >= this.y && this.y + this.height >= char.y) {
+                if(this.itemType === "ammo-kit") {
+                    console.log(char.x + char.width >= this.x && this.x + this.width >= char.x && char.y + char.height >= this.y && this.y + this.height >= char.y);
+                }
                 this.collectItem();
             }
             requestAnimationFrame(()=>{this.checkCharPos()});
@@ -31,6 +34,9 @@ class Item {
             switch(this.itemType) {
                 case "life-increaser":
                     this.collectHeart();
+                    break;
+                case "ammo-kit":
+                    this.collectSpecialAmmoKit();
                     break;
             }
         }
@@ -45,5 +51,10 @@ class Item {
                 char.healthAmount = char.maxHealthAmount;
             }
         }
+    }
+
+    collectSpecialAmmoKit() {
+        this.collected = true;
+        char.specialAmmoParts++;
     }
 }

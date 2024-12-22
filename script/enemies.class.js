@@ -28,7 +28,7 @@ class Enemy {
         this.x = x;
         this.y = y;
         this.minX = x;
-        this.maxX = canvas.width-wallBrickWidth;
+        this.maxX = canvas.offsetWidth-widthUnit;
         this.width = width;
         this.height = height;
         this.image = new Image();
@@ -148,7 +148,7 @@ class Enemy {
 
     animateWalking() {
         if(this.walks && this.isDangerous) {
-            this.x = this.lookingDirection === "right" ? this.x += wallBrickWidth/5 : this.x -= wallBrickWidth/5;
+            this.x = this.lookingDirection === "right" ? this.x += widthUnit/5 : this.x -= widthUnit/5;
             this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
             this.walkingIndex++;
             if(this.walkingIndex === this.attackingImagesAmount) { this.walkingIndex = 0; }

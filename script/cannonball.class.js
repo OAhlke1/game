@@ -8,8 +8,8 @@ class Cannonball extends Enemy {
         super();
         this.x = x;
         this.y = y;
-        this.width = wallBrickWidth;
-        this.height = wallBrickWidth;
+        this.width = widthUnit;
+        this.height = widthUnit;
         this.flyingDirection = flyingDirection;
         this.image = new Image();
         this.image.src = 'graphics/enemies/shooter/attack/cannonball.png';
@@ -27,7 +27,7 @@ class Cannonball extends Enemy {
                         this.x -= 5;
                         break;
                     case "right":
-                        if(this.x + this.width >= canvas.width) { return; }
+                        if(this.x + this.width >= canvas.offsetWidth) { return; }
                         this.x += 5;
                         break;
                 }
@@ -48,6 +48,6 @@ class Cannonball extends Enemy {
     }
     
     checkIfCannonballLeftCanvas () {
-        if(this.x + this.width <= 0 || this.x > canvas.width+wallBrickWidth) { return true; }
+        if(this.x + this.width <= 0 || this.x > canvas.offsetWidth+widthUnit) { return true; }
     }
 }

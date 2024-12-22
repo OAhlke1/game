@@ -11,7 +11,7 @@
 
 <body onload="initFunctions()">
     <div class="canvas-cont">
-        <canvas width="1600" height="450"></canvas>
+        <canvas width="1600" height="450" style="left: 0px;"></canvas>
         <div class="touch-control left" button-type="ArrowLeft" button-code="37" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
         <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypress(event)" onmouseup="dispatchKeypressStop(event)"></div>
         <div class="touch-control right" button-type="ArrowRight" button-code="39" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
@@ -53,7 +53,7 @@
     <div class="controls">
         <p>left: arrow-left</p>
         <p>right: arrow right</p>
-        <p>shoot: ALT</p>
+        <p>shoot: W</p>
         <p>jump: SPACE</p>
         <p>run: SHIFT</p>
         <p>pause: p</p>
@@ -68,20 +68,20 @@
     <!-- <audio src="" class="gaming-sound" volume="50"></audio> -->
 </body>
 <script src="script/char.class.js"></script>
-<script src="script/ammo.class.js"></script>
+    <script src="script/ammo.class.js"></script>
 <script src="script/wall.class.js"></script>
 <script src="script/menubar.class.js"></script>
-<script src="script/menubar-background.class.js"></script>
+    <script src="script/menubar-background.class.js"></script>
 <script src="script/platforms.class.js"></script>
-<script src="script/moving-platform.class.js"></script>
+    <script src="script/moving-platform.class.js"></script>
 <script src="script/enemies.class.js"></script>
-<script src="script/shooter.class.js"></script>
-<script src="script/cannonball.class.js"></script>
-<script src="script/green.class.js"></script>
+    <script src="script/shooter.class.js"></script>
+    <script src="script/cannonball.class.js"></script>
+    <script src="script/green.class.js"></script>
 <script src="script/background.class.js"></script>
 <script src="script/traps.class.js"></script>
 <script src="script/items.class.js"></script>
-<script src="script/life-increaser.class.js"></script>
+    <script src="script/special-ammo-kit.class.js"></script>
+    <script src="script/life-increaser.class.js"></script>
 <script src="script/game.js"></script>
-
 </html>
