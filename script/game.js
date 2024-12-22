@@ -42,7 +42,7 @@ function initFunctions() {
     createTraps();
     createEnemies();
     createItems();
-    createMenuBar();
+    //createMenuBar();
 }
 
 function setScreenSize() {
@@ -50,10 +50,10 @@ function setScreenSize() {
         let scales = JSON.parse(localStorage.canContScales);
         canCont.offsetWidth = scales.canContScales.width;
         canCont.offsetHeight = scales.canContScales.height;
-        canvas.style.width = 2 * canCont.offsetWidth;
+        canvas.style.width = 2*canCont.offsetWidth;
         canvas.style.height = canCont.offsetHeight;
     } else {
-        canvas.setAttribute("width", 2 * canCont.offsetWidth);
+        canvas.setAttribute("width", 2*canCont.offsetWidth);
         canvas.setAttribute("height", canCont.offsetHeight);
     }
 }
@@ -70,8 +70,8 @@ function loadPlayer() {
 function createCanvas() {
     canvas = document.querySelector('canvas');
     ctx = canvas.getContext('2d');
-    widthUnit = canCont.offsetWidth / 48;
-    heightUnit = canCont.offsetHeight / 27;
+    widthUnit = canCont.offsetWidth/48;
+    heightUnit = canCont.offsetHeight/27;
 }
 
 function createBackgrounds() {
@@ -80,7 +80,7 @@ function createBackgrounds() {
 }
 
 function createChar() {
-    char = new Char(widthUnit, heightUnit, widthUnit, 25 * heightUnit, 'graphics/main-char/run/run-right-0.png', widthUnit / 6, 4 * heightUnit);
+    char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, 'graphics/main-char/run/run-right-0.png', widthUnit/6, 4*heightUnit);
 }
 
 function createAmmo(x, y, width, height, imagePath) {
@@ -88,50 +88,59 @@ function createAmmo(x, y, width, height, imagePath) {
 }
 
 function createPlatforms() {
-    platforms.push(new Platform(0, 26 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
-    platforms.push(new Platform(5 * widthUnit, 26 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
-    platforms.push(new Platform(10 * widthUnit, 26 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
-    platforms.push(new Platform(21 * widthUnit, 26 * heightUnit, 130 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-long.png'));
-    platforms.push(new Platform(154 * widthUnit, 26 * heightUnit, 2 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
-    platforms.push(new Platform(158 * widthUnit, 26 * heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
-    platforms.push(new Platform(162 * widthUnit, 26 * heightUnit, 3 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
-    platforms.push(new Platform(168 * widthUnit, 26 * heightUnit, 4 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
-    platforms.push(new Platform(5 * widthUnit, 26 * heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
-    platforms.push(new Platform(10 * widthUnit, 20 * heightUnit, 2 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
-    platforms.push(new MovingPlatform(2 * widthUnit, heightUnit, 6 * widthUnit, 10 * widthUnit, 24 * heightUnit, 23 * heightUnit, 23 * heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
-    platforms.push(new MovingPlatform(3 * widthUnit, heightUnit, 11 * widthUnit, 19 * widthUnit, 17 * heightUnit, 17 * heightUnit, 17 * heightUnit, 'graphics/walls/ground/ground-tile-length-3.png', true));
-    platforms.push(new Platform(20 * widthUnit, 20 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/platforms/non-moving-length-5.png'));
-    platforms.push(new MovingPlatform(4 * widthUnit, heightUnit, 14 * widthUnit, 14 * widthUnit, 9 * heightUnit, 15 * heightUnit, 15 * heightUnit, 'graphics/walls/ground/ground-tile-length-4.png', false));
-    platforms.push(new Platform(5 * widthUnit, 11 * heightUnit, 4 * widthUnit, 0.5 * heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
-    platforms.push(new MovingPlatform(3 * widthUnit, 0.5 * heightUnit, widthUnit, widthUnit, 5 * heightUnit, 15 * heightUnit, 5 * heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
+    platforms.push(new Platform(0, 26*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(5*widthUnit, 26*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(10*widthUnit, 26*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(21*widthUnit, 26*heightUnit, 130*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-long.png'));
+    platforms.push(new Platform(154*widthUnit, 26*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
+    platforms.push(new Platform(158*widthUnit, 26*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
+    platforms.push(new Platform(162*widthUnit, 26*heightUnit, 3*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
+    platforms.push(new Platform(168*widthUnit, 26*heightUnit, 4*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
+    platforms.push(new Platform(5*widthUnit, 26*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
+    platforms.push(new Platform(10*widthUnit, 20*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
+    platforms.push(new MovingPlatform(2*widthUnit, heightUnit, 6*widthUnit, 10*widthUnit, 24*heightUnit, 23*heightUnit, 23*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
+    platforms.push(new MovingPlatform(3*widthUnit, heightUnit, 11*widthUnit, 19*widthUnit, 17*heightUnit, 17*heightUnit, 17*heightUnit, 'graphics/walls/ground/ground-tile-length-3.png', true));
+    platforms.push(new Platform(20*widthUnit, 20*heightUnit, 5*widthUnit, heightUnit, 'graphics/platforms/non-moving-length-5.png'));
+    platforms.push(new MovingPlatform(4*widthUnit, heightUnit, 14*widthUnit, 14*widthUnit, 9*heightUnit, 15*heightUnit, 15*heightUnit, 'graphics/walls/ground/ground-tile-length-4.png', false));
+    platforms.push(new Platform(5*widthUnit, 11*heightUnit, 4*widthUnit, 0.5*heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
+    platforms.push(new MovingPlatform(3*widthUnit, 0.5*heightUnit, widthUnit, widthUnit, 5*heightUnit, 15*heightUnit, 5*heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
+    platforms.push(new Platform(40*widthUnit, 23*heightUnit, 3*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
+    platforms.push(new MovingPlatform(2*widthUnit, 0.25*heightUnit, 35.5*widthUnit, 42*widthUnit, 20*heightUnit, 20*heightUnit, 20*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
+    platforms.push(new MovingPlatform(2*widthUnit, 0.25*heightUnit, 41.5*widthUnit, 48*widthUnit, 20*heightUnit, 20*heightUnit, 20*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
+    platforms.push(new Platform(41*widthUnit, 17*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
+    platforms.push(new Platform(39*widthUnit, 13*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
 }
 
 function createTraps() {
-    hitables.traps.push(new Trap(5 * widthUnit, 25 * heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
-    hitables.traps.push(new Trap(6 * widthUnit, 25 * heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
-    hitables.traps.push(new Trap(11 * widthUnit, 25 * heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
-    hitables.traps.push(new Trap(169 * widthUnit, 25 * heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
-    hitables.traps.push(new Trap(12 * widthUnit, 16 * heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 11));
-    hitables.traps.push(new Trap(5.125 * widthUnit, 10.25 * heightUnit, 0.75 * widthUnit, 0.75 * heightUnit, 'graphics/traps/saws/round.png', 'round-saw', 25, true, false, 0));
-    hitables.traps.push(new Trap(8.125 * widthUnit, 10.25 * heightUnit, 0.75 * widthUnit, 0.75 * heightUnit, 'graphics/traps/saws/round.png', 'round-saw', 25, true, false, 0));
-    hitables.traps.push(new Trap(2.125 * widthUnit, 10.25 * heightUnit, 0.75 * widthUnit, 0.75 * heightUnit, 'graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 25, true, true, 15));
+    hitables.traps.push(new Trap(5*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
+    hitables.traps.push(new Trap(6*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
+    hitables.traps.push(new Trap(11*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
+    hitables.traps.push(new Trap(169*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
+    hitables.traps.push(new Trap(12*widthUnit, 16*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 11));
+    hitables.traps.push(new Trap(5.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, 'graphics/traps/saws/round.png', 'round-saw', 25, true, false, 0));
+    hitables.traps.push(new Trap(8.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, 'graphics/traps/saws/round.png', 'round-saw', 25, true, false, 0));
+    hitables.traps.push(new Trap(2.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, 'graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 25, true, true, 15));
 }
 
 function createMenuBar() {
-    menuBar = new Menubar(0.75 * canvas.offsetWidth, canvas.offsetHeight - heightUnit, 0.25 * canvas.offsetWidth, heightUnit, `${2400 / 1920}vw SuperLegendBoy`, 'red', 0);
+    menuBar = new Menubar(0.75*canvas.offsetWidth, canvas.offsetHeight-heightUnit, 0.25*canvas.offsetWidth, heightUnit, `${2400/1920}vw SuperLegendBoy`, 'red', 0);
     menubarBackground = new MenubarBackground(menuBar.x, menuBar.y, menuBar.width, menuBar.height);
 }
 
 function createEnemies() {
-    hitables.enemies.push(new Shooter(21 * widthUnit, 19 * heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 20 * widthUnit, false, 5, 7));
-    hitables.enemies.push(new GreenEnemy(25 * widthUnit, 24 * heightUnit, 2 * widthUnit, 2 * heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15 * widthUnit, true, 5, 12));
-    hitables.enemies.push(new GreenEnemy(35 * widthUnit, 24 * heightUnit, 2 * widthUnit, 2 * heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15 * widthUnit, true, 5, 12));
-    hitables.enemies.push(new GreenEnemy(40 * widthUnit, 24 * heightUnit, 2 * widthUnit, 2 * heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15 * widthUnit, true, 5, 12));
+    hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 20*widthUnit, false, 5, 7));
+    hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 20*widthUnit, false, 5, 7));
 }
 
 function createItems() {
-    items.specialAmmo.push(new LifeIncreaser(6.25 * widthUnit, 9.5 * heightUnit, 1.5 * widthUnit, 1.5 * heightUnit, 'graphics/items/heart.png', 'life-increaser', 50));
-    items.specialAmmo.push(new SpecialAmmoKit(1.5 * widthUnit, 0.5 * heightUnit, widthUnit, heightUnit, 'graphics/items/special-ammo/rotation-0.png'));
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'graphics/items/heart.png', 'life-increaser', 75));
+    items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, 'graphics/items/special-ammo/rotation-0.png'));
+    items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, 'graphics/items/heart.png', 'life-increaser', 25));
+    items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, 'graphics/items/heart.png', 'life-increaser', 50));
+    items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, 'graphics/items/heart.png', 'life-increaser', 50));
 }
 
 function clearCanvas() {
@@ -140,12 +149,11 @@ function clearCanvas() {
 
 function drawElements() {
     drawBackgrounds();
-    drawWalls();
     drawPlatforms();
     drawHitables();
     drawItems();
     drawChar();
-    drawMenuBar();
+    //drawMenuBar();
     drawCharObjects();
 }
 
@@ -153,12 +161,6 @@ function drawBackgrounds() {
     backgrounds.forEach((elem) => {
         ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
     });
-}
-
-function drawWalls() {
-    walls.forEach((wall) => {
-        ctx.drawImage(wall.wallImage, wall.x, wall.y, wall.width, wall.height);
-    })
 }
 
 function drawMenuBar() {
@@ -262,7 +264,7 @@ function addKeypressMovingCommands() {
                 timer();
             }
         } else if (event.key.toLowerCase() === "w") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005 * widthUnit + canvas.offsetHeight, widthUnit * 10, heightUnit * 10, '/graphics/enemies/shooter/attack/cannonball.png');
+            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*widthUnit+canvas.offsetHeight, widthUnit*10, heightUnit*10, '/graphics/enemies/shooter/attack/cannonball.png');
         } else if (event.key.toLowerCase() === "m") {
             gameSoundOnOffToggle();
         }
@@ -355,7 +357,7 @@ function initStepRightTouch() {
 
 function speedUpChar() {
     if (char.stepLength === char.basicStepLength) {
-        char.stepLength = char.basicStepLength * 1.5;
+        char.stepLength = char.basicStepLength*1.5;
     }
 }
 
@@ -377,14 +379,14 @@ function restyleRunningTouchButton() {
 
 function touchShooting() {
     if (controller['shoot'].pressed) {
-        createAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.005 * canvas.offsetHeight, widthUnit, widthUnit, 'graphics/enemies/shooter/attack/cannonball.png');
+        createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*canvas.offsetHeight, widthUnit, widthUnit, 'graphics/enemies/shooter/attack/cannonball.png');
         document.querySelector('.touch-control.shoot').classList.remove('pressed');
         controller['shoot'].pressed = false;
     }
 }
 
 function slowDownChar() {
-    if (1.5 * char.basicStepLength === char.stepLength) {
+    if (1.5*char.basicStepLength === char.stepLength) {
         char.stepLength = char.basicStepLength;
     }
 }
@@ -415,31 +417,31 @@ function resetEnemies() {
 }
 
 function checkForScrolling(movingDirection = char.movingDirection) {
-    if (parseFloat(canvas.style.left) === 0 && char.x < 2 * canCont.offsetWidth / 3) {
+    if (parseFloat(canvas.style.left) === 0 && char.x < 2*canCont.offsetWidth/3) {
         return;
     } else {
-        if (movingDirection === "right" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x >= 2 * canCont.offsetWidth / 3) {
-            if (canvas.offsetLeft + canCont.offsetWidth <= 0) {
+        if (movingDirection === "right" && canCont.offsetLeft+parseFloat(canvas.style.left)+char.x >= 2*canCont.offsetWidth/3) {
+            if (canvas.offsetLeft+canCont.offsetWidth <= 0) {
                 return;
             }
             char.scrollingStepAmount++;
-        } else if (movingDirection === "left" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x <= canCont.offsetWidth / 3) {
+        } else if (movingDirection === "left" && canCont.offsetLeft+parseFloat(canvas.style.left)+char.x <= canCont.offsetWidth/3) {
             if (parseFloat(canvas.style.left) >= 0) {
                 return;
             }
             char.scrollingStepAmount--;
         }
-        canvas.style.left = `-${char.standardStepLength * char.scrollingStepAmount}px`;
+        canvas.style.left = `-${char.standardStepLength*char.scrollingStepAmount}px`;
     }
 }
 
 function setMenubarPosition() {
-    menubar.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
-    menubarBackground.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+    menubar.x = canvas.offsetLeft-canCont.offsetLeft+canCont.offsetWidth;
+    menubarBackground.x = canvas.offsetLeft-canCont.offsetLeft+canCont.offsetWidth;
 }
 
 function setCanvasSize() {
-    canvas.style.width = `${2 * canCont.offsetWidth}px`;
+    canvas.style.width = `${2*canCont.offsetWidth}px`;
     canvas.style.height = `${canCont.offsetHeight}px`;
 }
 
@@ -462,9 +464,9 @@ let setWholeVolume = function setWholeVolumeFunc(event) {
     let volumeBarInner = document.querySelectorAll('.volumebar .volumebar-inner')[index];
     let volumeBarWidth = document.querySelectorAll('.volumebar')[index].offsetWidth;
     let x = event.clientX;
-    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
+    gameVolume = ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) >= 0 ? ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) : 0;
     gameVolume = gameVolume > 1 ? 1 : gameVolume;
-    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
+    volumeBarInner.style.width = `${100*(x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth}%`;
     if (!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem) => { elem.volume = gameVolume; }); }
 }
 
@@ -482,8 +484,8 @@ function gameSoundOnOffToggle() {
 
 function turnOnFullScreen() {
     canCont.style.width = `${window.innerWidth}px`;
-    canCont.style.height = `${9 * canCont.offsetWidth / 16}px`;
-    canvas.style.width = `${2 * canCont.offsetWidth}px`;
+    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
+    canvas.style.width = `${2*canCont.offsetWidth}px`;
     canvas.style.height = `${canCont.offsetHeight}px`;
     localStorage.setItem('canContScales', JSON.stringify({ width: canCont.offsetWidth, height: canCont.offsetHeight }));
     document.querySelector('.turn-fullscreen-on').classList.add('disNone');
@@ -491,9 +493,9 @@ function turnOnFullScreen() {
 }
 
 function turnOffFullScreen() {
-    canCont.style.width = `${0.8 * window.innerWidth}px`;
-    canCont.style.height = `${9 * canCont.offsetWidth / 16}px`;
-    canvas.style.width = `${2 * canCont.offsetWidth}px`;
+    canCont.style.width = `${0.8*window.innerWidth}px`;
+    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
+    canvas.style.width = `${2*canCont.offsetWidth}px`;
     canvas.style.height = `${canCont.offsetHeight}px`;
     document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
     document.querySelector('.turn-fullscreen-off').classList.add('disNone');
