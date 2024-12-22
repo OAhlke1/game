@@ -5,9 +5,9 @@ class MovingPlatform extends Platform {
     lowestPoint;
     sideways;
 
-    constructor(startingPointX, endingPointX, highestPoint, lowestPoint, y, imgPath, sideways) {
+    constructor(width, startingPointX, endingPointX, highestPoint, lowestPoint, y, imgPath, sideways) {
         super();
-        this.width = widthUnit * 5;
+        this.width = width;
         this.height = heightUnit;
         this.startingPointX = startingPointX;
         this.endingPointX = endingPointX;

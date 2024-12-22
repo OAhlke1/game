@@ -6,11 +6,10 @@ class Platform extends Wall {
 
     constructor(x, y, width, height, imgPath, blockAmount = 1) {
         super();
-        this.width = width;
-        this.height = height;
         this.x = x;
         this.y = y;
-        this.imgPath = imgPath;
+        this.width = width;
+        this.height = height;
         this.platformImage = new Image();
         this.platformImage.src = imgPath;
         this.blockAmount = blockAmount;

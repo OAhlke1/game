@@ -41,7 +41,6 @@ function initFunctions() {
         addKeypressMovingCommands();
     } else { addTouchMovingCommands(); } */
     addKeypressMovingCommands();
-    createBottomPlatforms();
     createPlatforms();
     createTraps();
     createEnemies();
@@ -91,26 +90,34 @@ function createAmmo(x, y, width, height, imagePath) {
     charObjects.ammo.push(new Ammo(x, y, width, height, imagePath));
 }
 
-function createBottomPlatforms() {
-    let createdMovingPlatformAtThisSpot = false;
-    for (let i = 0; i < canvas.offsetWidth/widthUnit; i += 5) {
-        if (i != 25 && i != 30 && i != 35) {
-            platforms.push(new Platform(i*widthUnit, canvas.offsetHeight-heightUnit, 5*widthUnit, heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png'));
-        } else if (!createdMovingPlatformAtThisSpot) {
-            createdMovingPlatformAtThisSpot = true;
-            platforms.push(new MovingPlatform(i*widthUnit, (i+15)*widthUnit, canvas.offsetHeight-heightUnit, canvas.offsetHeight-heightUnit, canvas.offsetHeight-heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-        }
-    }
+function createPlatforms() {
+    /* Bottom */
+    platforms.push(new Platform(0, 53*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(5*widthUnit, 53*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(10*widthUnit, 53*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new MovingPlatform(2*widthUnit, 15*widthUnit, 20*widthUnit, 53*heightUnit, 53*heightUnit, 53*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
+    platforms.push(new Platform(21*widthUnit, 53*heightUnit, 130*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-long.png'));
+    platforms.push(new Platform(154*widthUnit, 53*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
+    platforms.push(new Platform(158*widthUnit, 53*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
+    platforms.push(new Platform(162*widthUnit, 53*heightUnit, 3*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
+    platforms.push(new Platform(168*widthUnit, 53*heightUnit, 4*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
+    platforms.push(new Platform(5*widthUnit, 53*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
+    platforms.push(new Platform(10*widthUnit, 49*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
+    platforms.push(new MovingPlatform(widthUnit, 12*widthUnit, 20*widthUnit, 47*heightUnit, 47*heightUnit, 47*heightUnit, 'graphics/walls/ground/ground-tile-length-1.png', true));
+    platforms.push(new MovingPlatform(2*widthUnit, 22*widthUnit, 30*widthUnit, 44*heightUnit, 44*heightUnit, 44*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
+}
+
+function createTraps() {
+    hitables.traps.push(new Traps(5*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
+    hitables.traps.push(new Traps(6*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
+    hitables.traps.push(new Traps(11*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
+    hitables.traps.push(new Traps(169*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
+    hitables.traps.push(new Traps(170*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
 }
 
 function createMenuBar() {
     menuBar = new Menubar(0.75*canvas.offsetWidth, canvas.offsetHeight-heightUnit, 0.25*canvas.offsetWidth, heightUnit, `${2400/1920}vw SuperLegendBoy`, 'red', 0);
     menubarBackground = new MenubarBackground(menuBar.x, menuBar.y, menuBar.width, menuBar.height);
-}
-
-function createTraps() {
-    hitables.traps.push(new Traps(10*widthUnit, canvas.offsetHeight-5.5*heightUnit, 4.8*widthUnit, 4.8*heightUnit, '../graphics/traps/chainsaws/round.png', 'saw', 10));
-    hitables.traps.push(new Traps(50*widthUnit, canvas.offsetHeight-3*heightUnit, canvas.offsetWidth/40, canvas.offsetWidth/40, '../graphics/traps/chainsaws/jagged.png', 'jagged-saw', 20));
 }
 
 function createEnemies() {
@@ -129,18 +136,6 @@ function createItems() {
     items.specialAmmo.push(new SpecialAmmoKit(10*widthUnit, 50*heightUnit, 2*widthUnit, 2.4*heightUnit, 'graphics/items/special-ammo/rotation-0.png'));
 }
 
-function createPlatforms() {
-    platforms.push(new Platform(canvas.offsetWidth/2, 20*heightUnit, 4.5*widthUnit, heightUnit, 'graphics/platforms/green-5.png'));
-    platforms.push(new Platform(canvas.offsetWidth/5, 10*heightUnit, 4.5*widthUnit, heightUnit, 'graphics/platforms/green-5.png'));
-    platforms.push(new MovingPlatform(20*widthUnit, 30*widthUnit, 0, 0, 10*heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(50*widthUnit, 60*widthUnit, 0, 0, 10*heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(5*widthUnit, 20*widthUnit, 0, 0, canvas.offsetHeight-5*heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(20*widthUnit, 50*widthUnit, 0, 0, canvas.offsetHeight-0.30*canvas.offsetHeight, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(canvas.offsetWidth/2, 3*canvas.offsetWidth/4, 0, 0, 25+heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', true));
-    platforms.push(new MovingPlatform(widthUnit, 0, 6+heightUnit, 60+heightUnit, 6+heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
-    platforms.push(new MovingPlatform(widthUnit, 0, 6+heightUnit, 30+heightUnit, 6+heightUnit, 'graphics/platforms/moving-platforms/five-wooden-boxes.png', false));
-}
-
 function clearCanvas() {
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
 }
@@ -152,7 +147,7 @@ function drawElements() {
     drawHitables();
     drawItems();
     drawChar();
-    drawMenuBar();
+    //drawMenuBar();
     drawCharObjects();
 }
 
@@ -175,9 +170,12 @@ function drawMenuBar() {
 }
 
 function drawPlatforms() {
-    for (let i = 0; i < platforms.length; i++) {
+    /* for (let i = 0; i < platforms.length; i++) {
         ctx.drawImage(platforms[i].platformImage, platforms[i].x, platforms[i].y, platforms[i].width, platforms[i].height);
-    }
+    } */
+    platforms.forEach((elem)=>{
+        ctx.drawImage(elem.platformImage, elem.x, elem.y, elem.width, elem.height);
+    });
 }
 
 function drawHitables() {
@@ -437,7 +435,6 @@ function checkForScrolling(movingDirection = char.movingDirection) {
         } else if ((canCont.offsetLeft+parseFloat(canvas.style.left)+char.x) <= canCont.offsetWidth/3 && movingDirection === "left" && controller['left'].pressed) {
             char.totalStepAmount--;
         }
-        console.log(char.stepLength);
         canvas.style.left = `-${char.stepLength*char.totalStepAmount}px`;
     } */
    if(parseFloat(canvas.style.left) === 0 && char.x < 2*canCont.offsetWidth/3) {
