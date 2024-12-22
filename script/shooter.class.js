@@ -36,6 +36,7 @@ class Shooter extends Enemy {
             this.hasShot = true;
             setTimeout(()=>{
                 this.hasShot = false;
+                console.log("Has shot:", this.hasShot);
                 this.setupCannonball();
             }, 1000);
         }else { return; }

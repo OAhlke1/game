@@ -28,9 +28,11 @@ class Menubar {
         ctx.textBaseline = "top";
         ctx.direction = 'ltr';
         ctx.fillStyle = 'red';
-        ctx.drawImage(this.lifeImage, this.x+10, this.y, items.lifeIncreasing[0].width, items.lifeIncreasing[0].height);
-        ctx.fillText(char.healthAmount, this.x+40, this.y);
-        ctx.drawImage(this.enemyImage, this.x+180, this.y, items.lifeIncreasing[0].width, items.lifeIncreasing[0].height);
-        ctx.fillText(char.enemiesKilled, this.x+200, this.y);
+        if(items.lifeIncreasing.length) {
+            ctx.drawImage(this.lifeImage, this.x+10, this.y, items.lifeIncreasing[0].width, items.lifeIncreasing[0].height);
+            ctx.fillText(char.healthAmount, this.x+40, this.y);
+            ctx.drawImage(this.enemyImage, this.x+180, this.y, items.lifeIncreasing[0].width, items.lifeIncreasing[0].height);
+            ctx.fillText(char.enemiesKilled, this.x+200, this.y);
+        }
     }
 }

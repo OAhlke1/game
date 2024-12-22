@@ -48,9 +48,7 @@ class Trap {
         if(this.onMovingPlatform) {
             if(platforms[this.movingPlatformIndex].sideways) {
                 this.x = platforms[this.movingPlatformIndex].x + (this.startingXPos - platforms[this.movingPlatformIndex].startingXPos);
-            }else if(platforms[this.movingPlatformIndex].sideways) {
-                this.y = platforms[this.movingPlatformIndex].y;
-            }
+            }else { this.y = platforms[this.movingPlatformIndex].y - this.height; }
             requestAnimationFrame(()=>{ this.checkPlatformCords(); });
         }else { return; }
     }
