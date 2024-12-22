@@ -1,4 +1,4 @@
-class Traps {
+class Trap {
     width;
     height;
     x;
@@ -11,9 +11,10 @@ class Traps {
     animationIndex;
     isDangerous;
     onMovingPlatform;
-    onMovingPlatformIndex;
+    movingPlatformIndex;
+    startingXPos;
 
-    constructor(x, y, width, height, imagePath, trapType, decreaseLifeAmount, isDangerous, onMovingPlatform, onMovingPlatformIndex = 0) {
+    constructor(x, y, width, height, imagePath, trapType, decreaseLifeAmount, isDangerous, onMovingPlatform, movingPlatformIndex) {
         this.width = width;
         this.height = height;
         this.x = x;
@@ -25,7 +26,8 @@ class Traps {
         this.animationIndex = 0;
         this.isDangerous = isDangerous;
         this.onMovingPlatform = onMovingPlatform;
-        this.onMovingPlatformIndex = onMovingPlatformIndex;
+        this.movingPlatformIndex = movingPlatformIndex;
+        this.startingXPos = x;
         this.checkCharPos();
         this.checkPlatformCords();
         this.trapAnimationId = setInterval(()=>{this.animateTrap();}, 800);
@@ -42,12 +44,12 @@ class Traps {
     }
 
     checkPlatformCords() {
-        //console.log(this.x, platforms[this.onMovingPlatformIndex].x);
+        //console.log(this.x, platforms[this.movingPlatformIndex].x);
         if(this.onMovingPlatform) {
-            if(platforms[this.onMovingPlatformIndex].sideways) {
-                this.x = platforms[this.onMovingPlatformIndex].x;
-            }else if(platforms[this.onMovingPlatformIndex].sideways) {
-                this.y = platforms[this.onMovingPlatformIndex].y;
+            if(platforms[this.movingPlatformIndex].sideways) {
+                this.x = platforms[this.movingPlatformIndex].x + (this.startingXPos - platforms[this.movingPlatformIndex].startingXPos);
+            }else if(platforms[this.movingPlatformIndex].sideways) {
+                this.y = platforms[this.movingPlatformIndex].y;
             }
             requestAnimationFrame(()=>{ this.checkPlatformCords(); });
         }else { return; }

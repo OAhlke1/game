@@ -73,8 +73,8 @@ function loadPlayer() {
 function createCanvas() {
     canvas = document.querySelector('canvas');
     ctx = canvas.getContext('2d');
-    widthUnit = canCont.offsetWidth/96;
-    heightUnit = canCont.offsetHeight/54;
+    widthUnit = canCont.offsetWidth/48;
+    heightUnit = canCont.offsetHeight/27;
 }
 
 function createBackgrounds() {
@@ -83,7 +83,7 @@ function createBackgrounds() {
 }
 
 function createChar() {
-    char = new Char(2*widthUnit, 2*heightUnit, widthUnit, canvas.offsetHeight-2*heightUnit, 'graphics/main-char/run/run-right-0.png', widthUnit/3);
+    char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, 'graphics/main-char/run/run-right-0.png', widthUnit/6, 4*heightUnit);
 }
 
 function createAmmo(x, y, width, height, imagePath) {
@@ -92,27 +92,32 @@ function createAmmo(x, y, width, height, imagePath) {
 
 function createPlatforms() {
     /* Bottom */
-    platforms.push(new Platform(0, 53*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
-    platforms.push(new Platform(5*widthUnit, 53*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
-    platforms.push(new Platform(10*widthUnit, 53*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
-    platforms.push(new MovingPlatform(2*widthUnit, 15*widthUnit, 20*widthUnit, 53*heightUnit, 53*heightUnit, 53*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
-    platforms.push(new Platform(21*widthUnit, 53*heightUnit, 130*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-long.png'));
-    platforms.push(new Platform(154*widthUnit, 53*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
-    platforms.push(new Platform(158*widthUnit, 53*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
-    platforms.push(new Platform(162*widthUnit, 53*heightUnit, 3*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
-    platforms.push(new Platform(168*widthUnit, 53*heightUnit, 4*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
-    platforms.push(new Platform(5*widthUnit, 53*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
-    platforms.push(new Platform(10*widthUnit, 49*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
-    platforms.push(new MovingPlatform(widthUnit, 12*widthUnit, 20*widthUnit, 47*heightUnit, 47*heightUnit, 47*heightUnit, 'graphics/walls/ground/ground-tile-length-1.png', true));
-    platforms.push(new MovingPlatform(2*widthUnit, 22*widthUnit, 30*widthUnit, 44*heightUnit, 44*heightUnit, 44*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
+    platforms.push(new Platform(0, 26*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(5*widthUnit, 26*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(10*widthUnit, 26*heightUnit, 5*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
+    platforms.push(new Platform(21*widthUnit, 26*heightUnit, 130*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-long.png'));
+    platforms.push(new Platform(154*widthUnit, 26*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
+    platforms.push(new Platform(158*widthUnit, 26*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
+    platforms.push(new Platform(162*widthUnit, 26*heightUnit, 3*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
+    platforms.push(new Platform(168*widthUnit, 26*heightUnit, 4*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
+    platforms.push(new Platform(5*widthUnit, 26*heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
+    /* not at bottom */
+    platforms.push(new Platform(10*widthUnit, 20*heightUnit, 2*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
+    platforms.push(new MovingPlatform(2*widthUnit, heightUnit, 6*widthUnit, 10*widthUnit, 24*heightUnit, 23*heightUnit, 23*heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
+    platforms.push(new MovingPlatform(3*widthUnit, heightUnit, 11*widthUnit, 19*widthUnit, 17*heightUnit, 17*heightUnit, 17*heightUnit, 'graphics/walls/ground/ground-tile-length-3.png', true));
+    platforms.push(new Platform(20*widthUnit, 20*heightUnit, 5*widthUnit, heightUnit, 'graphics/platforms/non-moving-length-5.png'));
+    platforms.push(new MovingPlatform(4*widthUnit, heightUnit, 14*widthUnit, 14*widthUnit, 9*heightUnit, 15*heightUnit, 15*heightUnit, 'graphics/walls/ground/ground-tile-length-4.png', false));
+    platforms.push(new Platform(5*widthUnit, 11*heightUnit, 4*widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
 }
 
 function createTraps() {
-    hitables.traps.push(new Traps(5*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
-    hitables.traps.push(new Traps(6*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
-    hitables.traps.push(new Traps(11*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
-    hitables.traps.push(new Traps(169*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
-    hitables.traps.push(new Traps(170*widthUnit, 52*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
+    hitables.traps.push(new Trap(5*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
+    hitables.traps.push(new Trap(6*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, false));
+    hitables.traps.push(new Trap(11*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
+    hitables.traps.push(new Trap(169*widthUnit, 25*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 0));
+    hitables.traps.push(new Trap(12*widthUnit, 16*heightUnit, widthUnit, heightUnit, '../graphics/traps/stings/sting-coming-out-0.png', 'coming-out-sting', 15, true, true, 11));
+    hitables.traps.push(new Trap(5.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, 'graphics/traps/saws/round.png', 'round-saw', 25, true, false, 0));
+    hitables.traps.push(new Trap(8.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, 'graphics/traps/saws/round.png', 'round-saw', 25, true, false, 0));
 }
 
 function createMenuBar() {
@@ -121,19 +126,11 @@ function createMenuBar() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new GreenEnemey(25*widthUnit, canvas.offsetHeight-4*widthUnit, 2.5*widthUnit, 2.5*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 10, false, 'left', 100, 20*widthUnit, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(20*widthUnit, canvas.offsetHeight-3*widthUnit, 2.5*widthUnit, 2.5*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 20, false, 'left', 70, 20*widthUnit, true, 5, 12));
-    hitables.enemies.push(new GreenEnemey(10*widthUnit, widthUnit, 2.5*widthUnit, 2.5*heightUnit, 'green', 'graphics/enemies/green/attack/attack-left-0.png', 30, false, 'left', 80, 20*widthUnit, true, 5, 12));
-    hitables.enemies.push(new Shooter(canvas.offsetWidth-23*widthUnit, canvas.offsetHeight-3*heightUnit, 2*widthUnit, 2*heightUnit, 'shooter', 15, true, 'left', 100, 10*widthUnit, true, 5, 7));
-    hitables.enemies.push(new Shooter(canvas.offsetWidth/2+7*widthUnit, canvas.offsetHeight-22*heightUnit, 2*widthUnit, 2*heightUnit, 'shooter', 15, true, 'left', 100, 2*widthUnit, true, 5, 7));
+    hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 20*widthUnit, false, 5, 7));
 }
 
 function createItems() {
-    items.lifeIncreasing.push(new LifeIncreaser(5*widthUnit, canvas.offsetHeight-2*heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.offsetWidth-widthUnit, Math.random()*canvas.offsetHeight-heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.offsetWidth-widthUnit, Math.random()*canvas.offsetHeight-heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.lifeIncreasing.push(new LifeIncreaser(Math.random()*canvas.offsetWidth-widthUnit, Math.random()*canvas.offsetHeight-heightUnit, widthUnit, widthUnit*800/646, 'graphics/items/heart.png', 'life-increaser', 30));
-    items.specialAmmo.push(new SpecialAmmoKit(10*widthUnit, 50*heightUnit, 2*widthUnit, 2.4*heightUnit, 'graphics/items/special-ammo/rotation-0.png'));
+    items.specialAmmo.push(new SpecialAmmoKit(6.5*widthUnit, 10*heightUnit, widthUnit, heightUnit, 'graphics/items/special-ammo/rotation-0.png'));
 }
 
 function clearCanvas() {
@@ -266,7 +263,6 @@ function addKeypressMovingCommands() {
             } else {
                 gamePaused = false;
                 timer();
-                //drawElements();
             }
         } else if (event.key.toLowerCase() === "w") {
             createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*widthUnit+canvas.offsetHeight, widthUnit*10, heightUnit*10, '/graphics/enemies/shooter/attack/cannonball.png');

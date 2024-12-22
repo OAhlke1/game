@@ -1,19 +1,20 @@
 class MovingPlatform extends Platform {
-    startingPointX;
-    endingPointX;
+    startingXPos;
+    endingXPos;
     highestPoint;
     lowestPoint;
     sideways;
 
-    constructor(width, startingPointX, endingPointX, highestPoint, lowestPoint, y, imgPath, sideways) {
+    constructor(width, height, startingXPos, endingXPos, highestPoint, lowestPoint, y, imgPath, sideways) {
         super();
         this.width = width;
+        this.height = height;
         this.height = heightUnit;
-        this.startingPointX = startingPointX;
-        this.endingPointX = endingPointX;
+        this.startingXPos = startingXPos;
+        this.endingXPos = endingXPos;
         this.highestPoint = highestPoint;
         this.lowestPoint = lowestPoint;
-        this.x = startingPointX;
+        this.x = startingXPos;
         this.y = y;
         this.platformImage = new Image();
         this.platformImage.src = imgPath;
@@ -31,8 +32,8 @@ class MovingPlatform extends Platform {
             //char.movingDirection = "right";
             checkForScrolling("right");
             this.x += widthUnit / 10;
-            if (this.x + this.width >= this.endingPointX) {
-                this.x = this.endingPointX - this.width;
+            if (this.x + this.width >= this.endingXPos) {
+                this.x = this.endingXPos - this.width;
                 this.moveLeft();
                 return;
             }
@@ -48,8 +49,8 @@ class MovingPlatform extends Platform {
             //char.movingDirection = "left";
             checkForScrolling("left");
             this.x -= widthUnit / 10;
-            if (this.x <= this.startingPointX) {
-                this.x = this.startingPointX;
+            if (this.x <= this.startingXPos) {
+                this.x = this.startingXPos;
                 this.moveRight();
                 return;
             }

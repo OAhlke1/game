@@ -27,10 +27,10 @@ class Shooter extends Enemy {
         if (!gamePaused && this.targeting && this.isDangerous && !this.hasShot) {
             switch (this.lookingDirection) {
                 case "left":
-                    this.createCannonBall(this.x - widthUnit, this.y + 5, this.lookingDirection);
+                    this.createCannonBall(0.5*widthUnit, 0.5*heightUnit, this.x - widthUnit, this.y + 5*this.height/32, this.lookingDirection);
                     break;
                 case "right":
-                    this.createCannonBall(this.x + widthUnit, this.y + 5, this.lookingDirection);
+                    this.createCannonBall(0.5*widthUnit, 0.5*heightUnit, this.x + widthUnit, this.y + 5*this.height/32, this.lookingDirection);
                     break;
             }
             this.hasShot = true;
@@ -41,7 +41,7 @@ class Shooter extends Enemy {
         }else { return; }
     }
 
-    createCannonBall(x, y, flyDirection) {
-        hitables.flyables.push(new Cannonball(x, y, flyDirection));
+    createCannonBall(width, height, x, y, flyDirection) {
+        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection));
     }
 }

@@ -42,11 +42,11 @@ class Char {
     onUpwardsMovingPlatform;
     specialAmmoParts;
 
-    constructor(width, height, x, y, src, stepLength, maxJumpHeight = 5 * heightUnit) {
+    constructor(width, height, x, y, src, stepLength, maxJumpHeight) {
         this.width = width;
-        this.height = 27 * width / 23;
+        this.height = height;
         this.x = x;
-        this.y = canvas.offsetHeight - heightUnit - this.height;
+        this.y = y;
         this.src = src;
         this.stepLength = stepLength;
         this.standardStepLength = stepLength;
@@ -199,7 +199,7 @@ class Char {
             i--;
             this.y -= this.jumpFallStepHeight;
             if (i <= 0 || this.y <= heightUnit) {
-                this.maxJumpHeight = 5*widthUnit;
+                //this.maxJumpHeight = 5*widthUnit;
                 this.checkIfFalling(i);
                 return;
             }
