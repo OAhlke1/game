@@ -88,7 +88,6 @@ function createAmmo(x, y, width, height, imagePath) {
 }
 
 function createPlatforms() {
-    /* Bottom */
     platforms.push(new Platform(0, 26 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
     platforms.push(new Platform(5 * widthUnit, 26 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
     platforms.push(new Platform(10 * widthUnit, 26 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-5.png'));
@@ -98,14 +97,13 @@ function createPlatforms() {
     platforms.push(new Platform(162 * widthUnit, 26 * heightUnit, 3 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
     platforms.push(new Platform(168 * widthUnit, 26 * heightUnit, 4 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
     platforms.push(new Platform(5 * widthUnit, 26 * heightUnit, widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-1.png'));
-    /* not at bottom */
     platforms.push(new Platform(10 * widthUnit, 20 * heightUnit, 2 * widthUnit, heightUnit, 'graphics/walls/ground/ground-tile-length-2.png'));
     platforms.push(new MovingPlatform(2 * widthUnit, heightUnit, 6 * widthUnit, 10 * widthUnit, 24 * heightUnit, 23 * heightUnit, 23 * heightUnit, 'graphics/walls/ground/ground-tile-length-2.png', true));
     platforms.push(new MovingPlatform(3 * widthUnit, heightUnit, 11 * widthUnit, 19 * widthUnit, 17 * heightUnit, 17 * heightUnit, 17 * heightUnit, 'graphics/walls/ground/ground-tile-length-3.png', true));
     platforms.push(new Platform(20 * widthUnit, 20 * heightUnit, 5 * widthUnit, heightUnit, 'graphics/platforms/non-moving-length-5.png'));
     platforms.push(new MovingPlatform(4 * widthUnit, heightUnit, 14 * widthUnit, 14 * widthUnit, 9 * heightUnit, 15 * heightUnit, 15 * heightUnit, 'graphics/walls/ground/ground-tile-length-4.png', false));
     platforms.push(new Platform(5 * widthUnit, 11 * heightUnit, 4 * widthUnit, 0.5 * heightUnit, 'graphics/walls/ground/ground-tile-length-4.png'));
-    platforms.push(new MovingPlatform(3 * widthUnit, 0.5 * heightUnit, widthUnit, widthUnit, 5 * heightUnit, 15 * heightUnit, 5 * heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'))
+    platforms.push(new MovingPlatform(3 * widthUnit, 0.5 * heightUnit, widthUnit, widthUnit, 5 * heightUnit, 15 * heightUnit, 5 * heightUnit, 'graphics/walls/ground/ground-tile-length-3.png'));
 }
 
 function createTraps() {
