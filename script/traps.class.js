@@ -6,15 +6,17 @@ class Trap {
     imagePath;
     image;
     trapType;
+    orientation;
     decreaseLifeAmount;
     trapAnimationId;
+    animationImagesAmount;
     animationIndex;
     isDangerous;
     onMovingPlatform;
     movingPlatformIndex;
     startingXPos;
 
-    constructor(x, y, width, height, imagePath, trapType, decreaseLifeAmount, isDangerous, onMovingPlatform, movingPlatformIndex) {
+    constructor(x, y, width, height, imagePath, trapType, orientation, decreaseLifeAmount, isDangerous, onMovingPlatform, movingPlatformIndex, animationImagesAmount, animationIndex = 0) {
         this.width = width;
         this.height = height;
         this.x = x;
@@ -22,12 +24,14 @@ class Trap {
         this.image = new Image();
         this.image.src = imagePath;
         this.trapType = trapType;
+        this.orientation = orientation;
         this.decreaseLifeAmount = decreaseLifeAmount;
-        this.animationIndex = 0;
         this.isDangerous = isDangerous;
         this.onMovingPlatform = onMovingPlatform;
         this.movingPlatformIndex = movingPlatformIndex;
         this.startingXPos = x;
+        this.animationImagesAmount = animationImagesAmount;
+        this.animationIndex = animationIndex;
         this.checkCharPos();
         this.checkPlatformCords();
         this.trapAnimationId = setInterval(()=>{this.animateTrap();}, 800);
@@ -44,8 +48,7 @@ class Trap {
     }
 
     checkPlatformCords() {
-        //console.log(this.x, platforms[this.movingPlatformIndex].x);
-        if(this.onMovingPlatform) {
+        if(this.onMovingPlatform && this.movingPlatformIndex >= 0) {
             if(platforms[this.movingPlatformIndex].sideways) {
                 this.x = platforms[this.movingPlatformIndex].x + (this.startingXPos - platforms[this.movingPlatformIndex].startingXPos);
             }else { this.y = platforms[this.movingPlatformIndex].y - this.height; }
@@ -54,9 +57,11 @@ class Trap {
     }
 
     animateTrap() {
-        if(this.trapType === "coming-out-sting") {
-            this.image.src = `graphics/traps/stings/sting-coming-out-${this.animationIndex % 9}.png`;
-            if(this.animationIndex % 9 === 0 || this.animationIndex % 9 === 1 || this.animationIndex % 9 === 7 ||this.animationIndex % 9 === 8) {
+        let onDangerousState = parseFloat(hitables.traps[0].animationIndex/hitables.traps[0].animationImagesAmount) - Math.floor(hitables.traps[0].animationIndex/hitables.traps[0].animationImagesAmount);
+        if(this.trapType === "sting-coming-out") {
+            this.image.src = `graphics/traps/stings/${this.trapType}${this.orientation === '' ? '' : '-'+this.orientation}-${this.animationIndex % this.animationImagesAmount}.png`;
+            //console.log(imgState, hitables.traps[0].animationIndex % hitables.traps[0].animationImagesAmount, onDangerousState);
+            if(onDangerousState < 0.25 || onDangerousState >= 0.75) { //this.animationIndex % this.animationImagesAmount === 0 || this.animationIndex % this.animationImagesAmount === 1 || this.animationIndex % this.animationImagesAmount === 6 ||this.animationIndex % this.animationImagesAmount === 7
                 this.isDangerous = false;
             }else { this.isDangerous = true; }
             this.animationIndex++;

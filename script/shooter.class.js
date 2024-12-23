@@ -1,7 +1,8 @@
 class Shooter extends Enemy {
-    targeting = false;
-    hasShot = false;
-    walks = false;
+    targeting;
+    hasShot;
+    walks;
+    player;
 
     constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
@@ -21,10 +22,16 @@ class Shooter extends Enemy {
         this.canWalk = canWalk;
         this.hitImagesAmount = hitImagesAmount;
         this.attackingImagesAmount = attackingImagesAmount;
+        this.targeting = false;
+        this.hasShot = false;
+        this.walks = false;
+        this.player = new Audio();
+        this.player.src = 'sounds/enemy-shoots.mp3';
     }
 
     setupCannonball() {
         if (!gamePaused && this.targeting && this.isDangerous && !this.hasShot) {
+            this.playSound();
             switch (this.lookingDirection) {
                 case "left":
                     this.createCannonBall(0.5*widthUnit, 0.5*heightUnit, this.x - widthUnit, this.y + 5*this.height/32, this.lookingDirection);
@@ -36,7 +43,6 @@ class Shooter extends Enemy {
             this.hasShot = true;
             setTimeout(()=>{
                 this.hasShot = false;
-                console.log("Has shot:", this.hasShot);
                 this.setupCannonball();
             }, 1000);
         }else { return; }
@@ -44,5 +50,9 @@ class Shooter extends Enemy {
 
     createCannonBall(width, height, x, y, flyDirection) {
         hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection));
+    }
+
+    playSound() {
+        this.player.play();
     }
 }

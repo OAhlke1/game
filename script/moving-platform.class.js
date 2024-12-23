@@ -25,6 +25,7 @@ class MovingPlatform extends Platform {
         }else {
             this.moveDown();
         }
+        //this.checkIfCharStandsAtPlatform();
     }
 
     moveRight() {

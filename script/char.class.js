@@ -4,7 +4,8 @@ class Char {
     x;
     y;
     src;
-    notAtWall;
+    atWallLeft;
+    atWallRight;
     startingYPos;
     standingPlatformIndex;
     onMovingPlatform;
@@ -51,7 +52,8 @@ class Char {
         this.stepLength = stepLength;
         this.standardStepLength = stepLength;
         this.basicStepLength = stepLength;
-        this.notAtWall = true;
+        this.atWallLeft = false;
+        this.atWallRight = false;
         this.jumps = false;
         this.jumpFallStepHeight = heightUnit / 3;
         this.maxJumpHeight = maxJumpHeight;
@@ -85,8 +87,9 @@ class Char {
     moveLeft(key) {
         if (controller['left'].pressed) {
             if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
-                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+                ////checkIfStandingAtPlatform(if(!this.atWallLeft && !this.falls) { this.atWallLeft = this.checkIfStandingAtPlatform(); }
+                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
+                    this.checkIfFalling();
                 }
                 this.setMovingState(key);
                 checkForScrolling();
@@ -94,7 +97,7 @@ class Char {
                     this.x = widthUnit + 1;
                     controller['left'].pressed = false;
                     return;
-                } else { this.x -= this.stepLength; }
+                } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
             }
             setTimeout(() => { this.moveLeft(key) }, 10);
         }
@@ -103,8 +106,9 @@ class Char {
     moveLeftTouch(key) {
         if(controller['left'].pressed) {
             if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length) {
-                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+                //checkIfStandingAtPlatform(if(!this.atWallLeft && !this.falls) { this.atWallLeft = this.checkIfStandingAtPlatform(); }
+                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
+                    this.checkIfFalling();
                 }
                 this.setMovingState(key);
                 checkForScrolling();
@@ -112,7 +116,7 @@ class Char {
                     this.x = widthUnit + 1;
                     controller['left'].pressed = false;
                     return;
-                } else { this.x -= this.stepLength; }
+                } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
             }
             setTimeout(() => { this.moveLeft(key) }, 10);
         }
@@ -121,8 +125,9 @@ class Char {
     moveRight(key) {
         if (controller['right'].pressed) {
             if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length) {
-                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+                //if(!this.atWallRight && !this.falls) { this.atWallRight = this.checkIfStandingAtPlatform(); }
+                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
+                    this.checkIfFalling();
                 }
                 this.setMovingState(key);
                 checkForScrolling();
@@ -133,7 +138,7 @@ class Char {
                 } else {
                     if (this.x + this.width - canvas.offsetWidth >= 0) {
                         this.x += (canvas.offsetWidth - this.x - this.width);
-                    } else { this.x += this.stepLength; }
+                    } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
                 }
             }
             setTimeout(() => { this.moveRight(key) }, 10);
@@ -143,8 +148,9 @@ class Char {
     moveRightTouch(key) {
         if(controller['right'].pressed) {
             if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length) {
-                    if (this.checkPlatformEnd()) { this.checkIfFalling(); }
+                //if(!this.atWallRight && !this.falls) { this.atWallRight = this.checkIfStandingAtPlatform(); }
+                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
+                    this.checkIfFalling();
                 }
                 this.setMovingState(key);
                 checkForScrolling();
@@ -155,7 +161,7 @@ class Char {
                 } else {
                     if (this.x + this.width - canvas.offsetWidth >= 0) {
                         this.x += (canvas.offsetWidth - this.x - this.width);
-                    } else { this.x += this.stepLength; }
+                    } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
                 }
             }
             setTimeout(() => { this.moveRight(key) }, 10);
@@ -192,6 +198,8 @@ class Char {
     jump(i = this.maxJumpHeight / this.jumpFallStepHeight) {
         if (!gamePaused && this.isAlive && !this.falls) {
             this.onMovingPlatform = false;
+            this.atWallLeft = false;
+            this.atWallRight = false;
             this.stopFalling();
             this.stepAmount = 0;
             this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
@@ -199,7 +207,6 @@ class Char {
             i--;
             this.y -= this.jumpFallStepHeight;
             if (i <= 0 || this.y <= heightUnit) {
-                //this.maxJumpHeight = 5*widthUnit;
                 this.checkIfFalling(i);
                 return;
             }
@@ -233,8 +240,16 @@ class Char {
                 return;
             } else if (this.y >= canvas.offsetHeight) {
                 this.jumps = false;
-                this.healthAmount = 0;
-                gamePaused = true;
+                this.falls = false;
+                this.healthAmount -= 50;
+                this.stopFalling();
+                if(this.healthAmount > 0) {
+                    this.hitChar();
+                    gamePaused = true;
+                    resetScreenPosition(parseInt(canvas.style.left));
+                }else {
+                    this.healthAmount = 0;
+                }
             }
 
             if (this.startingYPos === this.y) {

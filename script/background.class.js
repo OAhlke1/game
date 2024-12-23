@@ -14,6 +14,12 @@ class Background {
         this.image = new Image();
         this.imgPath = imgPath;
         this.image.src = imgPath;
+        this.setBackgroundPosition();
+    }
+
+    setBackgroundPosition() {
+        this.x = (canCont.offsetLeft - parseFloat(canvas.style.left));
+        requestAnimationFrame(()=>{this.setBackgroundPosition()});
     }
 
     fadeOut() {

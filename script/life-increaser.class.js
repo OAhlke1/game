@@ -1,5 +1,6 @@
 class LifeIncreaser extends Item {
     increaseLifeAmount;
+    player;
 
     constructor(x, y, width, height, imagePath, itemType, increaseLifeAmount) {
         super();
@@ -12,5 +13,12 @@ class LifeIncreaser extends Item {
         this.itemType = itemType;
         this.increaseLifeAmount = increaseLifeAmount;
         this.collected = false;
+        this.player = new Audio();
+        this.player.src = "sounds/got-life.mp3";
+    }
+
+    playAudio() {
+        this.player.play();
+        this.player.volume = 0.5;
     }
 }
