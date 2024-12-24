@@ -34,7 +34,7 @@ class Item {
             switch(this.itemType) {
                 case "life-increaser":
                     this.collectHeart();
-                    this.playAudio();
+                    if(char.healthAmount < char.maxHealthAmount) { this.playSound(); }
                     break;
                 case "ammo-kit":
                     this.collectSpecialAmmoKit();

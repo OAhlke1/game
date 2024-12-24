@@ -18,6 +18,7 @@ class Ammo extends Char {
     }
 
     animateTrajectory() {
+        console.log("animateTrajectory()");
         if(!gamePaused) {
             if(!this.leftCanvas) {
                 if(this.flyingDirection === "left") {

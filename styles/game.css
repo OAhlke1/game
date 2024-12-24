@@ -16,8 +16,8 @@ body {
 }
 
 .canvas-cont {
-    width: 100vw;
-    height: 100vh;
+    width: 80vw;
+    height: 45vw;
     position: relative;
     margin: 0 auto;
     overflow: hidden;

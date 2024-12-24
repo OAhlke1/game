@@ -10,7 +10,7 @@ class Background {
         this.x = x;
         this.y = y;
         this.width = width;
-        this.height = height;
+        this.height = 0.5625*width;
         this.image = new Image();
         this.imgPath = imgPath;
         this.image.src = imgPath;
@@ -18,7 +18,7 @@ class Background {
     }
 
     setBackgroundPosition() {
-        this.x = (canCont.offsetLeft - parseFloat(canvas.style.left));
+        this.x = 0*canCont.offsetLeft - parseFloat(canvas.style.left);
         requestAnimationFrame(()=>{this.setBackgroundPosition()});
     }
 

@@ -42,6 +42,7 @@ class Char {
     targeted;
     onUpwardsMovingPlatform;
     specialAmmoParts;
+    shootingSoundPlayer;
 
     constructor(width, height, x, y, src, stepLength, maxJumpHeight) {
         this.width = width;
@@ -82,6 +83,8 @@ class Char {
         this.targeted = false;
         this.onUpwardsMovingPlatform = false;
         this.specialAmmoParts = 0;
+        this.shootingSoundPlayer = new Audio();
+        this.shootingSoundPlayer.src = 'sounds/enemy-shoots.mp3';
     }
 
     moveLeft(key) {
@@ -249,6 +252,7 @@ class Char {
                     resetScreenPosition(parseInt(canvas.style.left));
                 }else {
                     this.healthAmount = 0;
+                    resetGame();
                 }
             }
 
@@ -307,7 +311,7 @@ class Char {
                     return;
                 }else {
                     if(platforms[this.standingPlatformIndex].sideways) {
-                        this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.stepLength;
+                        this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.standardStepLength;
                     }else {
                         char.onUpwardsMovingPlatform = true;
                         this.y = platforms[this.standingPlatformIndex].y - this.height;
@@ -389,5 +393,9 @@ class Char {
         } else {
             this.figImage.src = `../graphics/main-char/dead/dead-${this.movingDirection}.png`;
         }
+    }
+
+    playShootingSound() {
+        this.shootingSoundPlayer.play();
     }
 }

@@ -32,6 +32,7 @@ let items = {
 let audioPlayer = [];
 
 function initFunctions() {
+    //document.querySelector('body').requestFullscreen();
     loadPlayer();
     createCanvas();
     setScreenSize();
@@ -85,6 +86,7 @@ function createChar() {
 }
 
 function createAmmo(x, y, width, height, imagePath) {
+    char.playShootingSound();
     charObjects.ammo.push(new Ammo(x, y, width, height, imagePath));
 }
 
@@ -146,9 +148,9 @@ function createTraps() {
     hitables.traps.push(new Trap(5.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, 'graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
     hitables.traps.push(new Trap(8.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, 'graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
     hitables.traps.push(new Trap(38*widthUnit, 11*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
-    hitables.traps.push(new Trap(36*widthUnit, 9*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 6));
+    //hitables.traps.push(new Trap(36*widthUnit, 9*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 6));
     hitables.traps.push(new Trap(34*widthUnit, 7*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
-    hitables.traps.push(new Trap(32*widthUnit, 5*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 6));
+    //hitables.traps.push(new Trap(32*widthUnit, 5*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 6));
     hitables.traps.push(new Trap(30*widthUnit, 3*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(45*widthUnit, 11*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(12*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, true, true, 35, 8, 0));
@@ -298,8 +300,8 @@ function addKeypressMovingCommands() {
                 gamePaused = false;
                 timer();
             }
-        } else if (event.key.toLowerCase() === "w") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*widthUnit+canvas.offsetHeight, widthUnit*10, heightUnit*10, '/graphics/enemies/shooter/attack/cannonball.png');
+        } else if (event.key.toLowerCase() === "d") {
+            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.25*widthUnit, 0.25*heightUnit, '/graphics/enemies/shooter/attack/cannonball.png');
         } else if (event.key.toLowerCase() === "m") {
             gameSoundOnOffToggle();
         }
@@ -518,12 +520,13 @@ function gameSoundOnOffToggle() {
 }
 
 function turnOnFullScreen() {
+    gamePaused = true;
     canCont.style.width = `${window.innerWidth}px`;
     canCont.style.height = `${9*canCont.offsetWidth/16}px`;
+    widthUnit = canCont.offsetWidth/48;
+    heightUnit = canCont.offsetHeight/27;
     canvas.setAttribute("width", 2*canCont.offsetWidth);
     canvas.setAttribute("height", canCont.offsetHeight);
-    widthUnit = window.innerWidth/48;
-    heightUnit = window.innerHeight/27;
     clearCanvas();
     recreateElements();
     //localStorage.setItem('canContScales', JSON.stringify({ width: canCont.offsetWidth, height: canCont.offsetHeight }));
@@ -535,9 +538,15 @@ function recreateElements() {
     hitables.traps = [];
     hitables.enemies = [];
     platforms = [];
+    items.lifeIncreasing = [];
+    items.specialAmmo = [];
+    debugger;
+    createBackgrounds();
+    createPlatforms();
     createTraps();
     createEnemies();
-    createPlatforms();
+    createItems();
+    gamePaused = false;
 }
 
 function turnOffFullScreen() {
@@ -580,6 +589,7 @@ function resetScreenPosition(i) {
     canvas.style.left = `${i}px`;
     if(i >= 0) {
         canvas.style.left = '0px';
+        char.scrollingStepAmount = 0;
         resetCharPosition();
         gamePaused = false;
         return;
@@ -590,4 +600,10 @@ function resetScreenPosition(i) {
 function resetCharPosition() {
     char.x = widthUnit;
     char.y = 25*heightUnit;
+}
+
+function resetGame() {
+    console.log("reset game!");
+    clearCanvas();
+    recreateElements();
 }

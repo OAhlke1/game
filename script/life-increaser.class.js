@@ -17,7 +17,7 @@ class LifeIncreaser extends Item {
         this.player.src = "sounds/got-life.mp3";
     }
 
-    playAudio() {
+    playSound() {
         this.player.play();
         this.player.volume = 0.5;
     }
