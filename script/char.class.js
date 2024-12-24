@@ -84,7 +84,7 @@ class Char {
         this.onUpwardsMovingPlatform = false;
         this.specialAmmoParts = 0;
         this.shootingSoundPlayer = new Audio();
-        this.shootingSoundPlayer.src = 'sounds/enemy-shoots.mp3';
+        this.shootingSoundPlayer.src = './sounds/enemy-shoots.mp3';
     }
 
     moveLeft(key) {
@@ -191,7 +191,7 @@ class Char {
     checkIfJumping() {
         if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
-                playSound('sounds/jump.ogg');
+                playSound('./sounds/jump.ogg');
                 this.jumps = true;
                 this.jump();
             }
@@ -369,7 +369,7 @@ class Char {
 
     decreaseHealth(decreasingAmount) {
         if (!this.isImmune) {
-            playSound('sounds/hit.ogg');
+            playSound('./sounds/hit.ogg');
             this.isImmune = true;
             this.healthAmount -= decreasingAmount;
             if (this.healthAmount <= 0) {

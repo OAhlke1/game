@@ -61,7 +61,7 @@ function setScreenSize() {
 
 function loadPlayer() {
     bgPlayer = new Audio();
-    bgPlayer.src = 'sounds/background.mp3';
+    bgPlayer.src = './sounds/background.mp3';
     bgPlayer.volume = gameVolume;
     bgPlayer.play();
     bgPlayer.loop = true;

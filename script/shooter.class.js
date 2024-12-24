@@ -26,7 +26,7 @@ class Shooter extends Enemy {
         this.hasShot = false;
         this.walks = false;
         this.player = new Audio();
-        this.player.src = 'sounds/enemy-shoots.mp3';
+        this.player.src = './sounds/enemy-shoots.mp3';
     }
 
     setupCannonball() {
