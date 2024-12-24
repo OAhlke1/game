@@ -14,11 +14,11 @@ class Ammo extends Char {
         this.flyingDirection = char.movingDirection;
         this.decreaseLifeAmount = 30;
         this.leftCanvas = false;
+        this.playShootingSound();
         this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, 20);
     }
 
     animateTrajectory() {
-        console.log("animateTrajectory()");
         if(!gamePaused) {
             if(!this.leftCanvas) {
                 if(this.flyingDirection === "left") {
@@ -55,5 +55,9 @@ class Ammo extends Char {
 
     checkIfStillInCanvas() {
         if(this.x + this.width <= 0 || this.x >= canvas.offsetWidth) { this.leftCanvas = true; }
+    }
+
+    playShootingSound() {
+        this.shootingSoundPlayer.play();
     }
 }

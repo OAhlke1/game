@@ -394,8 +394,4 @@ class Char {
             this.figImage.src = `../graphics/main-char/dead/dead-${this.movingDirection}.png`;
         }
     }
-
-    playShootingSound() {
-        this.shootingSoundPlayer.play();
-    }
 }

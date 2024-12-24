@@ -86,7 +86,6 @@ function createChar() {
 }
 
 function createAmmo(x, y, width, height, imagePath) {
-    char.playShootingSound();
     charObjects.ammo.push(new Ammo(x, y, width, height, imagePath));
 }
 
@@ -304,6 +303,8 @@ function addKeypressMovingCommands() {
             createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.25*widthUnit, 0.25*heightUnit, '/graphics/enemies/shooter/attack/cannonball.png');
         } else if (event.key.toLowerCase() === "m") {
             gameSoundOnOffToggle();
+        } else if (event.key.toLowerCase() === "f") {
+            turnOnFullScreen();
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
@@ -520,46 +521,98 @@ function gameSoundOnOffToggle() {
 }
 
 function turnOnFullScreen() {
-    gamePaused = true;
-    canCont.style.width = `${window.innerWidth}px`;
-    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
-    widthUnit = canCont.offsetWidth/48;
-    heightUnit = canCont.offsetHeight/27;
-    canvas.setAttribute("width", 2*canCont.offsetWidth);
-    canvas.setAttribute("height", canCont.offsetHeight);
-    clearCanvas();
-    recreateElements();
-    //localStorage.setItem('canContScales', JSON.stringify({ width: canCont.offsetWidth, height: canCont.offsetHeight }));
+    pauseGame();
     document.querySelector('.turn-fullscreen-on').classList.add('disNone');
     document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    resizeElements();
 }
 
-function recreateElements() {
-    hitables.traps = [];
-    hitables.enemies = [];
-    platforms = [];
-    items.lifeIncreasing = [];
-    items.specialAmmo = [];
-    debugger;
-    createBackgrounds();
-    createPlatforms();
-    createTraps();
-    createEnemies();
-    createItems();
-    gamePaused = false;
+function resizeElements() {
+    let oldCancontSize = parseFloat(canCont.offsetWidth);
+    canCont.style.width = canCont.offsetWidth === window.innerWidth ? `${0.8*window.innerWidth}px` : `${window.innerWidth}px`;
+    canCont.style.height = canCont.offsetHeight === window.innerHeight ? `${0.8*window.innerHeight}px` : `${window.innerHeight}px`;
+    let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
+    widthUnit *= scaleFactor;
+    heightUnit *= scaleFactor;
+    resizeCanvasProperties(scaleFactor);
+    resizePlatformsProperties(scaleFactor);
+    resizeBackgroundsProperties(scaleFactor);
+    resizeHitablesProperties(scaleFactor);
+    resizeCharProperties(scaleFactor);
+    resizeItemsProperties(scaleFactor);
+    pauseGame();
 }
 
-function turnOffFullScreen() {
-    canCont.style.width = `${0.8*window.innerWidth}px`;
-    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
-    canvas.style.width = `${2*canCont.offsetWidth}px`;
-    canvas.style.height = `${canCont.offsetHeight}px`;
-    document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
-    document.querySelector('.turn-fullscreen-off').classList.add('disNone');
-    document.querySelector('#canCont-width').value = canCont.offsetWidth;
-    document.querySelector('#canvas-width').value = canvas.offsetWidth;
-    document.querySelector('#wallbrickwidth').value = widthUnit;
-    document.querySelector('#wallbrickheight').value = heightUnit;
+function resizeCanvasProperties(scaleFactor) {
+    canvas.setAttribute("width", canvas.width*scaleFactor);
+    canvas.setAttribute("height", canvas.height*scaleFactor);
+}
+
+function resizeBackgroundsProperties(scaleFactor) {
+    backgrounds.forEach((elem)=>{
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor;
+    })
+}
+
+function resizePlatformsProperties(scaleFactor) {
+    platforms.forEach((elem)=>{
+        elem.x *= scaleFactor;
+        elem.y *= scaleFactor;
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor;
+        if(elem.isMoving) {
+            elem.startingXPos *= scaleFactor;
+            elem.endingXPos *= scaleFactor;
+            elem.heighestPoint *= scaleFactor;
+            elem.lowestPoint *= scaleFactor;
+        }
+    })
+}
+
+function resizeHitablesProperties(scaleFactor) {
+    hitables.enemies.forEach((elem)=>{
+        elem.x *= scaleFactor;
+        elem.y *= scaleFactor;
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor;
+    })
+    hitables.traps.forEach((elem)=>{
+        elem.x *= scaleFactor;
+        elem.y *= scaleFactor;
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor;
+    })
+    hitables.flyables.forEach((elem)=>{
+        elem.x *= scaleFactor;
+        elem.y *= scaleFactor;
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor;
+    })
+}
+
+function resizeCharProperties(scaleFactor) {
+    char.x *= scaleFactor;
+    char.y *= scaleFactor;
+    char.width *= scaleFactor;
+    char.height *= scaleFactor;
+    char.standardStepLength *= scaleFactor;
+    char.jumpFallStepHeight *= scaleFactor;
+}
+
+function resizeItemsProperties(scaleFactor) {
+    items.lifeIncreasing.forEach((elem)=>{
+        elem.x *= scaleFactor;
+        elem.y *= scaleFactor;
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor;
+    })
+    items.specialAmmo.forEach((elem)=>{
+        elem.x *= scaleFactor;
+        elem.y *= scaleFactor;
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor;
+    })
 }
 
 function pauseGame() {
@@ -605,5 +658,5 @@ function resetCharPosition() {
 function resetGame() {
     console.log("reset game!");
     clearCanvas();
-    recreateElements();
+    resizeElements();
 }
