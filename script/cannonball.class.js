@@ -12,7 +12,7 @@ class Cannonball extends Enemy {
         this.height = height;
         this.flyingDirection = flyingDirection;
         this.image = new Image();
-        this.image.src = 'graphics/enemies/shooter/attack/cannonball.png';
+        this.image.src = './graphics/enemies/shooter/attack/cannonball.png';
         this.decreaseLifeAmount = 5;
         this.enemyType = "flyable";
         this.trajectoryIntervalId = setInterval(()=>{ this.animateTrajectory() }, 10);

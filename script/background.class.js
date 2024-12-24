@@ -23,7 +23,7 @@ class Background {
     }
 
     fadeOut() {
-        this.image.src = 'graphics/background/black-bg.svg';
+        this.image.src = './graphics/background/black-bg.svg';
         setTimeout(this.fadeIn, 10000);
         return;
     }
