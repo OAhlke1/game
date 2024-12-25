@@ -532,6 +532,7 @@ function resizeElements() {
     canCont.style.width = canCont.offsetWidth === window.innerWidth ? `${0.8*window.innerWidth}px` : `${window.innerWidth}px`;
     canCont.style.height = canCont.offsetHeight === window.innerHeight ? `${0.8*window.innerHeight}px` : `${window.innerHeight}px`;
     let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
+    fullScreenButtonToggle(canCont.offsetHeight === window.innerHeight);
     widthUnit *= scaleFactor;
     heightUnit *= scaleFactor;
     resizeCanvasProperties(scaleFactor);
@@ -541,6 +542,17 @@ function resizeElements() {
     resizeCharProperties(scaleFactor);
     resizeItemsProperties(scaleFactor);
     pauseGame();
+}
+
+function fullScreenButtonToggle(inFullscreen) {
+    console.log(inFullscreen);
+    if(inFullscreen) {
+        document.querySelector('.turn-fullscreen-on').classList.add('disNone');
+        document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    }else {
+        document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
+        document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+    }
 }
 
 function resizeCanvasProperties(scaleFactor) {

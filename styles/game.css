@@ -190,21 +190,21 @@ canvas {
 .mute-game {
     width: 40px;
     height: 40px;
-    background-image: url('../graphics/controls/speaker.svg');
+    background-image: url('./graphics/controls/speaker.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
 }
 
 .mute-game.muted {
-    background-image: url('../graphics/controls/speaker-dashed.svg');
+    background-image: url('./graphics/controls/speaker-dashed.svg');
 }
 
 .turn-fullscreen-on,
 .turn-fullscreen-off {
     width: 40px;
     height: 40px;
-    background-image: url('../graphics/controls/fullscreen-on.svg');
+    background-image: url('./graphics/controls/fullscreen-on.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
@@ -214,22 +214,23 @@ canvas {
     position: absolute;
     top: 30px;
     right: 30px;
-    background-image: url('../graphics/controls/fullscreen-off.svg');
+    background-image: url('./graphics/controls/fullscreen-off.svg');
     background-color: white;
     border-radius: 100%;
+    z-index: 5000;
 }
 
 .pause-game {
     width: 30px;
     height: 30px;
-    background-image: url('../graphics/controls/pause-game.svg');
+    background-image: url('./graphics/controls/pause-game.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
 }
 
 .pause-game.paused {
-    background-image: url('../graphics/controls/play-game.svg');
+    background-image: url('./graphics/controls/play-game.svg');
 }
 
 @media only screen and (max-width: 800px) {

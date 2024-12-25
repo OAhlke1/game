@@ -59,9 +59,8 @@ class Trap {
     animateTrap() {
         let onDangerousState = parseFloat(hitables.traps[0].animationIndex/hitables.traps[0].animationImagesAmount) - Math.floor(hitables.traps[0].animationIndex/hitables.traps[0].animationImagesAmount);
         if(this.trapType === "sting-coming-out") {
-            this.image.src = `graphics/traps/stings/${this.trapType}${this.orientation === '' ? '' : '-'+this.orientation}-${this.animationIndex % this.animationImagesAmount}.png`;
-            //console.log(imgState, hitables.traps[0].animationIndex % hitables.traps[0].animationImagesAmount, onDangerousState);
-            if(onDangerousState < 0.25 || onDangerousState >= 0.75) { //this.animationIndex % this.animationImagesAmount === 0 || this.animationIndex % this.animationImagesAmount === 1 || this.animationIndex % this.animationImagesAmount === 6 ||this.animationIndex % this.animationImagesAmount === 7
+            this.image.src = `./graphics/traps/stings/${this.trapType}${this.orientation === '' ? '' : '-'+this.orientation}-${this.animationIndex % this.animationImagesAmount}.png`;
+            if(this.animationIndex % this.animationImagesAmount === 0 || this.animationIndex % this.animationImagesAmount === 1 || this.animationIndex % this.animationImagesAmount === 6 ||this.animationIndex % this.animationImagesAmount === 7) {//onDangerousState < 0.25 || onDangerousState >= 0.75
                 this.isDangerous = false;
             }else { this.isDangerous = true; }
             this.animationIndex++;
