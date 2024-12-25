@@ -300,7 +300,7 @@ function addKeypressMovingCommands() {
                 timer();
             }
         } else if (event.key.toLowerCase() === "d") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.25*widthUnit, 0.25*heightUnit, '/graphics/enemies/shooter/attack/cannonball.png');
+            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.25*widthUnit, 0.0625*heightUnit, './graphics/main-char/ammo/laser.svg');
         } else if (event.key.toLowerCase() === "m") {
             gameSoundOnOffToggle();
         } else if (event.key.toLowerCase() === "f") {
@@ -486,21 +486,17 @@ function setCanvasSize() {
 function checkVolumeBarEvent(event) {
     if (event.type === "mousedown" || event.type === "touchstart") {
         controller['volume'].pressed = true;
-        document.querySelector('.volumebar-cont').addEventListener('mousemove', setWholeVolume);
+        document.querySelector('.controls .volumebar-cont').addEventListener('mousemove', setWholeVolume);
     } else if (event.type === "mouseup" || event.type === "touchend") {
         controller['volume'].pressed = false;
-        document.querySelector('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
-        document.querySelector('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
+        event.target.closest('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
+        event.target.closest('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
     }
 }
 
 let setWholeVolume = function setWholeVolumeFunc(event) {
-    let index;
-    if (event.type === "mousedown" || "mouseup") {
-        index = event.type = 0;
-    } else { index = 1; }
-    let volumeBarInner = document.querySelectorAll('.volumebar .volumebar-inner')[index];
-    let volumeBarWidth = document.querySelectorAll('.volumebar')[index].offsetWidth;
+    let volumeBarInner = event.target.closest('.volumebar').querySelector('.volumebar-inner');
+    let volumeBarWidth = event.target.closest('.volumebar').offsetWidth;
     let x = event.clientX;
     gameVolume = ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) >= 0 ? ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) : 0;
     gameVolume = gameVolume > 1 ? 1 : gameVolume;
@@ -545,7 +541,6 @@ function resizeElements() {
 }
 
 function fullScreenButtonToggle(inFullscreen) {
-    console.log(inFullscreen);
     if(inFullscreen) {
         document.querySelector('.turn-fullscreen-on').classList.add('disNone');
         document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
@@ -610,6 +605,7 @@ function resizeCharProperties(scaleFactor) {
     char.height *= scaleFactor;
     char.standardStepLength *= scaleFactor;
     char.jumpFallStepHeight *= scaleFactor;
+    char.maxJumpHeight *= scaleFactor;
 }
 
 function resizeItemsProperties(scaleFactor) {
