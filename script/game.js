@@ -60,7 +60,7 @@ function initFunctions() {
     createTraps();
     createEnemies();
     createItems();
-    createGameJson();
+    if(!localStorage.gameJson) { createGameJson(); }
     createMenuBar();
     drawElements();
     sizeElements(1);
@@ -68,7 +68,10 @@ function initFunctions() {
 
 function loadGameJson() {
     gameJson = JSON.parse(localStorage.gameJson);
-    console.log("load gameJson:", gameJson.hitables.enemies);
+    items = gameJson.items;
+    hitables.enemies = [];
+    hitables.enemies = gameJson.hitables.enemies;
+    console.log(hitables.enemies);
 }
 
 function createGameJson() {
@@ -79,7 +82,7 @@ function createGameJson() {
         },
         items: items
     };
-    //saveGameJson();
+    //saveGameJaon();
 }
 
 function setSizeUnits() {
@@ -189,10 +192,11 @@ function createTraps() {
 }
 
 function createEnemies() {
-    if(localStorage.gameJson) {
+    if(localStorage.enemies) {
         let enemy;
-        gameJson.hitables.enemies.forEach((elem)=>{
-            console.log("create enemies:", gameJson.hitables.enemies.length);
+        let enemiesJson = JSON.parse(localStorage.enemies);
+        debugger;
+        enemiesJson.forEach((elem)=>{
             if(elem.enemyType === "green") {
                 let elemImage = new Image();
                 elemImage.src = elem.standardImgPath;
@@ -225,16 +229,18 @@ function createEnemies() {
 }
 
 function createItems() {
-    if(localStorage.gameJson) {
+    if(localStorage.items) {
+        itemsJson = JSON.parse(localStorage.items);
+        console.log(items);
         let item;
-        gameJson.items.lifeIncreasing.forEach((elem)=>{
+        itemsJson.lifeIncreasing.forEach((elem)=>{
             let itemImage = new Image();
             itemImage.src = elem.imagePath;
             item = new LifeIncreaser(elem.standardX, elem.standardY, elem.width, elem.height, elem.imagePath, elem.itemType, elem.increaseLifeAmount);
             item.image = itemImage;
             items.lifeIncreasing.push(item);
         })
-        gameJson.items.specialAmmo.forEach((elem)=>{
+        itemsJson.specialAmmo.forEach((elem)=>{
             let itemImage = new Image();
             itemImage.src = elem.imagePath;
             item = new SpecialAmmoKit(elem.standardX, elem.standardY, elem.width, elem.height, elem.imagePath, elem.itemType);
@@ -651,7 +657,6 @@ function fullScreenButtonToggle(inFullscreen) {
 }
 
 function resizeCanvasProperties(scaleFactor) {
-    //console.log(scaleFactor);
     canvas.setAttribute("width", 2*canCont.offsetWidth);
     canvas.setAttribute("height", canCont.offsetHeight);
 }
@@ -786,7 +791,7 @@ function resetGame() {
 
 function saveCharProperties() {
     gameJson.char = char;
-    saveGameJson();
+    
 }
 
 function saveNotCollectedItems() {
@@ -799,29 +804,23 @@ function saveNotCollectedItems() {
     })
     items.lifeIncreasing.forEach((elem)=>{
         if(!elem.collected) { notCollected.lifeIncreasing.push(elem); }
-    })
-    items = notCollected;
-    createGameJson();
-    saveGameJson();
+    });
+    localStorage.setItem("items", JSON.stringify(notCollected));
+    //saveGameJaon();
+    
 }
 
 function saveNotDefeatedEnemies() {
     let notDefeated = [];
-    console.log("hitables enemies length:", hitables.enemies.length);
     hitables.enemies.forEach((elem)=>{
-        console.log(elem.isAlive);
         if(elem.isAlive) { notDefeated.push(elem); }
     });
+    localStorage.setItem("enemies", JSON.stringify(notDefeated));
     hitables.enemies = notDefeated;
-    console.log("not defeated:", notDefeated, hitables.enemies.length);
-    createGameJson();
-    saveGameJson();
 }
 
 function saveGameJson() {
     gameJson.char = char;
-    console.log("gameJson enemies:", gameJson.hitables.enemies);
-    localStorage.setItem('gameJson', JSON.stringify(gameJson));
 }
 
 function allAmmoKitsCollected() {
