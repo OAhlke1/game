@@ -4,6 +4,9 @@ class MovingPlatform extends Platform {
     highestPoint;
     lowestPoint;
     sideways;
+    directionOneMovingAnimationId;
+    directionTwoMovingAnimationId;
+
 
     constructor(width, height, startingXPos, endingXPos, highestPoint, lowestPoint, y, imgPath, sideways) {
         super();
@@ -21,45 +24,36 @@ class MovingPlatform extends Platform {
         this.isMoving = true;
         this.sideways = sideways;
         if(this.sideways) {
-            this.moveRight();
+            this.directionOneMovingAnimationId = setInterval(()=>{ this.moveRight(); }, 10);
         }else {
-            this.moveDown();
+            this.directionOneMovingAnimationId = setInterval(()=>{ this.moveDown(); }, 10);
         }
-        //this.checkIfCharStandsAtPlatform();
     }
 
     moveRight() {
         if (!gamePaused) {
-            //char.movingDirection = "right";
             checkForScrolling("right");
             this.x += widthUnit / 10;
             if (this.x + this.width >= this.endingXPos) {
                 this.x = this.endingXPos - this.width;
-                this.moveLeft();
+                clearInterval(this.directionOneMovingAnimationId);
+                this.directionTwoMovingAnimationId = setInterval(()=>{ this.moveLeft(); }, 10);
                 return;
             }
         }
-        requestAnimationFrame(() => {
-            drawElements();
-            this.moveRight();
-        });
     }
 
     moveLeft() {
         if (!gamePaused) {
-            //char.movingDirection = "left";
             checkForScrolling("left");
             this.x -= widthUnit / 10;
             if (this.x <= this.startingXPos) {
                 this.x = this.startingXPos;
-                this.moveRight();
+                clearInterval(this.directionTwoMovingAnimationId);
+                this.directionOneMovingAnimationId = setInterval(()=>{ this.moveRight(); }, 10);
                 return;
             }
         }
-        requestAnimationFrame(() => {
-            drawElements();
-            this.moveLeft();
-        });
     }
 
     moveDown() {
@@ -70,14 +64,11 @@ class MovingPlatform extends Platform {
             this.y += widthUnit / 10;
             if (this.y + this.height > this.lowestPoint) {
                 this.y = this.lowestPoint - this.height;
-                this.moveUp();
+                clearInterval(this.directionOneMovingAnimationId);
+                this.directionTwoMovingAnimationId = setInterval(()=>{ this.moveUp(); }, 10);
                 return;
             }
         }
-        requestAnimationFrame(() => {
-            drawElements();
-            this.moveDown();
-        });
     }
 
     moveUp() {
@@ -89,13 +80,11 @@ class MovingPlatform extends Platform {
             this.y -= heightUnit / 10;
             if (this.y <= this.highestPoint) {
                 this.y = this.highestPoint;
-                this.moveDown();
+                clearInterval(this.directionTwoMovingAnimationId);
+                this.directionOneMovingAnimationId = setInterval(()=>{ this.moveDown(); }, 10);
                 return;
             }
         }
-        requestAnimationFrame(() => {
-            drawElements();
-            this.moveUp();
-        });
+        //this.directionTwoMovingAnimationId = setInterval(() => { this.moveRight(); }, 10);
     }
 }

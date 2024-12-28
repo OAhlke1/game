@@ -1,6 +1,8 @@
 class Enemy {
     x;
     y;
+    standardX;
+    standardY;
     minX;
     maxX;
     width;
@@ -26,7 +28,9 @@ class Enemy {
 
     constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount) {
         this.x = x;
+        this.standardX = x;
         this.y = y;
+        this.standardY = y;
         this.minX = x;
         this.maxX = canvas.offsetWidth-widthUnit;
         this.width = width;
@@ -59,7 +63,7 @@ class Enemy {
                 if(this.checkIfGotHit() && this.isDangerous) {
                     this.isDangerous = false;
                     this.lifeAmount -= char.headJumpAmount;
-                    this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 500/this.hitImagesAmount);
+                    this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 250/this.hitImagesAmount);
                 }else {
                     this.walks = false;
                     this.targeting = false;
@@ -87,12 +91,12 @@ class Enemy {
         if(this.x > char.x + char.width) {
             if(this.lookingDirection === "right") {
                 this.lookingDirection = "left";
-                this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
+                this.image.src = `./graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
             }
         }else if(this.x + this.width < char.x) {
             if(this.lookingDirection === "left") {
                 this.lookingDirection = "right";
-                this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
+                this.image.src = `./graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-0.png`;
             }
         }
         this.atLookingAtChar();
@@ -104,7 +108,7 @@ class Enemy {
             if(this.canWalk && !this.walks) {
                 this.walks = true;
                 if(this.enemyType != "flyable") { this.animateWalking(); }
-                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 30);
+                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 10);
             }
         }else if(Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar/2) {
             this.targeting = true;
@@ -149,14 +153,14 @@ class Enemy {
     animateWalking() {
         if(this.walks && this.isDangerous) {
             this.x = this.lookingDirection === "right" ? this.x += widthUnit/5 : this.x -= widthUnit/5;
-            this.image.src = `graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
+            this.image.src = `./graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
             this.walkingIndex++;
             if(this.walkingIndex === this.attackingImagesAmount) { this.walkingIndex = 0; }
         }
     }
 
     animateEnemyGotHit() {
-        if(this.enemyType != "flyable") { this.image.src = `graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`; }
+        if(this.enemyType != "flyable") { this.image.src = `./graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`; }
         this.hittingIndex++;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;
@@ -168,7 +172,7 @@ class Enemy {
                     this.isDangerous = false;
                     char.enemiesKilled++;
                     this.isAlive = false;
-                    checkIfAllEnemiesAreDead();
+                    saveNotDefeatedEnemies();
                 }else if(this.lifeAmount > 0) {
                     this.isDangerous = true;
                 }

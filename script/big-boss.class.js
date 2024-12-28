@@ -1,8 +1,5 @@
-class Shooter extends Enemy {
-    targeting;
-    hasShot;
-    walks;
-    player;
+class BigBoss extends Shooter {
+    animateLevitationId;
 
     constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
@@ -11,7 +8,7 @@ class Shooter extends Enemy {
         this.y = y;
         this.standardY = y;
         this.width = width;
-        this.height = height,
+        this.height = height;
         this.image = new Image();
         this.image.src = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
         this.enemyType = enemyType;
@@ -29,32 +26,24 @@ class Shooter extends Enemy {
         this.walks = false;
         this.player = new Audio();
         this.player.src = './sounds/enemy-shoots.mp3';
+        this.animateLevitationId = setInterval(() => { this.levitateDown() }, 30);
     }
 
-    setupCannonball() {
-        if (!gamePaused && this.targeting && this.isDangerous && !this.hasShot) {
-            this.playSound();
-            switch (this.lookingDirection) {
-                case "left":
-                    this.createCannonBall(0.5*widthUnit, 0.5*heightUnit, this.x - widthUnit, this.y + 5*this.height/32, this.lookingDirection);
-                    break;
-                case "right":
-                    this.createCannonBall(0.5*widthUnit, 0.5*heightUnit, this.x + widthUnit, this.y + 5*this.height/32, this.lookingDirection);
-                    break;
-            }
-            this.hasShot = true;
-            setTimeout(()=>{
-                this.hasShot = false;
-                this.setupCannonball();
-            }, 1000);
-        }else { return; }
+    levitateUp() {
+        this.y -= 0.125*heightUnit;
+        if(this.y <= 0) {
+            clearInterval(this.animateLevitationId);
+            this.animateLevitationId = setInterval(()=>{ this.levitateDown(); }, 30);
+            return;
+        }
     }
 
-    createCannonBall(width, height, x, y, flyDirection) {
-        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection));
-    }
-
-    playSound() {
-        this.player.play();
+    levitateDown() {
+        this.y += 0.125*heightUnit;
+        if(this.y + this.height >= canCont.offsetHeight) {
+            clearInterval(this.animateLevitationId);
+            this.animateLevitationId = setInterval(()=>{ this.levitateUp(); }, 30);
+            return;
+        }
     }
 }

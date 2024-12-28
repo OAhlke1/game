@@ -15,7 +15,6 @@ class Platform extends Wall {
         this.blockAmount = blockAmount;
         this.isMoving = false;
         this.setPlatformImageProps();
-        //this.checkIfCharStandsAtPlatform();
     }
 
     setPlatformImageProps() {

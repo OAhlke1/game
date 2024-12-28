@@ -313,7 +313,7 @@ class Char {
                     if(platforms[this.standingPlatformIndex].sideways) {
                         this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.standardStepLength;
                     }else {
-                        char.onUpwardsMovingPlatform = true;
+                        this.onUpwardsMovingPlatform = true;
                         this.y = platforms[this.standingPlatformIndex].y - this.height;
                     }
                 }
@@ -347,7 +347,7 @@ class Char {
 
     hitChar() {
         this.gotHit = true;
-        this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 1500/this.hitImagesAmount);
+        this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 20);
         setTimeout(() => { this.gotHit = false; }, 1500);
     }
 
@@ -379,12 +379,14 @@ class Char {
                 this.setImagePath(`../graphics/main-char/dead/dead-${this.movingDirection}.png`);
                 return;
             }
+            saveCharProperties();
             setTimeout(() => {this.isImmune = false }, 1500);
         }
     }
 
-    animateShooting() {
-        
+    saveCharProperties() {
+        gameJson.char = char;
+        localStorage.setItem('gameJson', JSON.stringify(gameJson));
     }
 
     setImagePath(path) {

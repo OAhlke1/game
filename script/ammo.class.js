@@ -15,11 +15,10 @@ class Ammo extends Char {
         this.decreaseLifeAmount = 30;
         this.leftCanvas = false;
         this.playShootingSound();
-        this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, 20);
+        this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, 10);
     }
 
     animateTrajectory() {
-        console.log(this.image.src);
         if(!gamePaused) {
             if(!this.leftCanvas) {
                 if(this.flyingDirection === "left") {
@@ -38,14 +37,21 @@ class Ammo extends Char {
 
     checkForEnemies() {
         hitables.enemies.forEach((elem) => {
-            //console.log(this.x + this.width > elem.x && elem.x + elem.width > this.x);
             if(this.y + this.height > elem.y && elem.y + elem.height > this.y) {
                 if(this.x + this.width > elem.x && elem.x + elem.width > this.x) {
                     if(elem.isDangerous) {
                         elem.isDangerous = false;
                         elem.walks = false;
-                        elem.lifeAmount -= this.decreaseLifeAmount;
-                        elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
+                        if(elem.enemyType != "big-boss") {
+                            elem.lifeAmount -= this.decreaseLifeAmount;
+                            elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
+                        }else if(elem.enemyType === "big-boss") {
+                            if(this.specialAmmoParts === 3) {
+                                console.log("debugger;");
+                                elem.lifeAmount -= this.decreaseLifeAmount;
+                                elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
+                            }
+                        }
                         this.leftCanvas = true;
                         clearInterval(this.trajectoryAnimationId);
                     }
