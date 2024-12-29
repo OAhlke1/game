@@ -114,13 +114,10 @@ function createBackgrounds() {
 }
 
 function createChar() {
-    char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4*heightUnit);
-    if(localStorage.gameJson) {
-        let gameJs = JSON.parse(localStorage.gameJson);
-        char.specialAmmoParts = gameJs.char.specialAmmoParts;
-        char.lifeAmount = gameJs.char.lifeAmount;
-    }
-    gameJson.char = char;
+    if(localStorage.char) {
+        let charObject = JSON.parse(localStorage.char);
+        char = new Char(charObject.width, charObject.height, charObject.standardX, charObject.standardY, charObject.standardImgPath, charObject.standardStepLength, charObject.maxJumpHeight, charObject.specialAmmoParts);
+    }else { char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4*heightUnit, 0); }
 }
 
 function createAmmo(x, y, width, height, imagePath) {
@@ -195,27 +192,19 @@ function createEnemies() {
     if(localStorage.enemies) {
         let enemy;
         let enemiesJson = JSON.parse(localStorage.enemies);
-        debugger;
+        console.log("enemiesJson:", enemiesJson);
         enemiesJson.forEach((elem)=>{
+            let elemImage = new Image();
+            elemImage.src = elem.standardImgPath;
             if(elem.enemyType === "green") {
-                let elemImage = new Image();
-                elemImage.src = elem.standardImgPath;
                 enemy = new GreenEnemy(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.imagePath, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, elem.lifeAmount, elem.distanceToSeeChar, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
-                enemy.image = elemImage;
-                hitables.enemies.push(enemy);
-            }else if(elem.enemyTye === "shooter") {
-                    let elemImage = new Image();
-                    elemImage.src = elem.standardImgPath;
+            }else if(elem.enemyType === "shooter") {
                     enemy = new Shooter(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, elem.lifeAmount, elem.distanceToSeeChar, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
-                    enemy.image = elemImage;
-                    hitables.enemies.push(enemy);
             }else if(elem.enemyType === "big-boss") {
-                let elemImage = new Image();
-                elemImage.src = elem.standardImgPath;
                 enemy = new BigBoss(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, elem.lifeAmount, elem.distanceToSeeChar, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
-                enemy.image = elemImage;
-                hitables.enemies.push(enemy);
             }
+            enemy.image = elemImage;
+            hitables.enemies.push(enemy);
         })
     }else {
         hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
@@ -312,28 +301,20 @@ function drawHitables() {
 
 function drawItems() {
     items.lifeIncreasing.forEach((elem) => {
-        if (!elem.collected) {
-            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
-        }
+        if (!elem.collected) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
     items.specialAmmo.forEach((elem) => {
-        if (!elem.collected) {
-            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
-        }
+        if (!elem.collected) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
 }
 
 function drawChar() {
-    if (char.isAlive) {
-        ctx.drawImage(char.figImage, char.x, char.y, char.width, char.height);
-    }
+    if (char.isAlive) { ctx.drawImage(char.figImage, char.x, char.y, char.width, char.height); }
 }
 
 function drawCharObjects() {
     charObjects.ammo.forEach((elem) => {
-        if (!elem.leftCanvas) {
-            ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
-        }
+        if (!elem.leftCanvas) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     });
 }
 
@@ -790,8 +771,7 @@ function resetGame() {
 }
 
 function saveCharProperties() {
-    gameJson.char = char;
-    
+    localStorage.setItem("char", JSON.stringify(char));    
 }
 
 function saveNotCollectedItems() {
@@ -827,7 +807,7 @@ function allAmmoKitsCollected() {
     items.specialAmmo.forEach((elem, index)=>{
         if(elem.collected) {
             if(index+1 === items.specialAmmo.length) {
-                ammoImageSource = '.graphics/main-char/ammo/laser-special.svg';
+                ammoImageSource = './graphics/main-char/ammo/laser-special.svg';
                 char.shootingSoundPlayer.src = './sounds/special-shooting-sound.png';
             }
         }

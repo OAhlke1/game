@@ -61,12 +61,14 @@ class Item {
             }
         }
         saveNotCollectedItems("lifeIncreasing");
+        saveCharProperties();
     }
 
     collectSpecialAmmoKit() {
         this.collected = true;
         char.specialAmmoParts++;
         saveNotCollectedItems("specialAmmo");
+        saveCharProperties();
         allAmmoKitsCollected();
     }
 }

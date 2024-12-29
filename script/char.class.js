@@ -3,7 +3,9 @@ class Char {
     height;
     x;
     y;
-    src;
+    standardX;
+    standardY;
+    standardImgPath;
     atWallLeft;
     atWallRight;
     startingYPos;
@@ -44,12 +46,14 @@ class Char {
     specialAmmoParts;
     shootingSoundPlayer;
 
-    constructor(width, height, x, y, src, stepLength, maxJumpHeight) {
+    constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0) {
         this.width = width;
         this.height = height;
         this.x = x;
+        this.standardX = x;
         this.y = y;
-        this.src = src;
+        this.standardY = y;
+        this.standardImgPath = standardImgPath;
         this.stepLength = stepLength;
         this.standardStepLength = stepLength;
         this.basicStepLength = stepLength;
@@ -74,7 +78,7 @@ class Char {
         this.enemiesKilled = 0;
         this.movingDirection = 'right';
         this.figImage = new Image();
-        this.figImage.src = this.src;
+        this.figImage.src = this.standardImgPath;
         this.isAlive = true;
         this.sleeps = false;
         this.gotHit = false;
@@ -82,9 +86,9 @@ class Char {
         this.landedOnPlatform = false;
         this.targeted = false;
         this.onUpwardsMovingPlatform = false;
-        this.specialAmmoParts = 0;
+        this.specialAmmoParts = specialAmmoParts;
         this.shootingSoundPlayer = new Audio();
-        this.shootingSoundPlayer.src = './sounds/enemy-shoots.mp3';
+        this.shootingSoundPlayer.standardImgPath = './sounds/enemy-shoots.mp3';
     }
 
     moveLeft(key) {
@@ -348,6 +352,7 @@ class Char {
     hitChar() {
         this.gotHit = true;
         this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 20);
+        saveCharProperties();
         setTimeout(() => { this.gotHit = false; }, 1500);
     }
 
