@@ -69,7 +69,7 @@ function initFunctions() {
     }
     drawElements();
     sizeElements(1);
-    sizeMenuBar();
+    sizeMenuBarProperties();
 }
 
 function clearLocalStorage() {
@@ -643,12 +643,7 @@ function sizeElements(scaleFactor) {
 }
 
 function resizeElements() {
-    let oldCancontSize = parseFloat(canCont.offsetWidth);
-    canCont.style.width = canCont.offsetWidth === window.innerWidth ? `${0.8*window.innerWidth}px` : `${window.innerWidth}px`;
-    canCont.style.height = canCont.offsetHeight === window.innerHeight ? `${7.2*window.innerWidth/16}px` : `${9*canCont.offsetWidth/16}px`;
-    let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
-    widthUnit *= scaleFactor;
-    heightUnit *= scaleFactor;
+    let scaleFactor = setScreenProperties();
     fullScreenButtonToggle(canCont.offsetHeight === window.innerHeight);
     resizeCanvasProperties(scaleFactor);
     resizePlatformsProperties(scaleFactor);
@@ -656,7 +651,17 @@ function resizeElements() {
     resizeHitablesProperties(scaleFactor);
     resizeCharProperties(scaleFactor);
     resizeItemsProperties(scaleFactor);
-    sizeMenuBar();
+    sizeMenuBarProperties();
+}
+
+function setScreenProperties() {
+    let oldCancontSize = parseFloat(canCont.offsetWidth);
+    canCont.style.width = canCont.offsetWidth === window.innerWidth ? `${0.8*window.innerWidth}px` : `${window.innerWidth}px`;
+    canCont.style.height = canCont.offsetHeight === window.innerHeight ? `${7.2*canCont.offsetWidth/16}px` : `${9*canCont.offsetWidth/16}px`;
+    let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
+    widthUnit *= scaleFactor;
+    heightUnit *= scaleFactor;
+    return scaleFactor;
 }
 
 function fullScreenButtonToggle(inFullscreen) {
@@ -757,7 +762,7 @@ function resizeItemsProperties(scaleFactor) {
     })
 }
 
-function sizeMenuBar() {
+function sizeMenuBarProperties() {
     document.querySelector('.canvas-cont .menu-bar').style.width = `${10*widthUnit}px`;
     document.querySelector('.canvas-cont .menu-bar').style.height = `${heightUnit}px`;
     document.querySelectorAll('.canvas-cont .menu-bar img').forEach((elem)=>{
