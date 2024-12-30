@@ -3,6 +3,7 @@ class Shooter extends Enemy {
     hasShot;
     walks;
     player;
+    ammoImageSource;
 
     constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
@@ -28,33 +29,37 @@ class Shooter extends Enemy {
         this.hasShot = false;
         this.walks = false;
         this.player = new Audio();
-        this.player.src = './sounds/enemy-shoots.mp3';
+        this.shootingSound = './sounds/enemy-shoots.mp3';
+        this.ammoImageSource = './graphics/enemies/shooter/attack/shoot.svg';
+        this.hittingSound = './sounds/big-boss-got-hit.mp3';
+        this.hittingSoundPlayer = new Audio();
     }
 
-    setupCannonball() {
+    setupShoot(width = 0.5*widthUnit, height = 0.5*heightUnit) {
         if (!gamePaused && this.targeting && this.isDangerous && !this.hasShot) {
-            this.playSound();
+            if(!gameMuted) { this.playShootingSound(); }
             switch (this.lookingDirection) {
                 case "left":
-                    this.createCannonBall(0.5*widthUnit, 0.5*heightUnit, this.x - widthUnit, this.y + 5*this.height/32, this.lookingDirection);
+                    this.createNewShoot(width, height, this.enemyType != "big-boss" ? this.x - widthUnit : this.x + this.width/4, this.y + 5*this.height/32, this.lookingDirection, this.ammoImageSource);
                     break;
                 case "right":
-                    this.createCannonBall(0.5*widthUnit, 0.5*heightUnit, this.x + widthUnit, this.y + 5*this.height/32, this.lookingDirection);
+                    this.createNewShoot(width, height, this.x + widthUnit, this.y + 5*this.height/32, this.lookingDirection, this.ammoImageSource);
                     break;
             }
             this.hasShot = true;
             setTimeout(()=>{
                 this.hasShot = false;
-                this.setupCannonball();
+                this.setupShoot();
             }, 1000);
         }else { return; }
     }
 
-    createCannonBall(width, height, x, y, flyDirection) {
-        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection));
+    createNewShoot(width, height, x, y, flyDirection, ammoImageSource) {
+        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection, ammoImageSource));
     }
 
-    playSound() {
+    playShootingSound() {
+        this.player.src = this.shootingSound;
         this.player.play();
     }
 }

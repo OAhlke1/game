@@ -19,12 +19,15 @@ class Enemy {
     hittingAnimationIndex;
     hitImagesAmount;
     hittingIndex;
+    hittingSoundPlayer;
     walkingIndex;
     attackingImagesAmount;
     lifeAmount;
     maxLifeAmount;
+    hittingSound;
     hitable = true;
     canWalk = true;
+    muted = false;
 
     constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount) {
         this.x = x;
@@ -61,6 +64,7 @@ class Enemy {
                 if(this.checkIfCanSeeChar()) { this.lookAtChar(); }
                 if(this.checkIfHittingChar()) { this.hittingChar(); }
                 if(this.checkIfGotHit() && this.isDangerous) {
+                    this.playHittingSound();
                     this.isDangerous = false;
                     this.lifeAmount -= char.headJumpAmount;
                     this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 250/this.hitImagesAmount);
@@ -114,7 +118,7 @@ class Enemy {
             this.targeting = true;
             this.walks = false;
             if(this.animateWalkingId) { clearInterval(this.animateWalkingId); }
-            if(this.canShoot) { this.setupCannonball(); }
+            if(this.canShoot) { this.setupShoot(); }
         }
     }
 
@@ -171,8 +175,14 @@ class Enemy {
                     this.lifeAmount = 0;
                     this.isDangerous = false;
                     char.enemiesKilled++;
-                    this.isAlive = false;
+                    if(this.enemyType != "big-boss") {
+                        this.isAlive = false;
+                    }else {
+                        clearInterval(this.animateLevitationId);
+                        this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, 30);
+                    }
                     saveNotDefeatedEnemies();
+                    setMenuBarProperties("enemy");
                 }else if(this.lifeAmount > 0) {
                     this.isDangerous = true;
                 }
@@ -185,5 +195,11 @@ class Enemy {
 
     isDangerousAgain() {
         this.isDangerous = true;
+    }
+
+    playHittingSound() {
+        this.hittingSoundPlayer.src = this.hittingSound;
+        this.hittingSoundPlayer.volume = 0.5;
+        this.hittingSoundPlayer.play();
     }
 }

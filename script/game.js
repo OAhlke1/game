@@ -4,11 +4,11 @@ let ctx;
 let char, wall;
 let widthUnit;
 let menubarBackground;
-let menuBar;
 let canvasBackground;
 let controller;
 let bgPlayer;
 let canCont;
+let bigBoss;
 let ammoImageSource = './graphics/main-char/ammo/laser.svg';
 let gameVolume = 0.5;
 let t = -1;
@@ -47,9 +47,10 @@ let gameJson = {
         specialAmmo: [],
     }
 };
+let menuBar = document.querySelector('.menu-bar');
 
 function initFunctions() {
-    if(localStorage.gameJson) { loadGameJson(); }
+    //clearLocalStorage();
     loadPlayer();
     createScreen();
     setSizeUnits();
@@ -58,12 +59,23 @@ function initFunctions() {
     addKeypressMovingCommands();
     createPlatforms();
     createTraps();
-    createEnemies();
-    createItems();
-    if(!localStorage.gameJson) { createGameJson(); }
-    createMenuBar();
+    if(localStorage.items && localStorage.enemies) {
+        createEnemies();
+        createItems();
+        presetMenuBarProperties();
+    }else {
+        createNewEnemies();
+        createNewItems();
+    }
     drawElements();
     sizeElements(1);
+    sizeMenuBar();
+}
+
+function clearLocalStorage() {
+    localStorage.removeItem('char');
+    localStorage.removeItem('enemies');
+    localStorage.removeItem('items');
 }
 
 function loadGameJson() {
@@ -120,8 +132,8 @@ function createChar() {
     }else { char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4*heightUnit, 0); }
 }
 
-function createAmmo(x, y, width, height, imagePath) {
-    charObjects.ammo.push(new Ammo(x, y, width, height, imagePath));
+function createAmmo(x, y, width, height, imagePath, decreaseLifeAmount) {
+    charObjects.ammo.push(new Ammo(x, y, width, height, imagePath, decreaseLifeAmount));
 }
 
 function createPlatforms() {
@@ -192,65 +204,73 @@ function createEnemies() {
     if(localStorage.enemies) {
         let enemy;
         let enemiesJson = JSON.parse(localStorage.enemies);
-        console.log("enemiesJson:", enemiesJson);
         enemiesJson.forEach((elem)=>{
-            let elemImage = new Image();
-            elemImage.src = elem.standardImgPath;
             if(elem.enemyType === "green") {
-                enemy = new GreenEnemy(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.imagePath, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, elem.lifeAmount, elem.distanceToSeeChar, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
+                enemy = new GreenEnemy(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.standardImgPath, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, elem.lifeAmount, elem.distanceToSeeChar, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
             }else if(elem.enemyType === "shooter") {
                     enemy = new Shooter(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, elem.lifeAmount, elem.distanceToSeeChar, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
             }else if(elem.enemyType === "big-boss") {
-                enemy = new BigBoss(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, elem.lifeAmount, elem.distanceToSeeChar, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
+                enemy = new BigBoss(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, 1000, 32*widthUnit, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
+                bigBoss = enemy;
             }
-            enemy.image = elemImage;
+            console.log(enemy.image);
             hitables.enemies.push(enemy);
         })
-    }else {
-        hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-        hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-        hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-        hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 200, 0, false, 5, 7));
-        hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 20*widthUnit, false, 5, 7));
-        hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 20*widthUnit, false, 5, 7));
-        hitables.enemies.push(new Shooter(24*widthUnit, 2.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'shooter', 60, true, 'right', 100, 20*widthUnit, false, 5, 7));
     }
+}
+
+function createNewEnemies() {
+    hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 1000, 50*widthUnit, false, 5, 7));
+    hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 32*widthUnit, true, 5, 7));
+    hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 4*widthUnit, false, 5, 7));
+    hitables.enemies.push(new Shooter(24*widthUnit, 2.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'shooter', 60, true, 'right', 100, 5*widthUnit, true, 5, 7));
+    bigBoss = hitables.enemies[3];
+}
+
+function createNewItems() {
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
+    items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+    items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+    items.specialAmmo.push(new SpecialAmmoKit(22*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(58*widthUnit, 18*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
 }
 
 function createItems() {
-    if(localStorage.items) {
-        itemsJson = JSON.parse(localStorage.items);
-        console.log(items);
-        let item;
-        itemsJson.lifeIncreasing.forEach((elem)=>{
-            let itemImage = new Image();
-            itemImage.src = elem.imagePath;
-            item = new LifeIncreaser(elem.standardX, elem.standardY, elem.width, elem.height, elem.imagePath, elem.itemType, elem.increaseLifeAmount);
-            item.image = itemImage;
-            items.lifeIncreasing.push(item);
-        })
-        itemsJson.specialAmmo.forEach((elem)=>{
-            let itemImage = new Image();
-            itemImage.src = elem.imagePath;
-            item = new SpecialAmmoKit(elem.standardX, elem.standardY, elem.width, elem.height, elem.imagePath, elem.itemType);
-            item.image = itemImage;
-            items.specialAmmo.push(item);
-        })
-    }else {
-        items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
-        items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
-        items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
-        items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
-        items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
-        items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
-        items.specialAmmo.push(new SpecialAmmoKit(22*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
-        items.specialAmmo.push(new SpecialAmmoKit(58*widthUnit, 18*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
-    }
+    let itemsJson = JSON.parse(localStorage.items);
+    let item;
+    itemsJson.lifeIncreasing.forEach((elem)=>{
+        item = new LifeIncreaser(elem.standardX, elem.standardY, elem.width, elem.height, elem.imagePath, elem.itemType, elem.increaseLifeAmount);
+        items.lifeIncreasing.push(item);
+    })
+    itemsJson.specialAmmo.forEach((elem)=>{
+        item = new SpecialAmmoKit(elem.standardX, elem.standardY, elem.width, elem.height, elem.imagePath, elem.itemType);
+        items.specialAmmo.push(item);
+    })
 }
 
-function createMenuBar() {
-    menuBar = new Menubar(0.75*canvas.offsetWidth, canvas.offsetHeight-heightUnit, 0.25*canvas.offsetWidth, heightUnit, `${2400/1920}vw SuperLegendBoy`, 'red', 0);
-    menubarBackground = new MenubarBackground(menuBar.x, menuBar.y, menuBar.width, menuBar.height);
+function presetMenuBarProperties() {
+    menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${3 - items.specialAmmo.length} / 3`;
+    menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
+    menuBar.querySelector('.life-amount .life-amount-bar .life-amount-bar-inner').style.width = `${100*char.healthAmount/char.maxHealthAmount}%`;
+}
+
+function setMenuBarProperties(menuType) {
+    switch(menuType) {
+        case "specialAmmo":
+            menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${3 - items.specialAmmo.length} / 3`;
+            break;
+        case "enemy":
+            menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
+            break;
+        case "char":
+            menuBar.querySelector('.life-amount .life-amount-bar .life-amount-bar-inner').style.width = `${100*char.healthAmount/char.maxHealthAmount}%`;
+    }
 }
 
 function clearCanvas() {
@@ -290,7 +310,7 @@ function drawHitables() {
         if (elem || elem.isDangerous) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
     hitables.enemies.forEach((elem) => {
-        if (elem && elem.isAlive) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
+        if (elem || elem.isAlive) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
     })
     if (hitables.flyables.length) {
         hitables.flyables.forEach((elem) => {
@@ -367,7 +387,7 @@ function addKeypressMovingCommands() {
                 timer();
             }
         } else if (event.key.toLowerCase() === "d") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, ammoImageSource);
+            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, ammoImageSource, char.specialAmmoParts === 3 ? 200 : 30);
         } else if (event.key.toLowerCase() === "m") {
             gameSoundOnOffToggle();
         } else if (event.key.toLowerCase() === "f") {
@@ -486,7 +506,7 @@ function restyleRunningTouchButton() {
 
 function touchShooting() {
     if (controller['shoot'].pressed) {
-        createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*canvas.offsetHeight, widthUnit, widthUnit, './graphics/enemies/shooter/attack/cannonball.png');
+        createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*canvas.offsetHeight, widthUnit, widthUnit, './graphics/enemies/shooter/attack/shoot.svg');
         document.querySelector('.touch-control.shoot').classList.remove('pressed');
         controller['shoot'].pressed = false;
     }
@@ -539,6 +559,17 @@ function checkForScrolling(movingDirection = char.movingDirection) {
             char.scrollingStepAmount--;
         }
         canvas.style.left = `-${char.standardStepLength*char.scrollingStepAmount}px`;
+        checkIfBigBossVisible();
+    }
+}
+
+function checkIfBigBossVisible() {
+    if(bigBoss.x + bigBoss.width + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width/3) {
+        bigBoss.animateShooting();
+        bigBoss.isVisible = true;
+    }else {
+        bigBoss.isVisible = false;
+        clearInterval(bigBoss.animateLevitationId);
     }
 }
 
@@ -625,6 +656,7 @@ function resizeElements() {
     resizeHitablesProperties(scaleFactor);
     resizeCharProperties(scaleFactor);
     resizeItemsProperties(scaleFactor);
+    sizeMenuBar();
 }
 
 function fullScreenButtonToggle(inFullscreen) {
@@ -725,6 +757,14 @@ function resizeItemsProperties(scaleFactor) {
     })
 }
 
+function sizeMenuBar() {
+    document.querySelector('.canvas-cont .menu-bar').style.width = `${10*widthUnit}px`;
+    document.querySelector('.canvas-cont .menu-bar').style.height = `${heightUnit}px`;
+    document.querySelectorAll('.canvas-cont .menu-bar img').forEach((elem)=>{
+        elem.style.height = `${0.8*heightUnit}px`;
+    })
+}
+
 function pauseGame() {
     if (gamePaused) {
         document.querySelector('.pause-game').classList.remove('paused');
@@ -781,7 +821,7 @@ function saveNotCollectedItems() {
     };
     items.specialAmmo.forEach((elem)=>{
         if(!elem.collected) { notCollected.specialAmmo.push(elem); }
-    })
+    });
     items.lifeIncreasing.forEach((elem)=>{
         if(!elem.collected) { notCollected.lifeIncreasing.push(elem); }
     });
@@ -804,12 +844,8 @@ function saveGameJson() {
 }
 
 function allAmmoKitsCollected() {
-    items.specialAmmo.forEach((elem, index)=>{
-        if(elem.collected) {
-            if(index+1 === items.specialAmmo.length) {
-                ammoImageSource = './graphics/main-char/ammo/laser-special.svg';
-                char.shootingSoundPlayer.src = './sounds/special-shooting-sound.png';
-            }
-        }
-    })
+    if(char.specialAmmoParts === 3) {
+        ammoImageSource = './graphics/main-char/ammo/laser-special.svg';
+        char.shootingSound = './sounds/special-shooting-sound.png';
+    }
 }

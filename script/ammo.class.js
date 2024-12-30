@@ -1,9 +1,10 @@
 class Ammo extends Char {
     flyingDirection;
     decreaseLifeAmount;
+    shootingSoundPlayer;
     leftCanvas;
 
-    constructor(x, y, width, height, imagePath) {
+    constructor(x, y, width, height, imagePath, decreaseLifeAmount) {
         super();
         this.x = x;
         this.y = y;
@@ -12,9 +13,10 @@ class Ammo extends Char {
         this.image = new Image();
         this.image.src = imagePath;
         this.flyingDirection = char.movingDirection;
-        this.decreaseLifeAmount = 30;
+        this.decreaseLifeAmount = decreaseLifeAmount;
         this.leftCanvas = false;
-        this.playShootingSound();
+        this.shootingSoundPlayer = new Audio();
+        if(!gameMuted) { this.playShootingSound(); }
         this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, 10);
     }
 
@@ -40,14 +42,13 @@ class Ammo extends Char {
             if(this.y + this.height > elem.y && elem.y + elem.height > this.y) {
                 if(this.x + this.width > elem.x && elem.x + elem.width > this.x) {
                     if(elem.isDangerous) {
-                        elem.isDangerous = false;
+                        //elem.isDangerous = false;
                         elem.walks = false;
                         if(elem.enemyType != "big-boss") {
                             elem.lifeAmount -= this.decreaseLifeAmount;
                             elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
-                        }else if(elem.enemyType === "big-boss") {
-                            if(this.specialAmmoParts === 3) {
-                                console.log("debugger;");
+                        }else if(elem.enemyType === "big-boss" && bigBoss.isVisible) {
+                            if(char.specialAmmoParts === 3) {
                                 elem.lifeAmount -= this.decreaseLifeAmount;
                                 elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
                             }
@@ -65,6 +66,10 @@ class Ammo extends Char {
     }
 
     playShootingSound() {
-        this.shootingSoundPlayer.play();
+        if(!gameMuted) {
+            this.shootingSound = './sounds/enemy-shoots.mp3';
+            this.shootingSoundPlayer.src = this.shootingSound;
+            this.shootingSoundPlayer.play();
+        }
     }
 }

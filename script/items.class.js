@@ -11,6 +11,7 @@ class Item {
     image;
     collected;
     itemType;
+    muted = false;
 
     constructor(x, y, width, height, imagePath, itemType, increaseLifeAmount) {
         this.x = x;
@@ -61,6 +62,7 @@ class Item {
             }
         }
         saveNotCollectedItems("lifeIncreasing");
+        setMenuBarProperties("char");
         saveCharProperties();
     }
 
@@ -68,6 +70,7 @@ class Item {
         this.collected = true;
         char.specialAmmoParts++;
         saveNotCollectedItems("specialAmmo");
+        setMenuBarProperties("specialAmmo");
         saveCharProperties();
         allAmmoKitsCollected();
     }

@@ -11,6 +11,10 @@ body {
     margin: 0;
 }
 
+p {
+    width: fit-content;
+}
+
 .disNone {
     display: none !important;
 }
@@ -161,6 +165,49 @@ canvas {
 .canvas-cont .touch-control.right {
     right: 0;
 }
+.canvas-cont .menu-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background-color: black;
+}
+
+.canvas-cont .menu-bar > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    width: 30%;
+}
+
+.canvas-cont .menu-bar p {
+    color: white;
+    font-size: 150%;
+}
+
+.canvas-cont .menu-bar .life-amount {
+    width: 40%;
+    height: 100%;
+    justify-content: flex-start;
+    column-gap: 5%;
+}
+
+.canvas-cont .menu-bar .life-amount .life-amount-bar {
+    width: 50%;
+    height: 10%;
+}
+
+.canvas-cont .menu-bar .life-amount .life-amount-bar .life-amount-bar-inner {
+    height: 100%;
+    background-color: red;
+}
+
+.canvas-cont .menu-bar .special-ammo {
+    width: 30%;
+    height: 100%;
+}
 
 .touch-controls.run.pressed svg rect {
     fill: blue !important;
@@ -232,6 +279,7 @@ canvas {
 .pause-game.paused {
     background-image: url('./graphics/controls/play-game.svg');
 }
+
 
 @media only screen and (max-width: 800px) {
     .touch-controls {

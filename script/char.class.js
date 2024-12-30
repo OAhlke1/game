@@ -44,7 +44,7 @@ class Char {
     targeted;
     onUpwardsMovingPlatform;
     specialAmmoParts;
-    shootingSoundPlayer;
+    shootingSound;
 
     constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0) {
         this.width = width;
@@ -87,8 +87,6 @@ class Char {
         this.targeted = false;
         this.onUpwardsMovingPlatform = false;
         this.specialAmmoParts = specialAmmoParts;
-        this.shootingSoundPlayer = new Audio();
-        this.shootingSoundPlayer.standardImgPath = './sounds/enemy-shoots.mp3';
     }
 
     moveLeft(key) {
@@ -195,7 +193,7 @@ class Char {
     checkIfJumping() {
         if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
-                playSound('./sounds/jump.ogg');
+                if(!gameMuted) { playSound('./sounds/jump.ogg'); }
                 this.jumps = true;
                 this.jump();
             }
@@ -374,7 +372,7 @@ class Char {
 
     decreaseHealth(decreasingAmount) {
         if (!this.isImmune) {
-            playSound('./sounds/hit.ogg');
+            if(!gameMuted) { playSound('./sounds/hit.ogg'); }
             this.isImmune = true;
             this.healthAmount -= decreasingAmount;
             if (this.healthAmount <= 0) {
@@ -385,6 +383,7 @@ class Char {
                 return;
             }
             saveCharProperties();
+            setMenuBarProperties("char");
             setTimeout(() => {this.isImmune = false }, 1500);
         }
     }

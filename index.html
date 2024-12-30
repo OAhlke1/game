@@ -44,12 +44,26 @@
                 <div class="mute-game" onclick="muteGame()"></div>
                 <div class="turn-fullscreen-on" onclick="turnOnFullScreen()"></div>
                 <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
-                <div class="pause-game" onclick="pauseGame()"></div>
-                </div>
                 <div class="show-hide-touch-controls" onclick="showHideTouchControls()"></div>
             </div>
         </div>
         <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
+        <div class="menu-bar">
+            <div class="life-amount">
+                <img src="./graphics/items/heart.png" alt="">
+                <div class="life-amount-bar">
+                    <div class="life-amount-bar-inner"></div>
+                </div>
+            </div>
+            <div class="special-ammo">
+                <img src="./graphics/items/special-ammo/rotation-0.png" alt="">
+                <p class="items-collected">0 / 3</p>
+            </div>
+            <div class="defeated-enemies">
+                <img src="./graphics/enemies/green/attack/attack-left-0.png" alt="">
+                <p class="defeated-enemies-amount">0</p>
+            </div>
+        </div>
     </div>
     <div class="controls">
         <p>left: arrow-left</p>
@@ -77,8 +91,8 @@
     <script src="script/moving-platform.class.js"></script>
 <script src="script/enemies.class.js"></script>
     <script src="script/shooter.class.js"></script>
-    <script src="script/cannonball.class.js"></script>
-    <script src="script/green.class.js"></script>
+        <script src="script/cannonball.class.js"></script>
+    <script src="script/green-enemy.class.js"></script>
     <script src="script/big-boss.class.js"></script>
 <script src="script/background.class.js"></script>
 <script src="script/traps.class.js"></script>

@@ -19,5 +19,7 @@ class GreenEnemy extends Enemy {
         this.canWalk = canWalk;
         this.hitImagesAmount = hitImagesAmount;
         this.attackingImagesAmount = attackingImagesAmount;
+        this.hittingSound = './sounds/big-boss-got-hit.mp3';
+        this.hittingSoundPlayer = new Audio();
     }
 }
