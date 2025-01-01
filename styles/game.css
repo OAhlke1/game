@@ -13,6 +13,7 @@ body {
 
 p {
     width: fit-content;
+    margin: 0;
 }
 
 .disNone {
@@ -217,6 +218,7 @@ canvas {
 .canvas-cont .menu-bar .life-amount .life-amount-bar {
     width: 50%;
     height: 10%;
+    border: 1px solid white;
 }
 
 .canvas-cont .menu-bar .life-amount .life-amount-bar .life-amount-bar-inner {
@@ -313,6 +315,11 @@ canvas {
 
     .controls {
         display: none;
+    }
+
+    .canvas-cont {
+        width: 100vw;
+        height: 56.25vw;
     }
 
     .canvas-cont .touch-control.left,

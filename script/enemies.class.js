@@ -166,7 +166,7 @@ class Enemy {
     animateEnemyGotHit() {
         if(this.enemyType != "flyable") { this.image.src = `./graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`; }
         this.hittingIndex++;
-        this.hitable = false;
+        //this.hitable = false;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;
             this.hittingAnimationIndex++;

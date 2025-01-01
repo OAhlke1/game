@@ -50,7 +50,7 @@ let gameJson = {
 let menuBar = document.querySelector('.menu-bar');
 
 function initFunctions() {
-    clearLocalStorage();
+    //clearLocalStorage();
     loadPlayer();
     createScreen();
     setSizeUnits();
@@ -213,7 +213,6 @@ function createEnemies() {
                 enemy = new BigBoss(elem.standardX, elem.standardY, elem.width, elem.height, elem.enemyType, elem.decreaseLifeAmount, elem.canShoot, elem.lookingDirection, 1000, 32*widthUnit, elem.canWalk, elem.hitImagesAmount, elem.attackingImagesAmount);
                 bigBoss = enemy;
             }
-            console.log(enemy.image);
             hitables.enemies.push(enemy);
         })
     }
@@ -641,10 +640,9 @@ function showHideFullScreenMenuButton() {
     }
 }
 
-function sizeElements(scaleFactor) {
+function sizeElements() {
+    let scaleFactor = presetScreenProperties();
     fullScreenButtonToggle(canCont.offsetHeight === window.innerHeight);
-    widthUnit *= scaleFactor;
-    heightUnit *= scaleFactor;
     resizeCanvasProperties(scaleFactor);
     resizePlatformsProperties(scaleFactor);
     resizeBackgroundsProperties(scaleFactor);
@@ -663,6 +661,18 @@ function resizeElements() {
     resizeCharProperties(scaleFactor);
     resizeItemsProperties(scaleFactor);
     sizeMenuBarProperties();
+}
+
+function presetScreenProperties() {
+    let oldCancontSize = parseFloat(canCont.offsetWidth);
+    canCont.style.width = window.innerWidth < 801 ? `${window.innerWidth}px` : `${0.8*window.innerWidth}px`;
+    canCont.style.height = `${9*parseFloat(canCont.style.width).offsetWidth/16}px`;
+    /* canvas.setAttribute('width', 2*parseFloat(canCont.style.width));
+    canvas.setAttribute('height', parseFloat(canCont.style.height)); */
+    let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
+    widthUnit *= scaleFactor;
+    heightUnit *= scaleFactor;
+    return scaleFactor;
 }
 
 function setScreenProperties() {
