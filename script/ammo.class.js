@@ -42,7 +42,7 @@ class Ammo extends Char {
             if(this.y + this.height > elem.y && elem.y + elem.height > this.y) {
                 if(this.x + this.width > elem.x && elem.x + elem.width > this.x) {
                     if(elem.isDangerous) {
-                        //elem.isDangerous = false;
+                        elem.isDangerous = false;
                         elem.walks = false;
                         if(elem.enemyType != "big-boss") {
                             elem.lifeAmount -= this.decreaseLifeAmount;

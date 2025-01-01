@@ -42,7 +42,9 @@
                     </div>
                 </div>
                 <div class="mute-game" onclick="muteGame()"></div>
-                <div class="turn-fullscreen-on" onclick="turnOnFullScreen()"></div>
+                <div class="turn-fullscreen-on">
+                    <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen()">
+                </div>
                 <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
                 <div class="show-hide-touch-controls" onclick="showHideTouchControls()"></div>
             </div>
@@ -64,6 +66,26 @@
                 <p class="defeated-enemies-amount">0</p>
             </div>
         </div>
+        <div class="canvas-cont-controls-toggle disNone" onclick="canContControlsToggle()">
+            <img src="./graphics/open-menu-bar.svg" alt="">
+        </div>
+        <div class="controls disNone">
+            <p>left: arrow-left</p>
+            <p>right: arrow right</p>
+            <p>shoot: D</p>
+            <p>jump: SPACE</p>
+            <p>run: SHIFT</p>
+            <p>pause: P</p>
+            <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
+                <div class="volumebar">
+                    <div class="volumebar-inner"></div>
+                </div>
+            </div>
+            <div class="mute-game" onclick="muteGame()"></div>
+            <div class="turn-fullscreen-on">
+                <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt="" onclick="turnOffFullScreen()">
+            </div>
+        </div>
     </div>
     <div class="controls">
         <p>left: arrow-left</p>
@@ -78,7 +100,9 @@
             </div>
         </div>
         <div class="mute-game" onclick="muteGame()"></div>
-        <div class="turn-fullscreen-on" onclick="turnOnFullScreen()"></div>
+        <div class="turn-fullscreen-on">
+            <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen()">
+        </div>
     </div>
     <!-- <audio src="" class="gaming-sound" volume="50"></audio> -->
 </body>

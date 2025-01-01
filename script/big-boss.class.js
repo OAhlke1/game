@@ -1,6 +1,7 @@
 class BigBoss extends Shooter {
     animateLevitationId;
     isVisible;
+    isDefeated;
 
     constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
@@ -32,10 +33,11 @@ class BigBoss extends Shooter {
         this.isVisible = false;
         this.hittingSound = './sounds/big-boss-got-hit.mp3';
         this.hittingSoundPlayer = new Audio;
+        this.isDefeated = false;
     }
 
     levitateUp() {
-        if(this.isAlive) {
+        if(!this.isDefeated) {
             this.y -= 0.125*heightUnit;
             if(this.y <= 0) {
                 clearInterval(this.animateLevitationId);
@@ -49,7 +51,7 @@ class BigBoss extends Shooter {
     }
 
     levitateDown() {
-        if(this.isAlive) {
+        if(!this.isDefeated) {
             this.y += 0.125*heightUnit;
             if(this.y + this.height >= canCont.offsetHeight) {
                 clearInterval(this.animateLevitationId);

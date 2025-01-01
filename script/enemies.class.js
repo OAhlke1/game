@@ -67,7 +67,7 @@ class Enemy {
                     this.playHittingSound();
                     this.isDangerous = false;
                     this.lifeAmount -= char.headJumpAmount;
-                    this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 250/this.hitImagesAmount);
+                    if(this.hitable) { this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 250/this.hitImagesAmount); }
                 }else {
                     this.walks = false;
                     this.targeting = false;
@@ -166,6 +166,7 @@ class Enemy {
     animateEnemyGotHit() {
         if(this.enemyType != "flyable") { this.image.src = `./graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`; }
         this.hittingIndex++;
+        this.hitable = false;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;
             this.hittingAnimationIndex++;
@@ -193,8 +194,8 @@ class Enemy {
         return;
     }
 
-    isDangerousAgain() {
-        this.isDangerous = true;
+    isHitableAgain() {
+        setTimeout(()=>{ this.hitable = true; }, 1500);
     }
 
     playHittingSound() {

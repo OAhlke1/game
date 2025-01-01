@@ -50,7 +50,7 @@ let gameJson = {
 let menuBar = document.querySelector('.menu-bar');
 
 function initFunctions() {
-    //clearLocalStorage();
+    clearLocalStorage();
     loadPlayer();
     createScreen();
     setSizeUnits();
@@ -255,7 +255,7 @@ function createItems() {
 }
 
 function presetMenuBarProperties() {
-    menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${3 - items.specialAmmo.length} / 3`;
+    menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${3 - items.specialAmmo.length}/3`;
     menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
     menuBar.querySelector('.life-amount .life-amount-bar .life-amount-bar-inner').style.width = `${100*char.healthAmount/char.maxHealthAmount}%`;
 }
@@ -263,7 +263,7 @@ function presetMenuBarProperties() {
 function setMenuBarProperties(menuType) {
     switch(menuType) {
         case "specialAmmo":
-            menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${3 - items.specialAmmo.length} / 3`;
+            menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${3 - items.specialAmmo.length}/3`;
             break;
         case "enemy":
             menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
@@ -618,16 +618,27 @@ function gameSoundOnOffToggle() {
 
 function turnOnFullScreen() {
     document.querySelector('.turn-fullscreen-on').classList.add('disNone');
-    document.querySelector('.controls').classList.add('disNone');
+    document.querySelector('body > .controls').classList.add('disNone');
     document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    showHideFullScreenMenuButton();
     resizeElements();
 }
 
 function turnOffFullScreen() {
     document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
-    document.querySelector('.controls').classList.remove('disNone');
+    document.querySelector('body > .controls').classList.remove('disNone');
     document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+    showHideFullScreenMenuButton();
     resizeElements();
+}
+
+function showHideFullScreenMenuButton() {
+    if(document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.contains('disNone')) {
+        document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.remove('disNone');
+    }else {
+        document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.add('disNone');
+        document.querySelector('.canvas-cont .controls').classList.add('disNone');
+    }
 }
 
 function sizeElements(scaleFactor) {
@@ -645,7 +656,7 @@ function sizeElements(scaleFactor) {
 function resizeElements() {
     let scaleFactor = setScreenProperties();
     fullScreenButtonToggle(canCont.offsetHeight === window.innerHeight);
-    resizeCanvasProperties(scaleFactor);
+    resizeCanvasProperties();
     resizePlatformsProperties(scaleFactor);
     resizeBackgroundsProperties(scaleFactor);
     resizeHitablesProperties(scaleFactor);
@@ -657,7 +668,7 @@ function resizeElements() {
 function setScreenProperties() {
     let oldCancontSize = parseFloat(canCont.offsetWidth);
     canCont.style.width = canCont.offsetWidth === window.innerWidth ? `${0.8*window.innerWidth}px` : `${window.innerWidth}px`;
-    canCont.style.height = canCont.offsetHeight === window.innerHeight ? `${7.2*canCont.offsetWidth/16}px` : `${9*canCont.offsetWidth/16}px`;
+    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
     let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
     widthUnit *= scaleFactor;
     heightUnit *= scaleFactor;
@@ -674,9 +685,9 @@ function fullScreenButtonToggle(inFullscreen) {
     }
 }
 
-function resizeCanvasProperties(scaleFactor) {
-    canvas.setAttribute("width", 2*canCont.offsetWidth);
-    canvas.setAttribute("height", canCont.offsetHeight);
+function resizeCanvasProperties() {
+    canvas.setAttribute("width", 96*widthUnit);
+    canvas.setAttribute("height", 27*heightUnit);
 }
 
 function resizeBackgroundsProperties(scaleFactor) {
@@ -853,4 +864,11 @@ function allAmmoKitsCollected() {
         ammoImageSource = './graphics/main-char/ammo/laser-special.svg';
         char.shootingSound = './sounds/special-shooting-sound.png';
     }
+}
+
+function canContControlsToggle() {
+    let controlsBar = document.querySelector('.canvas-cont .controls');
+    if(controlsBar.classList.contains('disNone')) {
+        controlsBar.classList.remove('disNone');
+    }else { controlsBar.classList.add('disNone'); }
 }
