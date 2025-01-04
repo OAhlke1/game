@@ -17,7 +17,7 @@ class SpecialAmmoKit extends Item {
         this.image.src = imagePath;
         this.rotationIndex = 0;
         this.itemType = itemType;
-        this.rotateAnimationId = setInterval(()=> { this.rotateAnimation()}, 200);
+        this.rotateAnimationId = setInterval(()=> { this.rotateAnimation()}, 20*standardFrequency);
         this.checkCharPos();
     }
 

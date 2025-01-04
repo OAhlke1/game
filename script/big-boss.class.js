@@ -28,7 +28,7 @@ class BigBoss extends Shooter {
         this.walks = false;
         this.player = new Audio();
         this.player.src = './sounds/enemy-shoots.mp3';
-        this.animateLevitationId = setInterval(() => { this.levitateDown() }, 30);
+        this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3*standardFrequency);
         this.ammoImageSource = './graphics/enemies/big-boss/shoot.svg';
         this.isVisible = false;
         this.hittingSound = './sounds/big-boss-got-hit.mp3';
@@ -41,12 +41,12 @@ class BigBoss extends Shooter {
             this.y -= 0.125*heightUnit;
             if(this.y <= 0) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(()=>{ this.levitateDown(); }, 30);
+                this.animateLevitationId = setInterval(()=>{ this.levitateDown(); }, 3*standardFrequency);
                 return;
             }
         }else {
             clearInterval(this.animateLevitationId);
-            this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, 30);
+            this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, 3*standardFrequency);
         }
     }
 
@@ -55,7 +55,7 @@ class BigBoss extends Shooter {
             this.y += 0.125*heightUnit;
             if(this.y + this.height >= canCont.offsetHeight) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(()=>{ this.levitateUp(); }, 30);
+                this.animateLevitationId = setInterval(()=>{ this.levitateUp(); }, 3*standardFrequency);
                 return;
             }
         }
@@ -72,7 +72,9 @@ class BigBoss extends Shooter {
     }
 
     animateShooting() {
-        this.setupShoot(2.5*widthUnit, 2.5*heightUnit);
-        setTimeout(() => { this.animateShooting(); }, 1000);
+        if(this.isVisible) {
+            this.setupShoot(2.5*widthUnit, 2.5*heightUnit);
+            setTimeout(() => { this.animateShooting(); }, 1000);
+        }
     }
 }

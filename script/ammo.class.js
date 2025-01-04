@@ -17,7 +17,7 @@ class Ammo extends Char {
         this.leftCanvas = false;
         this.shootingSoundPlayer = new Audio();
         if(!gameMuted) { this.playShootingSound(); }
-        this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, 10);
+        this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, standardFrequency);
     }
 
     animateTrajectory() {
@@ -46,11 +46,11 @@ class Ammo extends Char {
                         elem.walks = false;
                         if(elem.enemyType != "big-boss") {
                             elem.lifeAmount -= this.decreaseLifeAmount;
-                            elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
+                            elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrequency);
                         }else if(elem.enemyType === "big-boss" && bigBoss.isVisible) {
                             if(char.specialAmmoParts === 3) {
                                 elem.lifeAmount -= this.decreaseLifeAmount;
-                                elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 500/elem.hitImagesAmount);
+                                elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrequency);
                             }
                         }
                         this.leftCanvas = true;

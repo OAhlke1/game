@@ -20,16 +20,17 @@ class Enemy {
     hitImagesAmount;
     hittingIndex;
     hittingSoundPlayer;
+    hittingSound;
     walkingIndex;
     attackingImagesAmount;
     lifeAmount;
     maxLifeAmount;
     hittingSound;
-    hitable = true;
-    canWalk = true;
-    muted = false;
+    hitable;
+    canWalk;
+    muted;
 
-    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount) {
+    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount, hittingSound = './sounds/big-boss-got-hit.mp3') {
         this.x = x;
         this.standardX = x;
         this.y = y;
@@ -41,6 +42,9 @@ class Enemy {
         this.image = new Image();
         this.image.src = imgPath;
         this.standardImgPath = imgPath;
+        this.hittingSound = hittingSound;
+        this.hittingSoundPlayer = new Audio();
+        this.hittingSoundPlayer.src = this.hittingSound;
         this.enemyType = enemyType;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.isDangerous = true;
@@ -55,6 +59,9 @@ class Enemy {
         this.walks = walks;
         this.attackingImagesAmount = attackingImagesAmount;
         this.isAlive = true;
+        this.hitable = true;
+        this.canWalk = true;
+        this.muted = false;
         this.checkCharPos();
     }
 
@@ -64,7 +71,6 @@ class Enemy {
                 if(this.checkIfCanSeeChar()) { this.lookAtChar(); }
                 if(this.checkIfHittingChar()) { this.hittingChar(); }
                 if(this.checkIfGotHit() && this.isDangerous) {
-                    this.playHittingSound();
                     this.isDangerous = false;
                     this.lifeAmount -= char.headJumpAmount;
                     if(this.hitable) { this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 250/this.hitImagesAmount); }
@@ -112,7 +118,7 @@ class Enemy {
             if(this.canWalk && !this.walks) {
                 this.walks = true;
                 if(this.enemyType != "flyable") { this.animateWalking(); }
-                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, 10);
+                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, standardFrequency);
             }
         }else if(Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar/2) {
             this.targeting = true;
@@ -129,17 +135,6 @@ class Enemy {
     }
 
     hittingChar() {
-        /* if(this.enemyType === "flyable") {
-            if(char.y + char.height > this.y && this.y + this.height > char.y) {
-                char.hitChar();
-                char.decreaseHealth(this.decreaseLifeAmount);
-            }
-        }else {
-            if(char.y + char.height > this.y && this.y + this.height > char.y) {
-                char.hitChar();
-                char.decreaseHealth(this.decreaseLifeAmount);
-            }
-        } */
         if(char.y + char.height > this.y && this.y + this.height > char.y) {
             char.hitChar();
             char.decreaseHealth(this.decreaseLifeAmount);
@@ -169,6 +164,7 @@ class Enemy {
         //this.hitable = false;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;
+            if(this.hittingIndex === 0 && this.hittingAnimationIndex === 0) { this.playHittingSound(); }
             this.hittingAnimationIndex++;
             if(this.hittingAnimationIndex === 2) {
                 this.hittingAnimationIndex = 0;
@@ -180,7 +176,7 @@ class Enemy {
                         this.isAlive = false;
                     }else {
                         clearInterval(this.animateLevitationId);
-                        this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, 30);
+                        this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, standardFrequency);
                     }
                     saveNotDefeatedEnemies();
                     setMenuBarProperties("enemy");
@@ -199,8 +195,11 @@ class Enemy {
     }
 
     playHittingSound() {
-        this.hittingSoundPlayer.src = this.hittingSound;
-        this.hittingSoundPlayer.volume = 0.5;
-        this.hittingSoundPlayer.play();
+        this.hittingSoundPlayer.addEventListener("ended", ()=>{ this.hittingSoundPlayer.currentTime = 0; });
+        if(this.hittingSoundPlayer.currentTime === 0) {
+            this.hittingSoundPlayer.src = this.hittingSound;
+            this.hittingSoundPlayer.volume = 0.5;
+            this.hittingSoundPlayer.play();
+        }
     }
 }

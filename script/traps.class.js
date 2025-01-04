@@ -34,7 +34,7 @@ class Trap {
         this.animationIndex = animationIndex;
         this.checkCharPos();
         this.checkPlatformCords();
-        this.trapAnimationId = setInterval(()=>{this.animateTrap();}, 800);
+        this.trapAnimationId = setInterval(()=>{this.animateTrap();}, 80*standardFrequency);
     }
 
     checkCharPos() {

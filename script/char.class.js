@@ -18,8 +18,7 @@ class Char {
     maxJumpHeight;
     basicStepLength;
     headJumpAmount;
-    movingAnimationId;
-    fallAnimationId;
+    fallingAnimationId;
     hittingAnimationId;
     hitImagesAmount;
     bulletAmount;
@@ -45,6 +44,9 @@ class Char {
     onUpwardsMovingPlatform;
     specialAmmoParts;
     shootingSound;
+    movingAnimationId;
+    jumpingAnimationId;
+    jumpingIntervalStep;
 
     constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0) {
         this.width = width;
@@ -56,7 +58,6 @@ class Char {
         this.standardImgPath = standardImgPath;
         this.stepLength = stepLength;
         this.standardStepLength = stepLength;
-        this.basicStepLength = stepLength;
         this.atWallLeft = false;
         this.atWallRight = false;
         this.jumps = false;
@@ -92,7 +93,6 @@ class Char {
     moveLeft(key) {
         if (controller['left'].pressed) {
             if (!gamePaused && this.isAlive) {
-                ////checkIfStandingAtPlatform(if(!this.atWallLeft && !this.falls) { this.atWallLeft = this.checkIfStandingAtPlatform(); }
                 if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
                     this.checkIfFalling();
                 }
@@ -100,11 +100,32 @@ class Char {
                 checkForScrolling();
                 if (this.x <= this.stepLength + widthUnit) {
                     this.x = widthUnit + 1;
-                    controller['left'].pressed = false;
+                    //controller['left'].pressed = false;
                     return;
                 } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
             }
-            setTimeout(() => { this.moveLeft(key) }, 10);
+        }
+    }
+
+    moveRight(key) {
+        if (controller['right'].pressed) {
+            if (!gamePaused && this.isAlive) {
+                //if(!this.atWallRight && !this.falls) { this.atWallRight = this.checkIfStandingAtPlatform(); }
+                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
+                    this.checkIfFalling();
+                }
+                this.setMovingState(key);
+                checkForScrolling();
+                if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
+                    //this.x = canvas.offsetWidth - this.width - widthUnit;
+                    this.x += this.stepLength;
+                    return;
+                } else {
+                    if (this.x + this.width - canvas.offsetWidth >= 0) {
+                        this.x += (canvas.offsetWidth - this.x - this.width);
+                    } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
+                }
+            }
         }
     }
 
@@ -123,30 +144,6 @@ class Char {
                     return;
                 } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
             }
-            setTimeout(() => { this.moveLeft(key) }, 10);
-        }
-    }
-
-    moveRight(key) {
-        if (controller['right'].pressed) {
-            if (!gamePaused && this.isAlive) {
-                //if(!this.atWallRight && !this.falls) { this.atWallRight = this.checkIfStandingAtPlatform(); }
-                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
-                    this.checkIfFalling();
-                }
-                this.setMovingState(key);
-                checkForScrolling();
-                if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
-                    this.x = canvas.offsetWidth - this.width - widthUnit;
-                    controller['right'].pressed = false;
-                    return;
-                } else {
-                    if (this.x + this.width - canvas.offsetWidth >= 0) {
-                        this.x += (canvas.offsetWidth - this.x - this.width);
-                    } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
-                }
-            }
-            setTimeout(() => { this.moveRight(key) }, 10);
         }
     }
 
@@ -169,7 +166,6 @@ class Char {
                     } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
                 }
             }
-            setTimeout(() => { this.moveRight(key) }, 10);
         }
     }
 
@@ -184,9 +180,7 @@ class Char {
                 this.stepAmount--;
                 checkForScrolling();
             }
-            if (this.isAlive) {
-                this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
-            }
+            this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
         }
     }
 
@@ -195,12 +189,13 @@ class Char {
             if (!this.jumps) {
                 if(!gameMuted) { playSound('./sounds/jump.ogg'); }
                 this.jumps = true;
-                this.jump();
+                this.jumpingIntervalStep = this.maxJumpHeight / this.jumpFallStepHeight;
+                this.jumpingAnimationId = setInterval(()=>{ this.jump(); }, standardFrequency);
             }
         }
     }
 
-    jump(i = this.maxJumpHeight / this.jumpFallStepHeight) {
+    jump() {
         if (!gamePaused && this.isAlive && !this.falls) {
             this.onMovingPlatform = false;
             this.atWallLeft = false;
@@ -209,13 +204,12 @@ class Char {
             this.stepAmount = 0;
             this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
             if (!this.startingYPos) { this.startingYPos = this.y; }
-            i--;
+            this.jumpingIntervalStep--;
             this.y -= this.jumpFallStepHeight;
-            if (i <= 0 || this.y <= heightUnit) {
-                this.checkIfFalling(i);
+            if (this.jumpingIntervalStep <= 0 || this.y <= heightUnit) {
+                this.checkIfFalling();
                 return;
             }
-            setTimeout(() => { this.jump(i); }, 10);
         }
     }
 
@@ -223,7 +217,8 @@ class Char {
         if (!gamePaused && this.isAlive) {
             if (!this.falls) {
                 this.falls = true;
-                this.fallAnimationId = setInterval(() => { this.fall(); }, 10);
+                clearInterval(this.jumpingAnimationId);
+                this.fallingAnimationId = setInterval(() => { this.fall(); }, standardFrequency);
             }
         }
     }
@@ -237,6 +232,7 @@ class Char {
                 this.jumps = false;
                 if (platforms[this.standingPlatformIndex].isMoving) {
                     this.onMovingPlatform = true;
+                    this.movingWidthPlatformAnimationId = setInterval(()=>{ this.movingWithPlatform(); }, standardFrequency);
                     this.startingPointX = this.x;
                     this.distanceCharMovingPlatformX = this.x - platforms[this.standingPlatformIndex].x;
                     this.movingWithPlatform();
@@ -251,7 +247,7 @@ class Char {
                 if(this.healthAmount > 0) {
                     this.hitChar();
                     gamePaused = true;
-                    resetScreenPosition(parseInt(canvas.style.left));
+                    shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrequency);
                 }else {
                     this.healthAmount = 0;
                     resetGame();
@@ -271,7 +267,7 @@ class Char {
 
     stopFalling() {
         this.falls = false;
-        clearInterval(this.fallAnimationId);
+        clearInterval(this.fallingAnimationId);
     }
 
     checkPlatformXCords() {
@@ -309,6 +305,7 @@ class Char {
         if (!gamePaused && this.isAlive) {
             if (this.onMovingPlatform) {
                 if (this.checkPlatformEnd()) {
+                    clearInterval(this.movingWidthPlatformAnimationId);
                     this.checkIfFalling();
                     return;
                 }else {
@@ -319,7 +316,6 @@ class Char {
                         this.y = platforms[this.standingPlatformIndex].y - this.height;
                     }
                 }
-                setTimeout(() => {this.movingWithPlatform();}, 10);
             }
             return;
         }
@@ -349,7 +345,7 @@ class Char {
 
     hitChar() {
         this.gotHit = true;
-        this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 20);
+        this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 3*standardFrequency);
         saveCharProperties();
         setTimeout(() => { this.gotHit = false; }, 1500);
     }

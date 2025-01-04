@@ -9,7 +9,9 @@ let controller;
 let bgPlayer;
 let canCont;
 let bigBoss;
+let shiftingCanvasBackAnimationId;
 let ammoImageSource = './graphics/main-char/ammo/laser.svg';
+let standardFrequency = 12;
 let gameVolume = 0.5;
 let t = -1;
 let gamePaused = false;
@@ -83,7 +85,6 @@ function loadGameJson() {
     items = gameJson.items;
     hitables.enemies = [];
     hitables.enemies = gameJson.hitables.enemies;
-    console.log(hitables.enemies);
 }
 
 function createGameJson() {
@@ -391,15 +392,21 @@ function addKeypressMovingCommands() {
             gameSoundOnOffToggle();
         } else if (event.key.toLowerCase() === "f") {
             if(canCont.offsetWidth >= window.innerWidth) {
+                document.exitFullscreen("hide");
                 turnOffFullScreen();
-            }else {turnOnFullScreen(); }
+            }else {
+                canCont.requestFullscreen("hide");
+                turnOnFullScreen();
+            }
         }
     });
     document.querySelector('body').addEventListener('keyup', (event) => {
         if (event.key === "ArrowLeft" || event.key === "a") {
             controller['left'].pressed = false;
+            clearInterval(char.movingAnimationId);
         } else if (event.key === "ArrowRight" || event.key === "d") {
             controller['right'].pressed = false;
+            clearInterval(char.movingAnimationId);
         } else if (event.key === "Shift") {
             controller['run'].pressed = false;
             slowDownChar();
@@ -443,13 +450,14 @@ function initJump() {
 
 function initStepLeft() {
     if (controller['left'].pressed) {
-        char.moveLeft("ArrowLeft");
+        char.movingAnimationId = setInterval(()=>{ char.moveLeft("ArrowLeft"); }, standardFrequency);
     }
 }
 
 function initStepLeftTouch() {
     if (controller['left'].pressed) {
-        char.moveLeftTouch("ArrowLeft");
+        //char.moveLeftTouch("ArrowLeft");
+        char.movingAnimationId = setInterval(()=>{ char.moveLeftTouch("ArrowLeft"); }, standardFrequency);
     }
 }
 
@@ -471,20 +479,20 @@ function showHideTouchControls() {
 
 function initStepRight() {
     if (controller['right'].pressed) {
-        char.moveRight("ArrowRight");
+        //char.moveRight("ArrowRight");
+        char.movingAnimationId = setInterval(()=>{ char.moveRight("ArrowRight"); }, standardFrequency);
     }
 }
 
 function initStepRightTouch() {
     if (controller['right'].pressed) {
-        char.moveRightTouch("ArrowRight");
+        //char.moveRightTouch("ArrowRight");
+        char.movingAnimationId = setInterval(()=>{ char.moveRightTouch("ArrowRight"); }, standardFrequency);
     }
 }
 
 function speedUpChar() {
-    if (char.stepLength === char.basicStepLength) {
-        char.stepLength = char.basicStepLength*1.5;
-    }
+    if (char.stepLength === char.standardStepLength) { char.stepLength *= 1.5; }
 }
 
 function setRunningCharTouch() {
@@ -512,9 +520,7 @@ function touchShooting() {
 }
 
 function slowDownChar() {
-    if (1.5*char.basicStepLength === char.stepLength) {
-        char.stepLength = char.basicStepLength;
-    }
+    if (1.5*char.standardStepLength === char.stepLength) { char.stepLength /= 1.5; }
 }
 
 function playSound(fileName) {
@@ -667,8 +673,6 @@ function presetScreenProperties() {
     let oldCancontSize = parseFloat(canCont.offsetWidth);
     canCont.style.width = window.innerWidth < 801 ? `${window.innerWidth}px` : `${0.8*window.innerWidth}px`;
     canCont.style.height = `${9*parseFloat(canCont.style.width).offsetWidth/16}px`;
-    /* canvas.setAttribute('width', 2*parseFloat(canCont.style.width));
-    canvas.setAttribute('height', parseFloat(canCont.style.height)); */
     let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
     widthUnit *= scaleFactor;
     heightUnit *= scaleFactor;
@@ -813,17 +817,17 @@ function timer() {
     return;
 }
 
-function resetScreenPosition(i) {
-    i += widthUnit;
-    canvas.style.left = `${i}px`;
-    if(i >= 0) {
+function shiftCanvasBack() {
+    //i += widthUnit;
+    canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
+    if(parseFloat(canvas.style.left) >= 0) {
         canvas.style.left = '0px';
         char.scrollingStepAmount = 0;
         resetCharPosition();
         gamePaused = false;
+        clearInterval(shiftingCanvasBackAnimationId);
         return;
     }
-    setTimeout(()=>{resetScreenPosition(i);}, 30);
 }
 
 function resetCharPosition() {
