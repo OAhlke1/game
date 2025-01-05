@@ -180,7 +180,7 @@ class Char {
                 this.stepAmount--;
                 checkForScrolling();
             }
-            this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
+            this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
         }
     }
 
@@ -202,7 +202,7 @@ class Char {
             this.atWallRight = false;
             this.stopFalling();
             this.stepAmount = 0;
-            this.setImagePath(`../graphics/main-char/jump/jump-${this.movingDirection}.png`);
+            this.setImagePath(`./graphcs/main-char/jump/jump-${this.movingDirection}.png`);
             if (!this.startingYPos) { this.startingYPos = this.y; }
             this.jumpingIntervalStep--;
             this.y -= this.jumpFallStepHeight;
@@ -225,9 +225,9 @@ class Char {
 
     fall() {
         if (!gamePaused && this.isAlive) {
-            if (!this.gotHit) { this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
+            if (!this.gotHit) { this.setImagePath(`./graphcs/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             if (this.checkPlatformXCords()) {
-                this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-0.png`);
+                this.setImagePath(`./graphcs/main-char/run/run-${this.movingDirection}-0.png`);
                 this.startingYPos = null;
                 this.jumps = false;
                 if (platforms[this.standingPlatformIndex].isMoving) {
@@ -352,7 +352,7 @@ class Char {
 
     animateHit() {
         if (this.gotHit) {
-            if (this.isAlive) { this.setImagePath(`../graphics/main-char/hit/hit-${this.movingDirection}-${this.hittingAnimationIndex}.png`); }
+            if (this.isAlive) { this.setImagePath(`./graphcs/main-char/hit/hit-${this.movingDirection}-${this.hittingAnimationIndex}.png`); }
             this.hittingAnimationIndex++;
             if (this.hittingAnimationIndex === this.hitImagesAmount) {
                 this.hittingAnimationIndex = 0
@@ -362,7 +362,7 @@ class Char {
                 }
             }
         } else if (this.isAlive) {
-            this.setImagePath(`../graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
+            this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
         }
     }
 
@@ -393,7 +393,7 @@ class Char {
         if (this.isAlive) {
             this.figImage.src = path;
         } else {
-            this.figImage.src = `../graphics/main-char/dead/dead-${this.movingDirection}.png`;
+            this.figImage.src = `./graphics/main-char/dead/dead-${this.movingDirection}.png`;
         }
     }
 }
