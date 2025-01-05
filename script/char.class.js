@@ -375,7 +375,7 @@ class Char {
                 this.healthAmount = 0;
                 this.isAlive = false;
                 gamePaused = true;
-                this.setImagePath(`../graphics/main-char/dead/dead-${this.movingDirection}.png`);
+                this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
                 return;
             }
             saveCharProperties();

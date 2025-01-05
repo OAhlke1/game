@@ -23,7 +23,7 @@ class SpecialAmmoKit extends Item {
 
     rotateAnimation() {
         if(!this.collected) {
-            this.image.src = `graphics/items/special-ammo/rotation-${(this.rotationIndex+1) % 6}.png`;
+            this.image.src = `./graphics/items/special-ammo/rotation-${(this.rotationIndex+1) % 6}.png`;
             this.rotationIndex++;
         }else {
             clearInterval(this.rotateAnimationId);
