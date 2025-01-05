@@ -48,7 +48,7 @@ class Char {
     jumpingAnimationId;
     jumpingIntervalStep;
 
-    constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0) {
+    constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0, healthAmount) {
         this.width = width;
         this.height = height;
         this.x = x;
@@ -72,7 +72,7 @@ class Char {
         this.scrollingStepAmount = 0;
         this.hittingAnimationIndex = 0;
         this.hittingAnimationStep = 0;
-        this.healthAmount = 200;
+        this.healthAmount = healthAmount;
         this.timeNextHit = 0;
         this.stepAmount = 0;
         this.totalStepAmount = 0;

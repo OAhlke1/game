@@ -3,7 +3,7 @@ class BigBoss extends Shooter {
     isVisible;
     isDefeated;
 
-    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
+    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount, isAlive) {
         super();
         this.x = x;
         this.standardX = x;

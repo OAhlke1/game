@@ -1,5 +1,5 @@
 class GreenEnemy extends Enemy {
-    constructor(x, y, width, height, enemyType, imagePath, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
+    constructor(x, y, width, height, enemyType, imagePath, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount, isAlive) {
         super();
         this.x = x;
         this.standardX = x;
