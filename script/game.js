@@ -61,14 +61,14 @@ function initFunctions() {
     addKeypressMovingCommands();
     createPlatforms();
     createTraps();
-    if(localStorage.items && localStorage.enemies) {
-        createEnemies();
-        createItems();
-        presetMenuBarProperties();
+    /* if(localStorage.items && localStorage.enemies) {
     }else {
         createEnemies();
         createItems();
-    }
+    } */
+    createEnemies();
+    createItems();
+    presetMenuBarProperties();
     drawElements();
     sizeElements(1);
     sizeMenuBarProperties();
@@ -241,7 +241,7 @@ function createItems() {
 }
 
 function presetMenuBarProperties() {
-    menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${3 - items.specialAmmo.length}/3`;
+    menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${char.specialAmmoParts}/3`;
     menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
     menuBar.querySelector('.life-amount .life-amount-bar .life-amount-bar-inner').style.width = `${100*char.healthAmount/char.maxHealthAmount}%`;
 }
@@ -658,7 +658,7 @@ function resizeElements() {
 function presetScreenProperties() {
     let oldCancontSize = parseFloat(canCont.offsetWidth);
     canCont.style.width = window.innerWidth < 801 ? `${window.innerWidth}px` : `${0.8*window.innerWidth}px`;
-    canCont.style.height = `${0.8*window.innerHeight}px`;
+    canCont.style.height = `${0.5625*parseInt(canCont.style.width)}px`;
     let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
     widthUnit *= scaleFactor;
     heightUnit *= scaleFactor;
@@ -804,7 +804,6 @@ function timer() {
 }
 
 function shiftCanvasBack() {
-    //i += widthUnit;
     canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
     if(parseFloat(canvas.style.left) >= 0) {
         canvas.style.left = '0px';
