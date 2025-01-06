@@ -4,14 +4,13 @@ class Ammo extends Char {
     shootingSoundPlayer;
     leftCanvas;
 
-    constructor(x, y, width, height, imagePath, decreaseLifeAmount) {
+    constructor(x, y, width, height, image, decreaseLifeAmount) {
         super();
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.image = new Image();
-        this.image.src = imagePath;
+        this.image = image;
         this.flyingDirection = char.movingDirection;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.leftCanvas = false;

@@ -1,6 +1,7 @@
 class SpecialAmmoKit extends Item {
     rotationIndex;
     rotateAnimationId;
+    rotationImages;
 
     constructor(x, y, width, height, imagePath, itemType) {
         super();
@@ -17,13 +18,14 @@ class SpecialAmmoKit extends Item {
         this.image.src = imagePath;
         this.rotationIndex = 0;
         this.itemType = itemType;
+        this.rotationImages = [];
         this.rotateAnimationId = setInterval(()=> { this.rotateAnimation()}, 20*standardFrequency);
         this.checkCharPos();
     }
 
     rotateAnimation() {
         if(!this.collected) {
-            this.image.src = `./graphics/items/special-ammo/rotation-${(this.rotationIndex+1) % 6}.png`;
+            this.image = this.rotationImages[this.rotationIndex % 6];
             this.rotationIndex++;
         }else {
             clearInterval(this.rotateAnimationId);

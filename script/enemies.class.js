@@ -29,6 +29,7 @@ class Enemy {
     hitable;
     canWalk;
     muted;
+    hitImagesArrays;
 
     constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount, hittingSound = './sounds/big-boss-got-hit.mp3') {
         this.x = x;
@@ -159,7 +160,7 @@ class Enemy {
     }
 
     animateEnemyGotHit() {
-        if(this.enemyType != "flyable") { this.image.src = `./graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`; }
+        if(this.enemyType != "flyable") { this.image = this.hitImagesArrays[this.lookingDirection][this.hittingIndex] } //.src = `./graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`;
         this.hittingIndex++;
         //this.hitable = false;
         if (this.hittingIndex === this.hitImagesAmount) {

@@ -4,16 +4,14 @@ class Cannonball extends Enemy {
     inCanvas = true;
     isDangerous = true;
     
-    constructor(width, height, x, y, flyingDirection, ammoImageSource) {
+    constructor(width, height, x, y, flyingDirection, ammoImage) {
         super();
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.flyingDirection = flyingDirection;
-        this.ammoImageSource = ammoImageSource;
-        this.image = new Image();
-        this.image.src = ammoImageSource;
+        this.ammoImage = ammoImage;
         this.decreaseLifeAmount = 5;
         this.enemyType = "flyable";
         this.trajectoryIntervalId = setInterval(()=>{ this.animateTrajectory() }, standardFrequency);

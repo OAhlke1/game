@@ -47,6 +47,10 @@ class Char {
     movingAnimationId;
     jumpingAnimationId;
     jumpingIntervalStep;
+    hitImagesArrays;
+    runImagesArrays;
+    jumpingImages;
+    ammoImages;
 
     constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0, healthAmount) {
         this.width = width;
@@ -88,6 +92,22 @@ class Char {
         this.targeted = false;
         this.onUpwardsMovingPlatform = false;
         this.specialAmmoParts = specialAmmoParts;
+        this.hitImagesArrays = {
+            left: [],
+            right: []
+        };
+        this.runImagesArrays = {
+            left: [],
+            right: []
+        };
+        this.jumpingImages = {
+            left: "",
+            right: ""
+        };
+        this.ammoImages = {
+            ammo: "",
+            specialAmmo: ""
+        }
     }
 
     moveLeft(key) {
@@ -180,7 +200,7 @@ class Char {
                 this.stepAmount--;
                 checkForScrolling();
             }
-            this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
+            this.figImage = this.runImagesArrays[this.movingDirection][Math.abs(this.stepAmount % 12)];
         }
     }
 
@@ -202,7 +222,7 @@ class Char {
             this.atWallRight = false;
             this.stopFalling();
             this.stepAmount = 0;
-            this.setImagePath(`./graphics/main-char/jump/jump-${this.movingDirection}.png`);
+            this.figImage = this.jumpingImages[this.movingDirection];
             if (!this.startingYPos) { this.startingYPos = this.y; }
             this.jumpingIntervalStep--;
             this.y -= this.jumpFallStepHeight;
@@ -245,8 +265,9 @@ class Char {
                 this.healthAmount -= 50;
                 this.stopFalling();
                 if(this.healthAmount > 0) {
-                    this.hitChar();
                     gamePaused = true;
+                    this.hitChar();
+                    this.scrollingStepAmount = 0;
                     shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrequency);
                 }else {
                     this.healthAmount = 0;
@@ -352,7 +373,7 @@ class Char {
 
     animateHit() {
         if (this.gotHit) {
-            if (this.isAlive) { this.setImagePath(`./graphics/main-char/hit/hit-${this.movingDirection}-${this.hittingAnimationIndex}.png`); }
+            if (this.isAlive) { this.figImage = this.hitImagesArrays[this.movingDirection][this.hittingAnimationIndex] } //this.setImagePath(`./graphics/main-char/hit/hit-${this.movingDirection}-${this.hittingAnimationIndex}.png`);
             this.hittingAnimationIndex++;
             if (this.hittingAnimationIndex === this.hitImagesAmount) {
                 this.hittingAnimationIndex = 0
@@ -374,8 +395,10 @@ class Char {
             if (this.healthAmount <= 0) {
                 this.healthAmount = 0;
                 this.isAlive = false;
+                this.healthAmount = 200;
                 gamePaused = true;
                 this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
+                this.saveCharProperties();
                 return;
             }
             saveCharProperties();

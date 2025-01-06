@@ -10,7 +10,6 @@ let bgPlayer;
 let canCont;
 let bigBoss;
 let shiftingCanvasBackAnimationId;
-let ammoImageSource = './graphics/main-char/ammo/laser.svg';
 let standardFrequency = 12;
 let gameVolume = 0.5;
 let t = -1;
@@ -52,7 +51,6 @@ let gameJson = {
 let menuBar = document.querySelector('.menu-bar');
 
 function initFunctions() {
-    //clearLocalStorage();
     loadPlayer();
     createScreen();
     setSizeUnits();
@@ -61,11 +59,6 @@ function initFunctions() {
     addKeypressMovingCommands();
     createPlatforms();
     createTraps();
-    /* if(localStorage.items && localStorage.enemies) {
-    }else {
-        createEnemies();
-        createItems();
-    } */
     createEnemies();
     createItems();
     presetMenuBarProperties();
@@ -127,14 +120,56 @@ function createBackgrounds() {
 function createChar() {
     let charObject;
     if(localStorage.char) { charObject = JSON.parse(localStorage.char); }
-    console.log(charObject);
     char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4*heightUnit, charObject ? charObject.specialAmmoParts : 0, charObject ? charObject.healthAmount : 200);
-    //char = new Char(charObject.width, charObject.height, charObject.standardX, charObject.standardY, charObject.standardImgPath, charObject.standardStepLength, charObject.maxJumpHeight, charObject ? charObject.specialAmmoParts : 0, charObject ? charObject.healthAmount : 200);
-    setMenuBarProperties("specialAmmo");
+    createHittingCharImagesArrays();
 }
 
-function createAmmo(x, y, width, height, imagePath, decreaseLifeAmount) {
-    charObjects.ammo.push(new Ammo(x, y, width, height, imagePath, decreaseLifeAmount));
+function createHittingCharImagesArrays() {
+    for(let i=0; i<char.hitImagesAmount; i++) {
+        hitImageLeft = new Image();
+        hitImageLeft.src = `./graphics/main-char/hit/hit-left-${i}.png`;
+        char.hitImagesArrays.left.push(hitImageLeft);
+        hitImageRight = new Image();
+        hitImageRight.src = `./graphics/main-char/hit/hit-right-${i}.png`;
+        char.hitImagesArrays.right.push(hitImageRight);
+    }
+    createRunningCharImagesArrays();
+}
+
+function createRunningCharImagesArrays() {
+    for(let i=0; i<12; i++) {
+        runImageLeft = new Image();
+        runImageLeft.src = `./graphics/main-char/run/run-left-${i}.png`;
+        char.runImagesArrays.left.push(runImageLeft);
+        runImageRight = new Image();
+        runImageRight.src = `./graphics/main-char/run/run-right-${i}.png`;
+        char.runImagesArrays.right.push(runImageRight);
+    }
+    createJumpingCharImages();
+}
+
+function createJumpingCharImages() {
+    let jumpLeft = new Image();
+    let jumpRight = new Image();
+    jumpLeft.src = './graphics/main-char/jump/jump-left.png';
+    jumpRight.src = './graphics/main-char/jump/jump-right.png';
+    char.jumpingImages.left = jumpLeft;
+    char.jumpingImages.right = jumpRight;
+    createCharAmmoImages();
+}
+
+function createCharAmmoImages() {
+    let ammoImage = new Image();
+    let specialAmmoImage = new Image();
+    ammoImage.src = './graphics/main-char/ammo/laser.svg';
+    specialAmmoImage.src = './graphics/main-char/ammo/laser-special.svg';
+    char.ammoImages.ammo = ammoImage;
+    char.ammoImages.specialAmmo = specialAmmoImage;
+    setMenuBarProperties("char");
+}
+
+function createCharAmmo(x, y, width, height, image, decreaseLifeAmount) {
+    charObjects.ammo.push(new Ammo(x, y, width, height, image, decreaseLifeAmount));
 }
 
 function createPlatforms() {
@@ -199,6 +234,19 @@ function createTraps() {
     hitables.traps.push(new Trap(45*widthUnit, 11*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(12*widthUnit, 16*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, true, true, 35, 8, 0));
     hitables.traps.push(new Trap(2.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 25, true, true, 36, 8, 0));
+    createTrapAnimationImages();
+}
+
+function createTrapAnimationImages() {
+    for(let i=0; i<hitables.traps.length; i++) {
+        if(hitables.traps[i].trapType === "sting-coming-out") {
+            for(let j=0; j<8; j++) {
+                let animationImage = new Image();
+                animationImage.src = `./graphics/traps/stings/sting-coming-out-${hitables.traps[i].orientation}-${j}.png`;
+                hitables.traps[i].animationImages[hitables.traps[i].orientation].push(animationImage);
+            }
+        }
+    }
 }
 
 function createEnemies() {
@@ -210,10 +258,39 @@ function createEnemies() {
     hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 32*widthUnit, true, 5, 7));
     hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 4*widthUnit, false, 5, 7));
     hitables.enemies.push(new Shooter(24*widthUnit, 2.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'shooter', 60, true, 'right', 100, 5*widthUnit, true, 5, 7));
-    setAliveDangerous();
+    bigBoss = hitables.enemies[3];
+    createEnemiesHitImagesArrays();
 }
 
-function setAliveDangerous() {
+function createEnemiesHitImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].hitImagesAmount; j++) {
+            let hitImageLeft = new Image();
+            hitImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-left-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.left.push(hitImageLeft);
+            let hitImageRight = new Image();
+            hitImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-right-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.right.push(hitImageRight);
+        }
+    }
+    createEnemiesAttackingImagesArrays();
+}
+
+function createEnemiesAttackingImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].attackingImagesAmount; j++) {
+            let attackingImageLeft = new Image();
+            attackingImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-left-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.left.push(hitImageLeft);
+            let attackingImageRight = new Image();
+            attackingImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-right-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.right.push(attackingImageRight);
+        }
+    }
+    setEnemiesAliveAndDangerousProperties();
+}
+
+function setEnemiesAliveAndDangerousProperties() {
     if(localStorage.enemies) {
         alive = JSON.parse(localStorage.enemies);
         for(let i=0; i<hitables.enemies.length; i++) {
@@ -237,6 +314,17 @@ function createItems() {
         collected = JSON.parse(localStorage.items);
         for(let i=0; i<items.lifeIncreasing.length; i++) { items.lifeIncreasing[i].collected = collected.lifeIncreasing[i]; }
         for(let i=0; i<items.specialAmmo.length; i++) { items.specialAmmo[i].collected = collected.specialAmmo[i]; }
+    }
+    createSpecialAmmosAnimationImages();
+}
+
+function createSpecialAmmosAnimationImages() {
+    for(let i=0; i<items.specialAmmo.length; i++) {
+        for(let j=0; j<7; j++) {
+            let rotationImage = new Image();
+            rotationImage.src = `./graphics/items/special-ammo/rotation-${j}.png`;
+            items.specialAmmo[i].rotationImages.push(rotationImage);
+        }
     }
 }
 
@@ -300,7 +388,7 @@ function drawHitables() {
     })
     if (hitables.flyables.length) {
         hitables.flyables.forEach((elem) => {
-            if (elem.inCanvas) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
+            if (elem.inCanvas) { ctx.drawImage(elem.ammoImage, elem.x, elem.y, elem.width, elem.height); }
         })
     }
 }
@@ -373,7 +461,7 @@ function addKeypressMovingCommands() {
                 timer();
             }
         } else if (event.key.toLowerCase() === "d") {
-            createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, ammoImageSource, char.specialAmmoParts === 3 ? 200 : 30);
+            createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
         } else if (event.key.toLowerCase() === "m") {
             gameSoundOnOffToggle();
         } else if (event.key.toLowerCase() === "f") {
@@ -497,7 +585,7 @@ function restyleRunningTouchButton() {
 
 function touchShooting() {
     if (controller['shoot'].pressed) {
-        createAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.005*canvas.offsetHeight, widthUnit, widthUnit, './graphics/enemies/shooter/attack/shoot.svg');
+        createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
         document.querySelector('.touch-control.shoot').classList.remove('pressed');
         controller['shoot'].pressed = false;
     }
@@ -807,7 +895,6 @@ function shiftCanvasBack() {
     canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
     if(parseFloat(canvas.style.left) >= 0) {
         canvas.style.left = '0px';
-        char.scrollingStepAmount = 0;
         resetCharPosition();
         gamePaused = false;
         clearInterval(shiftingCanvasBackAnimationId);
@@ -863,7 +950,6 @@ function saveGameJson() {
 
 function allAmmoKitsCollected() {
     if(char.specialAmmoParts === 3) {
-        ammoImageSource = './graphics/main-char/ammo/laser-special.svg';
         char.shootingSound = './sounds/special-shooting-sound.png';
     }
 }

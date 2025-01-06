@@ -3,7 +3,7 @@ class BigBoss extends Shooter {
     isVisible;
     isDefeated;
 
-    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount, isAlive) {
+    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
         this.x = x;
         this.standardX = x;
@@ -29,7 +29,8 @@ class BigBoss extends Shooter {
         this.player = new Audio();
         this.player.src = './sounds/enemy-shoots.mp3';
         this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3*standardFrequency);
-        this.ammoImageSource = './graphics/enemies/big-boss/shoot.svg';
+        this.ammoImage = new Image();
+        this.ammoImage.src = './graphics/enemies/big-boss/shoot.svg';
         this.isVisible = false;
         this.hittingSound = './sounds/big-boss-got-hit.mp3';
         this.hittingSoundPlayer = new Audio;

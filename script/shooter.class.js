@@ -3,7 +3,7 @@ class Shooter extends Enemy {
     hasShot;
     walks;
     player;
-    ammoImageSource;
+    ammoImage;
 
     constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
@@ -30,9 +30,18 @@ class Shooter extends Enemy {
         this.walks = false;
         this.player = new Audio();
         this.shootingSound = './sounds/enemy-shoots.mp3';
-        this.ammoImageSource = './graphics/enemies/shooter/attack/shoot.svg';
+        this.ammoImage = new Image();
+        this.ammoImage.src = './graphics/enemies/shooter/attack/shoot.svg';
         this.hittingSound = './sounds/big-boss-got-hit.mp3';
         this.hittingSoundPlayer = new Audio();
+        this.hitImagesArrays = {
+            left: [],
+            right: []
+        };
+        this.attackingImagesArrays = {
+            left: [],
+            right: []
+        }
     }
 
     setupShoot(width = 0.5*widthUnit, height = 0.5*heightUnit) {
@@ -40,10 +49,10 @@ class Shooter extends Enemy {
             if(!gameMuted) { this.playShootingSound(); }
             switch (this.lookingDirection) {
                 case "left":
-                    this.createNewShoot(width, height, this.enemyType != "big-boss" ? this.x - widthUnit : this.x + this.width/4, this.y + 5*this.height/32, this.lookingDirection, this.ammoImageSource);
+                    this.createNewShoot(width, height, this.enemyType != "big-boss" ? this.x - widthUnit : this.x + this.width/4, this.y + 5*this.height/32, this.lookingDirection, this.ammoImage);
                     break;
                 case "right":
-                    this.createNewShoot(width, height, this.x + widthUnit, this.y + 5*this.height/32, this.lookingDirection, this.ammoImageSource);
+                    this.createNewShoot(width, height, this.x + widthUnit, this.y + 5*this.height/32, this.lookingDirection, this.ammoImage);
                     break;
             }
             this.hasShot = true;
@@ -54,8 +63,8 @@ class Shooter extends Enemy {
         }else { return; }
     }
 
-    createNewShoot(width, height, x, y, flyDirection, ammoImageSource) {
-        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection, ammoImageSource));
+    createNewShoot(width, height, x, y, flyDirection, ammoImage) {
+        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection, ammoImage));
     }
 
     playShootingSound() {
