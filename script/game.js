@@ -728,6 +728,7 @@ function sizeElements() {
     resizeBackgroundsProperties(scaleFactor);
     resizeHitablesProperties(scaleFactor);
     resizeCharProperties(scaleFactor);
+    resizeCharObjcectsProperties(scaleFactor);
     resizeItemsProperties(scaleFactor);
 }
 
@@ -739,6 +740,7 @@ function resizeElements() {
     resizeBackgroundsProperties(scaleFactor);
     resizeHitablesProperties(scaleFactor);
     resizeCharProperties(scaleFactor);
+    resizeCharObjcectsProperties(scaleFactor);
     resizeItemsProperties(scaleFactor);
     sizeMenuBarProperties();
 }
@@ -829,6 +831,7 @@ function resizeHitablesProperties(scaleFactor) {
         elem.standardY *= scaleFactor;
         elem.width *= scaleFactor;
         elem.height *= scaleFactor;
+        console.log(elem);
     })
 }
 
@@ -840,6 +843,15 @@ function resizeCharProperties(scaleFactor) {
     char.standardStepLength *= scaleFactor;
     char.jumpFallStepHeight *= scaleFactor;
     char.maxJumpHeight *= scaleFactor;
+}
+
+function resizeCharObjcectsProperties(scaleFactor) {
+    charObjects.ammo.forEach((elem)=>{
+        elem.x *= scaleFactor;
+        elem.y *= scaleFactor;
+        elem.width *= scaleFactor;
+        elem.height *= scaleFactor
+    })
 }
 
 function resizeItemsProperties(scaleFactor) {
