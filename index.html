@@ -12,9 +12,9 @@
 <body onload="initFunctions()">
     <div class="canvas-cont" fullscreen="allow">
         <canvas width="1600" height="450" style="left: 0px;" lo></canvas>
-        <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
+        <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypress(event)" onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
         <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypress(event)" onmouseup="dispatchKeypressStop(event)"></div>
-        <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
+        <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypress(event)" onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
         <div class="touch-controls disNone">
             <div class="touch-controls-top">
                 <div class="running-controls"></div>
