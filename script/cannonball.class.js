@@ -14,7 +14,7 @@ class Cannonball extends Enemy {
         this.ammoImage = ammoImage;
         this.decreaseLifeAmount = 5;
         this.enemyType = "flyable";
-        this.trajectoryIntervalId = setInterval(()=>{ this.animateTrajectory() }, standardFrequency);
+        this.trajectoryIntervalId = setInterval(()=>{ this.animateTrajectory() }, standardFrameRate);
     }
 
     animateTrajectory() {

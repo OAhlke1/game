@@ -12,12 +12,13 @@ class BigBoss extends Shooter {
         this.width = width;
         this.height = height;
         this.image = new Image();
-        this.image.src = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
+        this.image.src = `./graphics/enemies/big-boss/putin.png`; //`./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`
         this.enemyType = enemyType;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.canShoot = canShoot;
         this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
+        this.maxLifeAmount = lifeAmount;
         this.standardImgPath = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
         this.distanceToSeeChar = distanceToSeeChar;
         this.canWalk = canWalk;
@@ -28,13 +29,14 @@ class BigBoss extends Shooter {
         this.walks = false;
         this.player = new Audio();
         this.player.src = './sounds/enemy-shoots.mp3';
-        this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3*standardFrequency);
+        this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3*standardFrameRate);
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/big-boss/shoot.svg';
         this.isVisible = false;
         this.hittingSound = './sounds/big-boss-got-hit.mp3';
         this.hittingSoundPlayer = new Audio;
         this.isDefeated = false;
+        this.isDangerous = true;
     }
 
     levitateUp() {
@@ -42,12 +44,12 @@ class BigBoss extends Shooter {
             this.y -= 0.125*heightUnit;
             if(this.y <= 0) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(()=>{ this.levitateDown(); }, 3*standardFrequency);
+                this.animateLevitationId = setInterval(()=>{ this.levitateDown(); }, 3*standardFrameRate);
                 return;
             }
         }else {
             clearInterval(this.animateLevitationId);
-            this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, 3*standardFrequency);
+            this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, 3*standardFrameRate);
         }
     }
 
@@ -56,7 +58,7 @@ class BigBoss extends Shooter {
             this.y += 0.125*heightUnit;
             if(this.y + this.height >= canCont.offsetHeight) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(()=>{ this.levitateUp(); }, 3*standardFrequency);
+                this.animateLevitationId = setInterval(()=>{ this.levitateUp(); }, 3*standardFrameRate);
                 return;
             }
         }
@@ -67,9 +69,10 @@ class BigBoss extends Shooter {
         if(this.y > canvas.offsetHeight) {
             gamePaused = true;
             clearInterval(this.animateLevitationId);
+            document.querySelector('.you-won-screen').classList.remove('disNone');
             return;
         }
-        playFallingSound();
+        this.playFallingSound();
     }
 
     animateShooting() {
@@ -77,5 +80,9 @@ class BigBoss extends Shooter {
             this.setupShoot(2.5*widthUnit, 2.5*heightUnit);
             setTimeout(() => { this.animateShooting(); }, 1000);
         }
+    }
+
+    playFallingSound() {
+        console.log('I am defeated!');
     }
 }

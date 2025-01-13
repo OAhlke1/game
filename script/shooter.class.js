@@ -5,7 +5,7 @@ class Shooter extends Enemy {
     player;
     ammoImage;
 
-    constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
+    constructor(x, y, width, height, enemyType, decreaseHealthAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
         this.x = x;
         this.standardX = x;
@@ -16,10 +16,11 @@ class Shooter extends Enemy {
         this.image = new Image();
         this.image.src = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
         this.enemyType = enemyType;
-        this.decreaseLifeAmount = decreaseLifeAmount;
+        this.decreaseHealthAmount = decreaseHealthAmount;
         this.canShoot = canShoot;
         this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
+        this.maxLifeAmount = lifeAmount;
         this.standardImgPath = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
         this.distanceToSeeChar = distanceToSeeChar;
         this.canWalk = canWalk;
@@ -32,8 +33,6 @@ class Shooter extends Enemy {
         this.shootingSound = './sounds/enemy-shoots.mp3';
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/shooter/attack/shoot.svg';
-        this.hittingSound = './sounds/big-boss-got-hit.mp3';
-        this.hittingSoundPlayer = new Audio();
         this.hitImagesArrays = {
             left: [],
             right: []

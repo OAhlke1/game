@@ -51,6 +51,7 @@ class Char {
     runImagesArrays;
     jumpingImages;
     ammoImages;
+    underGround;
 
     constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0, healthAmount) {
         this.width = width;
@@ -91,7 +92,14 @@ class Char {
         this.landedOnPlatform = false;
         this.targeted = false;
         this.onUpwardsMovingPlatform = false;
+        this.underGround = false;
         this.specialAmmoParts = specialAmmoParts;
+        this.hittingSound = new Audio();
+        this.hittingSound.src = './sounds/char-got-hit.ogg';
+        this.shootingSound = new Audio();
+        this.shootingSound.src = './sounds/enemy-shoots.mp3';
+        this.jumpingSound = new Audio();
+        this.jumpingSound.src = './sounds/jump.ogg';
         this.hitImagesArrays = {
             left: [],
             right: []
@@ -207,10 +215,10 @@ class Char {
     checkIfJumping() {
         if (!gamePaused && this.isAlive) {
             if (!this.jumps) {
-                if(!gameMuted) { playSound('./sounds/jump.ogg'); }
+                if(!gameMuted) { this.playJumpingSound(); }
                 this.jumps = true;
                 this.jumpingIntervalStep = this.maxJumpHeight / this.jumpFallStepHeight;
-                this.jumpingAnimationId = setInterval(()=>{ this.jump(); }, standardFrequency);
+                this.jumpingAnimationId = setInterval(()=>{ this.jump(); }, standardFrameRate);
             }
         }
     }
@@ -238,7 +246,7 @@ class Char {
             if (!this.falls) {
                 this.falls = true;
                 clearInterval(this.jumpingAnimationId);
-                this.fallingAnimationId = setInterval(() => { this.fall(); }, standardFrequency);
+                this.fallingAnimationId = setInterval(() => { this.fall(); }, standardFrameRate);
             }
         }
     }
@@ -252,7 +260,7 @@ class Char {
                 this.jumps = false;
                 if (platforms[this.standingPlatformIndex].isMoving) {
                     this.onMovingPlatform = true;
-                    this.movingWidthPlatformAnimationId = setInterval(()=>{ this.movingWithPlatform(); }, standardFrequency);
+                    this.movingWidthPlatformAnimationId = setInterval(()=>{ this.movingWithPlatform(); }, standardFrameRate);
                     this.startingPointX = this.x;
                     this.distanceCharMovingPlatformX = this.x - platforms[this.standingPlatformIndex].x;
                     this.movingWithPlatform();
@@ -262,17 +270,22 @@ class Char {
             } else if (this.y >= canvas.offsetHeight) {
                 this.jumps = false;
                 this.falls = false;
-                this.healthAmount -= 50;
+                this.underGround = true;
+                setMenuBarProperties("char");
+                this.decreaseHealth();
                 this.stopFalling();
-                if(this.healthAmount > 0) {
+                if(this.healthAmount >= 0) {
                     gamePaused = true;
                     this.hitChar();
                     this.scrollingStepAmount = 0;
-                    shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrequency);
-                }else {
+                    shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrameRate);
+                }/* else {
                     this.healthAmount = 0;
-                    resetGame();
-                }
+                    setMenuBarProperties("char");
+                    this.isAlive = false;
+                    //resetGame();
+                    document.querySelector('.game-over-screen').classList.remove('disNone');
+                } */
             }
 
             if (this.startingYPos === this.y) {
@@ -288,6 +301,7 @@ class Char {
 
     stopFalling() {
         this.falls = false;
+        //this.onMovingPlatform = true;
         clearInterval(this.fallingAnimationId);
     }
 
@@ -364,11 +378,14 @@ class Char {
         }
     }
 
-    hitChar() {
+    hitChar(decreasingAmount) {
         this.gotHit = true;
-        this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 3*standardFrequency);
-        saveCharProperties();
-        setTimeout(() => { this.gotHit = false; }, 1500);
+        this.decreaseHealth(decreasingAmount);
+        if(this.healthAmount > 0) {
+            this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 3*standardFrameRate);
+            saveCharProperties();
+            setTimeout(() => { this.gotHit = false; }, 1500);
+        }
     }
 
     animateHit() {
@@ -387,24 +404,29 @@ class Char {
         }
     }
 
-    decreaseHealth(decreasingAmount) {
+    decreaseHealth(decreasingAmount = 50) {
         if (!this.isImmune) {
-            if(!gameMuted) { playSound('./sounds/hit.ogg'); }
+            if(!gameMuted) { this.playHittingSound(); }
             this.isImmune = true;
             this.healthAmount -= decreasingAmount;
             if (this.healthAmount <= 0) {
-                this.healthAmount = 0;
-                this.isAlive = false;
-                this.healthAmount = 200;
-                gamePaused = true;
-                this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
-                this.saveCharProperties();
+                this.charIsDead();
                 return;
             }
             saveCharProperties();
             setMenuBarProperties("char");
             setTimeout(() => {this.isImmune = false }, 1500);
         }
+    }
+
+    charIsDead() {
+        this.healthAmount = 0;
+        this.isAlive = false;
+        this.healthAmount = 200;
+        gamePaused = true;
+        this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
+        //this.saveCharProperties();
+        document.querySelector('.game-over-screen').classList.remove('disNone');
     }
 
     saveCharProperties() {
@@ -419,4 +441,14 @@ class Char {
             this.figImage.src = `./graphics/main-char/dead/dead-${this.movingDirection}.png`;
         }
     }
+
+    playHittingSound() {
+        this.hittingSound.play();
+    }
+
+    playJumpingSound() {
+        this.jumpingSound.play();
+    }
+
+
 }

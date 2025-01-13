@@ -10,11 +10,17 @@ let bgPlayer;
 let canCont;
 let bigBoss;
 let shiftingCanvasBackAnimationId;
-let standardFrequency = 12;
+let canContWidthSmall;
+let standardFrameRate = 12;
 let gameVolume = 0.5;
 let t = -1;
 let gamePaused = false;
 let gameMuted = false;
+let screenSizesSet = false;
+let inFullscreen = false;
+let pageJustLoaded = true;
+let ratioSmallBigScreenHeight;
+let aspectRatio;
 let walls = [];
 let platforms = [];
 let standables = [];
@@ -48,23 +54,27 @@ let gameJson = {
         specialAmmo: [],
     }
 };
+let body = document.querySelector('body');
 let menuBar = document.querySelector('.menu-bar');
 
 function initFunctions() {
+    gamePaused = true;
     loadPlayer();
     createScreen();
+    setScreenProperties();
     setSizeUnits();
     createBackgrounds();
-    createChar();
+    if(!char) { createChar(); }
     addKeypressMovingCommands();
-    createPlatforms();
-    createTraps();
-    createEnemies();
+    if(platforms.length === 0) { createPlatforms(); }
+    if(hitables.traps.length === 0) { createTraps(); }
+    if(hitables.enemies.length === 0) { createEnemies(); }
     createItems();
     presetMenuBarProperties();
     drawElements();
-    sizeElements(1);
+    //if(inFullscreen) { sizeElements(); }
     sizeMenuBarProperties();
+    gamePaused = false;
 }
 
 function clearLocalStorage() {
@@ -91,8 +101,11 @@ function createGameJson() {
 }
 
 function setSizeUnits() {
-    widthUnit = canCont.offsetWidth/48;
+    aspectRatio = screen.height/screen.width;
     heightUnit = canCont.offsetHeight/27;
+    widthUnit = heightUnit/aspectRatio;
+    ratioSmallBigScreenHeight = canCont.offsetHeight/screen.height;
+    console.log(heightUnit/widthUnit, aspectRatio, ratioSmallBigScreenHeight);
 }
 
 function loadPlayer() {
@@ -111,6 +124,7 @@ function createScreen() {
     canvas.setAttribute('width', 2*canCont.offsetWidth);
     canvas.setAttribute('height', canCont.offsetHeight);
     ctx = canvas.getContext('2d');
+    canContWidthSmall = canCont.offsetWidth;
 }
 
 function createBackgrounds() {
@@ -254,7 +268,7 @@ function createEnemies() {
     hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-    hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 1000, 50*widthUnit, false, 5, 7));
+    hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 1000, 50*widthUnit/3, false, 5, 7));
     hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 32*widthUnit, true, 5, 7));
     hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 4*widthUnit, false, 5, 7));
     hitables.enemies.push(new Shooter(24*widthUnit, 2.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'shooter', 60, true, 'right', 100, 5*widthUnit, true, 5, 7));
@@ -348,7 +362,8 @@ function setMenuBarProperties(menuType) {
 }
 
 function clearCanvas() {
-    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
+    ctx.clearRect(0, 0, 2*canCont.offsetWidth, canCont.offsetHeight);
+    debugger;
 }
 
 function drawElements() {
@@ -419,7 +434,7 @@ function dispatchKeypress(event) {
         keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
         bubbles: true
     });
-    document.querySelector('body').dispatchEvent(keyPressEvent);
+    body.dispatchEvent(keyPressEvent);
 }
 
 function dispatchKeypressStop(event) {
@@ -429,12 +444,12 @@ function dispatchKeypressStop(event) {
         keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
         bubbles: true
     });
-    document.querySelector('body').dispatchEvent(keyUpEvent);
+    body.dispatchEvent(keyUpEvent);
 }
 
 function addKeypressMovingCommands() {
     setController();
-    document.querySelector('body').addEventListener('keydown', (event) => {
+    body.addEventListener('keydown', async (event) => {
         char.sleeps = false;
         t = 0;
         if (event.key === "ArrowLeft") {
@@ -460,29 +475,25 @@ function addKeypressMovingCommands() {
                 gamePaused = false;
                 timer();
             }
-        } else if (event.key.toLowerCase() === "d") {
-            createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
         } else if (event.key.toLowerCase() === "m") {
             gameSoundOnOffToggle();
-        } else if (event.key.toLowerCase() === "f") {
-            if(canCont.offsetWidth >= window.innerWidth) {
-                turnOffFullScreen();
-            }else {
-                turnOnFullScreen();
-            }
+        } else if(event.key.toLowerCase() === "f" && !inFullscreen) {
+            turnOnFullScreen();
         }
     });
-    document.querySelector('body').addEventListener('keyup', (event) => {
-        if (event.key === "ArrowLeft" || event.key === "a") {
+    body.addEventListener('keyup', (event) => {
+        if (event.key === "ArrowLeft") {
             controller['left'].pressed = false;
             clearInterval(char.movingAnimationId);
-        } else if (event.key === "ArrowRight" || event.key === "d") {
+        } else if (event.key === "ArrowRight") {
             controller['right'].pressed = false;
             clearInterval(char.movingAnimationId);
         } else if (event.key === "Shift") {
             controller['run'].pressed = false;
             slowDownChar();
-        }
+        } else if (event.key.toLowerCase() === "d" && char.isAlive) {
+            createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
+        } else if (event.key === "Escape" && inFullscreen) { turnOffFullScreen(); }
     });
 }
 
@@ -522,14 +533,14 @@ function initJump() {
 
 function initStepLeft() {
     if (controller['left'].pressed) {
-        char.movingAnimationId = setInterval(()=>{ char.moveLeft("ArrowLeft"); }, standardFrequency);
+        char.movingAnimationId = setInterval(()=>{ char.moveLeft("ArrowLeft"); }, standardFrameRate);
     }
 }
 
 function initStepLeftTouch() {
     if (controller['left'].pressed) {
         //char.moveLeftTouch("ArrowLeft");
-        char.movingAnimationId = setInterval(()=>{ char.moveLeftTouch("ArrowLeft"); }, standardFrequency);
+        char.movingAnimationId = setInterval(()=>{ char.moveLeftTouch("ArrowLeft"); }, standardFrameRate);
     }
 }
 
@@ -552,19 +563,23 @@ function showHideTouchControls() {
 function initStepRight() {
     if (controller['right'].pressed) {
         //char.moveRight("ArrowRight");
-        char.movingAnimationId = setInterval(()=>{ char.moveRight("ArrowRight"); }, standardFrequency);
+        char.movingAnimationId = setInterval(()=>{ char.moveRight("ArrowRight"); }, standardFrameRate);
     }
 }
 
 function initStepRightTouch() {
     if (controller['right'].pressed) {
         //char.moveRightTouch("ArrowRight");
-        char.movingAnimationId = setInterval(()=>{ char.moveRightTouch("ArrowRight"); }, standardFrequency);
+        char.movingAnimationId = setInterval(()=>{ char.moveRightTouch("ArrowRight"); }, standardFrameRate);
     }
 }
 
 function speedUpChar() {
-    if (char.stepLength === char.standardStepLength) { char.stepLength *= 1.5; }
+    char.stepLength *= 1.5;
+}
+
+function slowDownChar() {
+    char.stepLength /= 1.5;
 }
 
 function setRunningCharTouch() {
@@ -589,10 +604,6 @@ function touchShooting() {
         document.querySelector('.touch-control.shoot').classList.remove('pressed');
         controller['shoot'].pressed = false;
     }
-}
-
-function slowDownChar() {
-    if (1.5*char.standardStepLength === char.stepLength) { char.stepLength /= 1.5; }
 }
 
 function playSound(fileName) {
@@ -636,17 +647,17 @@ function checkForScrolling(movingDirection = char.movingDirection) {
             char.scrollingStepAmount--;
         }
         canvas.style.left = `-${char.standardStepLength*char.scrollingStepAmount}px`;
-        //checkIfBigBossVisible();
+        checkIfBigBossVisible();
     }
 }
 
 function checkIfBigBossVisible() {
-    if(bigBoss.x + bigBoss.width + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width/3) {
+    if(bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width/3) {
         bigBoss.animateShooting();
         bigBoss.isVisible = true;
     }else {
-        bigBoss.isVisible = false;
-        clearInterval(bigBoss.animateLevitationId);
+        //bigBoss.isVisible = false;
+        //clearInterval(bigBoss.animateLevitationId);
     }
 }
 
@@ -693,24 +704,6 @@ function gameSoundOnOffToggle() {
     }
 }
 
-async function turnOnFullScreen() {
-    canCont.requestFullscreen("hide");
-    document.querySelector('.turn-fullscreen-on').classList.add('disNone');
-    document.querySelector('body > .controls').classList.add('disNone');
-    document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
-    showHideFullScreenMenuButton();
-    resizeElements();
-}
-
-async function turnOffFullScreen() {
-    await document.exitFullscreen();
-    document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
-    document.querySelector('body > .controls').classList.remove('disNone');
-    document.querySelector('.turn-fullscreen-off').classList.add('disNone');
-    showHideFullScreenMenuButton();
-    resizeElements();
-}
-
 function showHideFullScreenMenuButton() {
     if(document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.contains('disNone')) {
         document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.remove('disNone');
@@ -718,54 +711,75 @@ function showHideFullScreenMenuButton() {
         document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.add('disNone');
         document.querySelector('.canvas-cont .controls').classList.add('disNone');
     }
+    resetScreenProperties();
+}
+
+async function turnOnFullScreen() {
+    inFullscreen = true;
+    document.querySelector('.turn-fullscreen-on').classList.add('disNone');
+    document.querySelector('body > .controls').classList.add('disNone');
+    document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    await body.requestFullscreen("hide").then(()=>{
+        canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
+        canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
+        showHideFullScreenMenuButton();
+    })
+}
+
+async function turnOffFullScreen() {
+    inFullscreen = false;
+    canCont.style.width = `${0.8*screen.width}px`;
+    canCont.style.height = `${0.8*screen.height}px`;
+    document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
+    document.querySelector('body > .controls').classList.remove('disNone');
+    document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+    gamePaused = false;
+    await document.exitFullscreen().then(()=>{
+        showHideFullScreenMenuButton();
+    })
 }
 
 function sizeElements() {
-    let scaleFactor = presetScreenProperties();
-    fullScreenButtonToggle(canCont.offsetHeight === window.innerHeight);
-    resizeCanvasProperties(scaleFactor);
-    resizePlatformsProperties(scaleFactor);
-    resizeBackgroundsProperties(scaleFactor);
-    resizeHitablesProperties(scaleFactor);
-    resizeCharProperties(scaleFactor);
-    resizeCharObjcectsProperties(scaleFactor);
-    resizeItemsProperties(scaleFactor);
+    setScreenProperties();
+    standardFrameRate = inFullscreen ? standardFrameRate/ratioSmallBigScreenHeight : 12;
+    fullScreenButtonToggle();
+    //resizeCanvasProperties();
+    resizePlatformsProperties();
+    resizeBackgroundsProperties();
+    resizeHitablesProperties();
+    resizeCharProperties();
+    resizeItemsProperties();
 }
 
-function resizeElements() {
-    let scaleFactor = setScreenProperties();
-    fullScreenButtonToggle(canCont.offsetHeight === window.innerHeight);
-    resizeCanvasProperties();
-    resizePlatformsProperties(scaleFactor);
-    resizeBackgroundsProperties(scaleFactor);
-    resizeHitablesProperties(scaleFactor);
-    resizeCharProperties(scaleFactor);
-    resizeCharObjcectsProperties(scaleFactor);
-    resizeItemsProperties(scaleFactor);
-    sizeMenuBarProperties();
+/* function resizeElements() {
+    resetScreenProperties();
+    //standardFrameRate = inFullscreen ? standardFrameRate/ratioSmallBigScreenHeight : 12;
 }
 
 function presetScreenProperties() {
-    let oldCancontSize = parseFloat(canCont.offsetWidth);
+    oldCancontSize = canCont.offsetWidth;
     canCont.style.width = window.innerWidth < 801 ? `${window.innerWidth}px` : `${0.8*window.innerWidth}px`;
     canCont.style.height = `${0.5625*parseInt(canCont.style.width)}px`;
-    let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
-    widthUnit *= scaleFactor;
-    heightUnit *= scaleFactor;
-    return scaleFactor;
-}
+    widthUnit *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    heightUnit *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    return ratioSmallBigScreenHeight;
+} */
 
 function setScreenProperties() {
-    let oldCancontSize = parseFloat(canCont.offsetWidth);
-    canCont.style.width = canCont.offsetWidth === window.innerWidth ? `${0.8*window.innerWidth}px` : `${window.innerWidth}px`;
-    canCont.style.height = `${9*canCont.offsetWidth/16}px`;
-    let scaleFactor = parseFloat(canCont.style.width)/oldCancontSize;
-    widthUnit *= scaleFactor;
-    heightUnit *= scaleFactor;
-    return scaleFactor;
+    //aspectRatio = screen.height/screen.width;
+    canCont.style.width = `${0.8*screen.width}px`;
+    canCont.style.height = `${0.8*screen.height}px`;
+    canvas.setAttribute('width', 2*canCont.offsetWidth);
+    canvas.setAttribute('height', canCont.offsetHeight);
+    /* heightUnit = canvas.offsetHeight/27;
+    widthUnit = heightUnit/aspectRatio; */
 }
 
-function fullScreenButtonToggle(inFullscreen) {
+function resetScreenProperties() {
+    fullScreenButtonToggle();
+}
+
+function fullScreenButtonToggle() {
     if(inFullscreen) {
         document.querySelector('.turn-fullscreen-on').classList.add('disNone');
         document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
@@ -773,104 +787,106 @@ function fullScreenButtonToggle(inFullscreen) {
         document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
         document.querySelector('.turn-fullscreen-off').classList.add('disNone');
     }
+    resizeCanvasProperties();
 }
 
 function resizeCanvasProperties() {
-    canvas.setAttribute("width", 96*widthUnit);
-    canvas.setAttribute("height", 27*heightUnit);
+    /* if(pageJustLoaded) {
+        pageJustLoaded = false;
+    }else if(inFullscreen) {  } */
+    canvas.setAttribute("width", inFullscreen ? 2*screen.width : 2*canCont.offsetWidth);
+    canvas.setAttribute("height", inFullscreen ? screen.height : canCont.offsetHeight);
+    resizePlatformsProperties();
 }
 
-function resizeBackgroundsProperties(scaleFactor) {
-    backgrounds.forEach((elem)=>{
-        elem.width *= scaleFactor;
-        elem.height *= scaleFactor;
-    })
-}
-
-function resizePlatformsProperties(scaleFactor) {
+function resizePlatformsProperties() {
     platforms.forEach((elem)=>{
-        elem.x *= scaleFactor;
-        elem.y *= scaleFactor;
-        elem.width *= scaleFactor;
-        elem.height *= scaleFactor;
+        elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         if(elem.isMoving) {
-            elem.startingXPos *= scaleFactor;
-            elem.endingXPos *= scaleFactor;
-            elem.heighestPoint *= scaleFactor;
-            elem.lowestPoint *= scaleFactor;
+            elem.startingXPos *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+            elem.endingXPos *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+            elem.heighestPoint *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+            elem.lowestPoint *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         }
     })
+    resizeBackgroundsProperties();
 }
 
-function resizeHitablesProperties(scaleFactor) {
+function resizeBackgroundsProperties() {
+    backgrounds.forEach((elem)=>{
+        elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    })
+    resizeHitablesProperties();
+}
+
+function resizeHitablesProperties() {
     hitables.enemies.forEach((elem)=>{
-        elem.x *= scaleFactor;
-        elem.standardX *= scaleFactor;
-        elem.y *= scaleFactor;
-        elem.standardY *= scaleFactor;
-        elem.standardWidth *= scaleFactor;
-        elem.width *= scaleFactor;
-        elem.standardHeight *= scaleFactor;
-        elem.height *= scaleFactor;
+        elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardY *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardWidth *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardHeight *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.distanceToSeeChar *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
     hitables.traps.forEach((elem)=>{
-        elem.x *= scaleFactor;
-        elem.standardX *= scaleFactor;
-        elem.y *= scaleFactor;
-        elem.standardY *= scaleFactor;
-        elem.standardWidth *= scaleFactor;
-        elem.width *= scaleFactor;
-        elem.standardHeight *= scaleFactor;
-        elem.height *= scaleFactor;
-        elem.startingXPos *= scaleFactor;
+        elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardY *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardWidth *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardHeight *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.startingXPos *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
     hitables.flyables.forEach((elem)=>{
-        elem.x *= scaleFactor;
-        elem.standardX *= scaleFactor;
-        elem.y *= scaleFactor;
-        elem.standardY *= scaleFactor;
-        elem.width *= scaleFactor;
-        elem.height *= scaleFactor;
-        console.log(elem);
+        elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardY *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
+    resizeCharProperties();
 }
 
-function resizeCharProperties(scaleFactor) {
-    char.x *= scaleFactor;
-    char.y *= scaleFactor;
-    char.width *= scaleFactor;
-    char.height *= scaleFactor;
-    char.standardStepLength *= scaleFactor;
-    char.jumpFallStepHeight *= scaleFactor;
-    char.maxJumpHeight *= scaleFactor;
+function resizeCharProperties() {
+    char.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.stepLength *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.standardStepLength *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.jumpFallStepHeight *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.maxJumpHeight *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    resizeItemsProperties();
 }
 
-function resizeCharObjcectsProperties(scaleFactor) {
-    charObjects.ammo.forEach((elem)=>{
-        elem.x *= scaleFactor;
-        elem.y *= scaleFactor;
-        elem.width *= scaleFactor;
-        elem.height *= scaleFactor
-    })
-}
-
-function resizeItemsProperties(scaleFactor) {
+function resizeItemsProperties() {
     items.lifeIncreasing.forEach((elem)=>{
-        elem.x *= scaleFactor;
-        elem.standardX *= scaleFactor;
-        elem.y *= scaleFactor;
-        elem.standardY *= scaleFactor;
-        elem.width *= scaleFactor;
-        elem.height *= scaleFactor;
+        elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardY *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
     items.specialAmmo.forEach((elem)=>{
-        elem.x *= scaleFactor;
-        elem.standardX *= scaleFactor;
-        elem.y *= scaleFactor;
-        elem.standardY *= scaleFactor;
-        elem.width *= scaleFactor;
-        elem.height *= scaleFactor;
+        elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.standardY *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+        elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
+    sizeMenuBarProperties();
 }
 
 function sizeMenuBarProperties() {
@@ -904,14 +920,16 @@ function timer() {
 }
 
 function shiftCanvasBack() {
-    canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
-    if(parseFloat(canvas.style.left) >= 0) {
-        canvas.style.left = '0px';
-        resetCharPosition();
-        gamePaused = false;
-        clearInterval(shiftingCanvasBackAnimationId);
-        return;
-    }
+    if(char.isAlive) {
+        canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
+        if(parseFloat(canvas.style.left) >= 0) {
+            canvas.style.left = '0px';
+            resetCharPosition();
+            gamePaused = false;
+            clearInterval(shiftingCanvasBackAnimationId);
+            return;
+        }
+    }else { clearInterval(shiftingCanvasBackAnimationId); }
 }
 
 function resetCharPosition() {
@@ -920,8 +938,57 @@ function resetCharPosition() {
 }
 
 function resetGame() {
-    clearCanvas();
-    resizeElements();
+    screenSizesSet = true;
+    clearLocalStorage();
+    shiftCanvasBack();
+    //clearCanvas();
+    clearAllElements();
+    unholdAllKeys();
+    initFunctions();
+    document.querySelector('.you-win-screen').classList.add('disNone');
+    document.querySelector('.game-over-screen').classList.add('disNone');
+}
+
+function clearAllElements() {
+    resetChar();
+    clearEnemies();
+    resetItems();
+}
+
+function resetChar() {
+    char.x = widthUnit;
+    char.y = 25*heightUnit;
+    char.healthAmount = char.maxHealthAmount;
+    char.specialAmmoParts = 0;
+    char.standingPlatformIndex = 0;
+    char.isAlive = true;
+    char.underGround = false;
+    char.gotHit = false;
+    char.isImmune = false;
+    char.movingDirection = 'right';
+}
+
+function clearEnemies() {
+    hitables.enemies = [];
+    hitables.flyables = [];
+}
+
+function resetItems() {
+    /* items.lifeIncreasing.forEach((elem)=>{
+        elem.collected = false;
+    })
+    items.specialAmmo.forEach((elem)=>{
+        elem.collected = false;
+    }) */
+    items.lifeIncreasing = [];
+    items.specialAmmo = [];
+}
+
+function unholdAllKeys() {
+    controller['left'].pressed = false;
+    controller['right'].pressed = false;
+    controller['jump'].pressed = false;
+    controller['run'].pressed = false;
 }
 
 function saveCharProperties() {
@@ -969,6 +1036,14 @@ function allAmmoKitsCollected() {
 function canContControlsToggle() {
     let controlsBar = document.querySelector('.canvas-cont .controls');
     if(controlsBar.classList.contains('disNone')) {
+        gamePaused = true;
         controlsBar.classList.remove('disNone');
-    }else { controlsBar.classList.add('disNone'); }
+    }else {
+        gamePaused = false;
+        controlsBar.classList.add('disNone');
+    }
+}
+
+function muteGame() {
+    gameMuted = true;
 }

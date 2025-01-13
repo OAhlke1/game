@@ -16,7 +16,7 @@ class Ammo extends Char {
         this.leftCanvas = false;
         this.shootingSoundPlayer = new Audio();
         if(!gameMuted) { this.playShootingSound(); }
-        this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, standardFrequency);
+        this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, standardFrameRate);
     }
 
     animateTrajectory() {
@@ -41,15 +41,16 @@ class Ammo extends Char {
             if(this.y + this.height > elem.y && elem.y + elem.height > this.y) {
                 if(this.x + this.width > elem.x && elem.x + elem.width > this.x) {
                     if(elem.isDangerous) {
-                        elem.isDangerous = false;
                         elem.walks = false;
                         if(elem.enemyType != "big-boss") {
+                            elem.isDangerous = false;
                             elem.lifeAmount -= this.decreaseLifeAmount;
-                            elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrequency);
+                            elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrameRate);
                         }else if(elem.enemyType === "big-boss" && bigBoss.isVisible) {
                             if(char.specialAmmoParts === 3) {
+                                //elem.isDangerous = false;
                                 elem.lifeAmount -= this.decreaseLifeAmount;
-                                elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrequency);
+                                elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrameRate);
                             }
                         }
                         this.leftCanvas = true;
@@ -65,7 +66,7 @@ class Ammo extends Char {
     }
 
     playShootingSound() {
-        if(!gameMuted) {
+        if(!gameMuted && char.isAlive) {
             this.shootingSound = './sounds/enemy-shoots.mp3';
             this.shootingSoundPlayer.src = this.shootingSound;
             this.shootingSoundPlayer.play();

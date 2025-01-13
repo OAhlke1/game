@@ -9,7 +9,7 @@ class Enemy {
     height;
     enemyType;
     lookingDirection;
-    decreaseLifeAmount;
+    decreaseHealthAmount;
     isDangerous;
     isAlive;
     canShoot;
@@ -19,19 +19,17 @@ class Enemy {
     hittingAnimationIndex;
     hitImagesAmount;
     hittingIndex;
-    hittingSoundPlayer;
     hittingSound;
     walkingIndex;
     attackingImagesAmount;
     lifeAmount;
     maxLifeAmount;
-    hittingSound;
     hitable;
     canWalk;
     muted;
     hitImagesArrays;
 
-    constructor(x, y, width, height, imgPath, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount, hittingSound = './sounds/big-boss-got-hit.mp3') {
+    constructor(x, y, width, height, imgPath, enemyType, decreaseHealthAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount) {
         this.x = x;
         this.standardX = x;
         this.y = y;
@@ -43,11 +41,10 @@ class Enemy {
         this.image = new Image();
         this.image.src = imgPath;
         this.standardImgPath = imgPath;
-        this.hittingSound = hittingSound;
-        this.hittingSoundPlayer = new Audio();
-        this.hittingSoundPlayer.src = this.hittingSound;
+        this.hittingSound = new Audio();
+        this.hittingSound.src = './sounds/big-boss-got-hit.mp3';
         this.enemyType = enemyType;
-        this.decreaseLifeAmount = decreaseLifeAmount;
+        this.decreaseHealthAmount = decreaseHealthAmount;
         this.isDangerous = true;
         this.canShoot = canShoot;
         this.lookingDirection = lookingDirection;
@@ -119,7 +116,7 @@ class Enemy {
             if(this.canWalk && !this.walks) {
                 this.walks = true;
                 if(this.enemyType != "flyable") { this.animateWalking(); }
-                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, standardFrequency);
+                this.animateWalkingId = setInterval(()=>{ this.animateWalking(); }, standardFrameRate);
             }
         }else if(Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar/2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar/2) {
             this.targeting = true;
@@ -137,8 +134,7 @@ class Enemy {
 
     hittingChar() {
         if(char.y + char.height > this.y && this.y + this.height > char.y) {
-            char.hitChar();
-            char.decreaseHealth(this.decreaseLifeAmount);
+            char.hitChar(this.decreaseHealthAmount);
         }
     }
 
@@ -165,7 +161,7 @@ class Enemy {
         //this.hitable = false;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;
-            if(this.hittingIndex === 0 && this.hittingAnimationIndex === 0) { this.playHittingSound(); }
+            if(this.hittingIndex === 0 && this.hittingAnimationIndex === 0 && !gameMuted) { this.playHittingSound(); }
             this.hittingAnimationIndex++;
             if(this.hittingAnimationIndex === 2) {
                 this.hittingAnimationIndex = 0;
@@ -177,7 +173,7 @@ class Enemy {
                         this.isAlive = false;
                     }else {
                         clearInterval(this.animateLevitationId);
-                        this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, standardFrequency);
+                        this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, standardFrameRate);
                     }
                     saveNotDefeatedEnemies();
                     setMenuBarProperties("enemy");
@@ -196,11 +192,6 @@ class Enemy {
     }
 
     playHittingSound() {
-        this.hittingSoundPlayer.addEventListener("ended", ()=>{ this.hittingSoundPlayer.currentTime = 0; });
-        if(this.hittingSoundPlayer.currentTime === 0) {
-            this.hittingSoundPlayer.src = this.hittingSound;
-            this.hittingSoundPlayer.volume = 0.5;
-            this.hittingSoundPlayer.play();
-        }
+        this.hittingSound.play();
     }
 }

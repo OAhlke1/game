@@ -36,7 +36,7 @@ class Trap {
         this.animationImages = [];
         this.checkCharPos();
         this.checkPlatformCords();
-        this.trapAnimationId = setInterval(()=>{this.animateTrap();}, 80*standardFrequency);
+        this.trapAnimationId = setInterval(()=>{this.animateTrap();}, 80*standardFrameRate);
         this.animationImages = {
             ttb: [],
             btt: []
@@ -46,8 +46,7 @@ class Trap {
     checkCharPos() {
         if(char.x + char.width > this.x && this.x + this.width > char.x && char.y + char.height > this.y && this.y + this.height > char.y && !char.gotHit) {
             if(this.isDangerous) {
-                char.hitChar();
-                char.decreaseHealth(this.decreaseLifeAmount);
+                char.hitChar(this.decreaseLifeAmount);
             }
         }
         requestAnimationFrame(()=>{this.checkCharPos()});
