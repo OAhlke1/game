@@ -10,7 +10,7 @@ class Background {
         this.x = x;
         this.y = y;
         this.width = width;
-        this.height = 0.5625*width;
+        this.height = height;
         this.image = new Image();
         this.imgPath = imgPath;
         this.image.src = imgPath;
