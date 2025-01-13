@@ -36,7 +36,7 @@ h2 {
 }
 
 p {
-    font-family: 'nexion', Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     width: fit-content;
     margin: 0;
 }
@@ -231,7 +231,7 @@ p {
 
 .canvas-cont .menu-bar p {
     color: white;
-    font-size: 150%;
+    font-size: calc(2200%/15);
 }
 
 .canvas-cont .menu-bar .life-amount {
