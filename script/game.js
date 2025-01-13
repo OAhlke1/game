@@ -109,7 +109,6 @@ function setSizeUnits() {
     heightUnit = canCont.offsetHeight/27;
     widthUnit = heightUnit;
     ratioSmallBigScreenHeight = canCont.offsetHeight/screen.height;
-    console.log(heightUnit/widthUnit, aspectRatio, ratioSmallBigScreenHeight);
 }
 
 function loadPlayer() {
@@ -496,7 +495,7 @@ function addKeypressMovingCommands() {
             controller['run'].pressed = false;
             slowDownChar();
         } else if (event.key.toLowerCase() === "d" && char.isAlive) {
-            createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
+            createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.75*widthUnit, 0.25*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
         } else if (event.key === "Escape" && inFullscreen) { turnOffFullScreen(); }
     });
 }
@@ -724,7 +723,7 @@ async function turnOnFullScreen() {
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
     document.querySelector('.game-headline').classList.add('disNone');
-    await body.requestFullscreen("hide").then(()=>{
+    await body.requestFullscreen().then(()=>{
         canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
         gamePaused = false;

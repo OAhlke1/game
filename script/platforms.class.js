@@ -43,7 +43,6 @@ class Platform extends Wall {
         if(Math.abs(char.x - this.x - this.width) <= 2*char.stepLength) {
             char.atWallRight = false;
             char.atWallLeft = true;
-            console.log("at wall left:", char.atWallLeft);
         } else { char.atWallLeft = false; }
     }
 
@@ -51,7 +50,6 @@ class Platform extends Wall {
         if(Math.abs(this.x - char.x - char.width) <= 2*char.stepLength) {
             char.atWallRight = true;
             char.atWallLeft = false;
-            console.log("at wall right:", char.atWallRight);
         } else{ char.atWallRight = false; }
     }
 }

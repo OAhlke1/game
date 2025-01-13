@@ -83,6 +83,6 @@ class BigBoss extends Shooter {
     }
 
     playFallingSound() {
-        console.log('I am defeated!');
+        //console.log('I am defeated!');
     }
 }
