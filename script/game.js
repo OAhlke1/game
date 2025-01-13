@@ -56,6 +56,9 @@ let gameJson = {
 };
 let body = document.querySelector('body');
 let menuBar = document.querySelector('.menu-bar');
+let description = document.querySelector('.description');
+let openDescription = document.querySelector('.open-description');
+let closeDescription = document.querySelector('.close-description');
 
 function initFunctions() {
     gamePaused = true;
@@ -103,7 +106,7 @@ function createGameJson() {
 function setSizeUnits() {
     aspectRatio = screen.height/screen.width;
     heightUnit = canCont.offsetHeight/27;
-    widthUnit = heightUnit/aspectRatio;
+    widthUnit = heightUnit;
     ratioSmallBigScreenHeight = canCont.offsetHeight/screen.height;
     console.log(heightUnit/widthUnit, aspectRatio, ratioSmallBigScreenHeight);
 }
@@ -719,6 +722,7 @@ async function turnOnFullScreen() {
     document.querySelector('.turn-fullscreen-on').classList.add('disNone');
     document.querySelector('body > .controls').classList.add('disNone');
     document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    document.querySelector('.game-headline').classList.add('disNone');
     await body.requestFullscreen("hide").then(()=>{
         canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
@@ -733,6 +737,7 @@ async function turnOffFullScreen() {
     document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
     document.querySelector('body > .controls').classList.remove('disNone');
     document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+    document.querySelector('.game-headline').classList.remove('disNone');
     gamePaused = false;
     await document.exitFullscreen().then(()=>{
         showHideFullScreenMenuButton();
@@ -1036,14 +1041,36 @@ function allAmmoKitsCollected() {
 function canContControlsToggle() {
     let controlsBar = document.querySelector('.canvas-cont .controls');
     if(controlsBar.classList.contains('disNone')) {
-        gamePaused = true;
         controlsBar.classList.remove('disNone');
+        if(!description.classList.contains('disNone')) {
+            return;
+        }else { gamePaused = true; }
     }else {
-        gamePaused = false;
         controlsBar.classList.add('disNone');
+        if(!description.classList.contains('disNone')) {
+            return;
+        }else { gamePaused = false; }
     }
 }
 
 function muteGame() {
     gameMuted = true;
+}
+
+function showDescription() {
+    openDescription.classList.add('disNone');
+    closeDescription.classList.remove('disNone');
+    description.classList.remove('disNone');
+    if(!controlsBar.classList.contains('disNone')) {
+        return;
+    }else { gamePaused = true; }
+}
+
+function hideDescription() {
+    openDescription.classList.remove('disNone');
+    closeDescription.classList.add('disNone');
+    description.classList.add('disNone');
+    if(!controlsBar.classList.contains('disNone')) {
+        return;
+    }else { gamePaused = false; }
 }

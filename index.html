@@ -10,12 +10,45 @@
 </head>
 
 <body onload="initFunctions()">
+    <h1 class="game-headline">SPACE JUMPER</h1>
     <div class="canvas-cont" fullscreen="allow">
+        <div class="open-description" onclick="showDescription()" ontouch="descriptionToggle()">
+            <p>?</p>
+        </div>
+        <div class="close-description disNone" onclick="hideDescription()">
+            <img src="./graphics/close.svg" alt="">
+        </div>
+        <div class="description disNone">
+            <div class="description-inner">
+                <h2>What's this game about?</h2>
+                <p>
+                    You have to collect all three ammo-crystals <img
+                        src="./graphics/items/special-ammo/rotation-0.png" alt=""> to get the special shoot
+                    <br>so that you can defeat the main boss.
+                </p>
+                <p>
+                    <b>Controls:</b>
+                    <br>go left: press left key or touch the left side of the gaming screen.
+                    <br>go left: press right key or touch the right side of the gaming screen.
+                    <br>run: press SHIFT or touch the running-button.
+                    <br>jump: press the spacebar or touch the center of the gaming screen.
+                    <br>shoot: press d or touch the bottom of the gaming screen.
+                </p>
+            </div>
+        </div>
         <canvas width="1600" height="450" style="left: 0px;" lo></canvas>
-        <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypress(event)" onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
-        <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypress(event)" onmouseup="dispatchKeypressStop(event)"></div>
-        <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypress(event)" onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
-        <div class="touch-controls disNone">
+        <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypress(event)"
+            onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)"
+            ontouchend="dispatchKeypressStop(event)"></div>
+        <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypress(event)"
+            onmouseup="dispatchKeypressStop(event)"></div>
+        <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypress(event)"
+            onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)"
+            ontouchend="dispatchKeypressStop(event)"></div>
+        <div class="touch-control shoot" button-type="d" button-code="83" onmousedown="dispatchKeypress(event)"
+            onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)"
+            ontouchend="dispatchKeypressStop(event)"></div>
+        <!-- <div class="touch-controls disNone">
             <div class="touch-controls-top">
                 <div class="running-controls"></div>
                 <div class="touch-control shoot" button-type="Alt" button-code="18" onclick="dispatchKeypress(event)">
@@ -27,7 +60,8 @@
                         <rect x="19" y="10" width="2" height="6" fill="black" />
                     </svg>
                 </div>
-                <div class="touch-control run" button-type="Shift" button-code="16" onmousedown="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
+                <div class="touch-control run" button-type="Shift" button-code="16"
+                    onmousedown="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
                         <rect x="10" y="12" width="20" height="6" fill="RED" />
                         <rect x="6" y="14" width="4" height="12" fill="red" />
@@ -36,19 +70,21 @@
                         <rect x="19" y="10" width="2" height="6" fill="red" />
                     </svg>
                 </div>
-                <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" ontouchend="checkVolumeBarEvent(event)">
+                <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)"
+                    ontouchend="checkVolumeBarEvent(event)">
                     <div class="volumebar">
                         <div class="volumebar-inner"></div>
                     </div>
                 </div>
                 <div class="mute-game" onclick="muteGame()"></div>
                 <div class="turn-fullscreen-on">
-                    <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen()">
+                    <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt=""
+                        onclick="turnOnFullScreen()">
                 </div>
                 <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
                 <div class="show-hide-touch-controls" onclick="showHideTouchControls()"></div>
             </div>
-        </div>
+        </div> -->
         <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
         <div class="menu-bar">
             <div class="life-amount">
@@ -66,7 +102,7 @@
                 <p class="defeated-enemies-amount">0</p>
             </div>
         </div>
-        <div class="canvas-cont-controls-toggle disNone" onclick="canContControlsToggle()">
+        <div class="canvas-cont-controls-toggle" onclick="canContControlsToggle()">
             <img src="./graphics/open-menu-bar.svg" alt="">
         </div>
         <div class="controls disNone">
@@ -83,7 +119,8 @@
             </div>
             <div class="mute-game" onclick="muteGame()"></div>
             <div class="turn-fullscreen-on">
-                <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt="" onclick="turnOffFullScreen()">
+                <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt=""
+                    onclick="turnOffFullScreen()">
             </div>
         </div>
         <div class="you-win-screen disNone">
@@ -115,21 +152,22 @@
     <!-- <audio src="" class="gaming-sound" volume="50"></audio> -->
 </body>
 <script src="script/char.class.js"></script>
-    <script src="script/ammo.class.js"></script>
+<script src="script/ammo.class.js"></script>
 <script src="script/wall.class.js"></script>
 <script src="script/menubar.class.js"></script>
-    <script src="script/menubar-background.class.js"></script>
+<script src="script/menubar-background.class.js"></script>
 <script src="script/platforms.class.js"></script>
-    <script src="script/moving-platform.class.js"></script>
+<script src="script/moving-platform.class.js"></script>
 <script src="script/enemies.class.js"></script>
-    <script src="script/shooter.class.js"></script>
-        <script src="script/cannonball.class.js"></script>
-    <script src="script/green-enemy.class.js"></script>
-    <script src="script/big-boss.class.js"></script>
+<script src="script/shooter.class.js"></script>
+<script src="script/cannonball.class.js"></script>
+<script src="script/green-enemy.class.js"></script>
+<script src="script/big-boss.class.js"></script>
 <script src="script/background.class.js"></script>
 <script src="script/traps.class.js"></script>
 <script src="script/items.class.js"></script>
-    <script src="script/special-ammo-kit.class.js"></script>
-    <script src="script/life-increaser.class.js"></script>
+<script src="script/special-ammo-kit.class.js"></script>
+<script src="script/life-increaser.class.js"></script>
 <script src="script/game.js"></script>
+
 </html>
