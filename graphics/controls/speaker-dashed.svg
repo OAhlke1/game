@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 100 100">
     <!-- Lautsprecher mit abgerundeten Kanten -->
-    <path d="M25,45 Q20,50 25,55 L35,55 Q40,60 45,60 L55,70 Q60,75 60,50 Q60,25 55,30 L45,40 Q40,40 35,45 Z" fill="black"/>
+    <path d="M25,45 Q20,50 25,55 L35,55 Q40,60 45,60 L55,70 Q60,75 60,50 Q60,25 55,30 L45,40 Q40,40 35,45 Z" fill="white"/>
     <!-- Diagonaler Strich -->
-    <line x1="10" y1="90" x2="90" y2="10" stroke="black" stroke-width="5"/>
+    <line x1="10" y1="90" x2="90" y2="10" stroke="white" stroke-width="5"/>
 </svg>  
