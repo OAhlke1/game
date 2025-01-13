@@ -85,7 +85,7 @@
                 <div class="show-hide-touch-controls" onclick="showHideTouchControls()"></div>
             </div>
         </div> -->
-        <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div>
+        <!-- <div class="turn-fullscreen-off disNone" onclick="turnOffFullScreen()"></div> -->
         <div class="menu-bar">
             <div class="life-amount">
                 <img src="./graphics/items/heart.png" alt="">
@@ -106,21 +106,17 @@
             <img src="./graphics/open-menu-bar.svg" alt="">
         </div>
         <div class="controls disNone">
-            <p>left: key left</p>
-            <p>right: key right</p>
-            <p>shoot: d</p>
-            <p>jump: SPACE</p>
-            <p>run: SHIFT</p>
-            <p>pause: p</p>
             <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
                 <div class="volumebar">
                     <div class="volumebar-inner"></div>
                 </div>
             </div>
             <div class="mute-game" onclick="muteGame()"></div>
+            <div class="turn-fullscreen-off disNone">
+                <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt="" onclick="turnOffFullScreen()">
+            </div>
             <div class="turn-fullscreen-on">
-                <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt=""
-                    onclick="turnOffFullScreen()">
+                <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen()">
             </div>
         </div>
         <div class="you-win-screen disNone">
@@ -132,7 +128,7 @@
             <button onclick="resetGame()">Restart game</button>
         </div>
     </div>
-    <div class="controls">
+    <div class="controls disNone">
         <p>left: key left</p>
         <p>right: key right</p>
         <p>shoot: d</p>

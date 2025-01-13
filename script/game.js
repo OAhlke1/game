@@ -56,6 +56,7 @@ let gameJson = {
 };
 let body = document.querySelector('body');
 let menuBar = document.querySelector('.menu-bar');
+let controlsBar = document.querySelector('.canvas-cont .controls');
 let description = document.querySelector('.description');
 let openDescription = document.querySelector('.open-description');
 let closeDescription = document.querySelector('.close-description');
@@ -708,38 +709,40 @@ function gameSoundOnOffToggle() {
 }
 
 function showHideFullScreenMenuButton() {
-    if(document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.contains('disNone')) {
+    /* if(document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.contains('disNone')) {
         document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.remove('disNone');
     }else {
         document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.add('disNone');
         document.querySelector('.canvas-cont .controls').classList.add('disNone');
-    }
+    } */
     resetScreenProperties();
 }
 
 async function turnOnFullScreen() {
     inFullscreen = true;
-    document.querySelector('.turn-fullscreen-on').classList.add('disNone');
-    document.querySelector('body > .controls').classList.add('disNone');
-    document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    document.querySelector('.canvas-cont .controls').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
     document.querySelector('.game-headline').classList.add('disNone');
     await body.requestFullscreen("hide").then(()=>{
         canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
+        gamePaused = false;
         showHideFullScreenMenuButton();
     })
 }
 
 async function turnOffFullScreen() {
     inFullscreen = false;
-    canCont.style.width = `${0.8*screen.width}px`;
-    canCont.style.height = `${0.8*screen.height}px`;
-    document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
-    document.querySelector('body > .controls').classList.remove('disNone');
-    document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+    canCont.style.width = `${0.7*screen.width}px`;
+    canCont.style.height = `${0.7*screen.height}px`;
+    document.querySelector('.canvas-cont .controls').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
     document.querySelector('.game-headline').classList.remove('disNone');
     gamePaused = false;
     await document.exitFullscreen().then(()=>{
+        gamePaused = false;
         showHideFullScreenMenuButton();
     })
 }
@@ -763,7 +766,7 @@ function sizeElements() {
 
 function presetScreenProperties() {
     oldCancontSize = canCont.offsetWidth;
-    canCont.style.width = window.innerWidth < 801 ? `${window.innerWidth}px` : `${0.8*window.innerWidth}px`;
+    canCont.style.width = window.innerWidth < 801 ? `${window.innerWidth}px` : `${0.7*window.innerWidth}px`;
     canCont.style.height = `${0.5625*parseInt(canCont.style.width)}px`;
     widthUnit *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     heightUnit *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -772,8 +775,8 @@ function presetScreenProperties() {
 
 function setScreenProperties() {
     //aspectRatio = screen.height/screen.width;
-    canCont.style.width = `${0.8*screen.width}px`;
-    canCont.style.height = `${0.8*screen.height}px`;
+    canCont.style.width = `${0.7*screen.width}px`;
+    canCont.style.height = `${0.7*screen.height}px`;
     canvas.setAttribute('width', 2*canCont.offsetWidth);
     canvas.setAttribute('height', canCont.offsetHeight);
     /* heightUnit = canvas.offsetHeight/27;
@@ -898,7 +901,7 @@ function sizeMenuBarProperties() {
     document.querySelector('.canvas-cont .menu-bar').style.width = `${10*widthUnit}px`;
     document.querySelector('.canvas-cont .menu-bar').style.height = `${heightUnit}px`;
     document.querySelectorAll('.canvas-cont .menu-bar img').forEach((elem)=>{
-        elem.style.height = `${0.8*heightUnit}px`;
+        elem.style.height = `${0.7*heightUnit}px`;
     })
 }
 
@@ -1039,7 +1042,6 @@ function allAmmoKitsCollected() {
 }
 
 function canContControlsToggle() {
-    let controlsBar = document.querySelector('.canvas-cont .controls');
     if(controlsBar.classList.contains('disNone')) {
         controlsBar.classList.remove('disNone');
         if(!description.classList.contains('disNone')) {
@@ -1051,10 +1053,6 @@ function canContControlsToggle() {
             return;
         }else { gamePaused = false; }
     }
-}
-
-function muteGame() {
-    gameMuted = true;
 }
 
 function showDescription() {
@@ -1073,4 +1071,8 @@ function hideDescription() {
     if(!controlsBar.classList.contains('disNone')) {
         return;
     }else { gamePaused = false; }
+}
+
+function muteGame() {
+    gameMuted = true;
 }

@@ -292,7 +292,7 @@ h1 {
     height: 100%;
 }
 
-.turn-fullscreen-off {
+/* .turn-fullscreen-off {
     position: absolute;
     top: 30px;
     right: 30px;
@@ -300,7 +300,7 @@ h1 {
     background-color: white;
     border-radius: 100%;
     z-index: 5000;
-}
+} */
 
 .pause-game {
     width: 30px;
