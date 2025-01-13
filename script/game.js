@@ -16,7 +16,6 @@ let gameVolume = 0.5;
 let t = -1;
 let gamePaused = false;
 let gameMuted = false;
-let screenSizesSet = false;
 let inFullscreen = false;
 let pageJustLoaded = true;
 let ratioSmallBigScreenHeight;
@@ -137,7 +136,7 @@ function createBackgrounds() {
 function createChar() {
     let charObject;
     if(localStorage.char) { charObject = JSON.parse(localStorage.char); }
-    char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4*heightUnit, charObject ? charObject.specialAmmoParts : 0, charObject ? charObject.healthAmount : 200);
+    char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4.5*heightUnit, charObject ? charObject.specialAmmoParts : 0, charObject ? charObject.healthAmount : 200);
     createHittingCharImagesArrays();
 }
 
@@ -945,21 +944,25 @@ function resetCharPosition() {
 }
 
 function resetGame() {
-    screenSizesSet = true;
     clearLocalStorage();
-    shiftCanvasBack();
+    //shiftCanvasBack();
     //clearCanvas();
-    clearAllElements();
-    unholdAllKeys();
-    initFunctions();
-    document.querySelector('.you-win-screen').classList.add('disNone');
-    document.querySelector('.game-over-screen').classList.add('disNone');
+    //clearAllElements();
+    //unholdAllKeys();
+    //initFunctions();
+    //if(inFullscreen) {
+    //    sizeElements();
+    //}
+    location.reload();
+    return;
+    //document.querySelector('.you-win-screen').classList.add('disNone');
+    //document.querySelector('.game-over-screen').classList.add('disNone');
 }
 
 function clearAllElements() {
-    resetChar();
-    clearEnemies();
-    resetItems();
+    //resetChar();
+    //clearEnemies();
+    //resetItems();
 }
 
 function resetChar() {
@@ -976,6 +979,14 @@ function resetChar() {
 }
 
 function clearEnemies() {
+    hitables.enemies.forEach((elem)=>{
+        elem.isDangerous = false;
+        elem.isAlive = false;
+    })
+    hitables.flyables.forEach((elem)=>{
+        elem.isDangerous = false;
+        elem.isAlive = false;
+    })
     hitables.enemies = [];
     hitables.flyables = [];
 }
