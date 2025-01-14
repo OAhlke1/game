@@ -24,9 +24,9 @@ class MovingPlatform extends Platform {
         this.isMoving = true;
         this.sideways = sideways;
         if(this.sideways) {
-            this.directionOneMovingAnimationId = setInterval(()=>{ this.moveRight(); }, standardFrameRate);
+            this.directionOneMovingAnimationId = setInterval(()=>{ this.moveRight(); }, 2*standardFrameRate);
         }else {
-            this.directionOneMovingAnimationId = setInterval(()=>{ this.moveDown(); }, standardFrameRate);
+            this.directionOneMovingAnimationId = setInterval(()=>{ this.moveDown(); }, 2*standardFrameRate);
         }
     }
 
@@ -37,7 +37,7 @@ class MovingPlatform extends Platform {
             if (this.x + this.width >= this.endingXPos) {
                 this.x = this.endingXPos - this.width;
                 clearInterval(this.directionOneMovingAnimationId);
-                this.directionTwoMovingAnimationId = setInterval(()=>{ this.moveLeft(); }, standardFrameRate);
+                this.directionTwoMovingAnimationId = setInterval(()=>{ this.moveLeft(); }, 2*standardFrameRate);
                 return;
             }
         }
@@ -50,7 +50,7 @@ class MovingPlatform extends Platform {
             if (this.x <= this.startingXPos) {
                 this.x = this.startingXPos;
                 clearInterval(this.directionTwoMovingAnimationId);
-                this.directionOneMovingAnimationId = setInterval(()=>{ this.moveRight(); }, standardFrameRate);
+                this.directionOneMovingAnimationId = setInterval(()=>{ this.moveRight(); }, 2*standardFrameRate);
                 return;
             }
         }
@@ -65,7 +65,7 @@ class MovingPlatform extends Platform {
             if (this.y + this.height > this.lowestPoint) {
                 this.y = this.lowestPoint - this.height;
                 clearInterval(this.directionOneMovingAnimationId);
-                this.directionTwoMovingAnimationId = setInterval(()=>{ this.moveUp(); }, standardFrameRate);
+                this.directionTwoMovingAnimationId = setInterval(()=>{ this.moveUp(); }, 2*standardFrameRate);
                 return;
             }
         }
@@ -81,7 +81,7 @@ class MovingPlatform extends Platform {
             if (this.y <= this.highestPoint) {
                 this.y = this.highestPoint;
                 clearInterval(this.directionTwoMovingAnimationId);
-                this.directionOneMovingAnimationId = setInterval(()=>{ this.moveDown(); }, standardFrameRate);
+                this.directionOneMovingAnimationId = setInterval(()=>{ this.moveDown(); }, 2*standardFrameRate);
                 return;
             }
         }

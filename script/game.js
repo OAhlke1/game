@@ -577,10 +577,14 @@ function initStepRightTouch() {
 }
 
 function speedUpChar() {
+    if(char.stepLength/char.standardStepLength >= 1.5) { return; }
+    console.log(char.stepLength, controller['run'].pressed);
     char.stepLength *= 1.5;
 }
 
 function slowDownChar() {
+    if(char.stepLength/char.standardStepLength <= 1) { return; }
+    console.log(char.stepLength, controller['run'].pressed);
     char.stepLength /= 1.5;
 }
 
