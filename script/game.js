@@ -77,7 +77,7 @@ function initFunctions() {
     drawElements();
     //if(inFullscreen) { sizeElements(); }
     sizeMenuBarProperties();
-    gamePaused = false;
+    //gamePaused = false;
 }
 
 function clearLocalStorage() {
