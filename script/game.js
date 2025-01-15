@@ -59,6 +59,7 @@ let controlsBar = document.querySelector('.canvas-cont .controls');
 let description = document.querySelector('.description');
 let openDescription = document.querySelector('.open-description');
 let closeDescription = document.querySelector('.close-description');
+let gameReloaded;
 
 function initFunctions() {
     gamePaused = true;
@@ -78,6 +79,8 @@ function initFunctions() {
     //if(inFullscreen) { sizeElements(); }
     sizeMenuBarProperties();
     //gamePaused = false;
+    gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
+    showDescription();
 }
 
 function clearLocalStorage() {
@@ -1070,21 +1073,25 @@ function canContControlsToggle() {
 }
 
 function showDescription() {
-    openDescription.classList.add('disNone');
-    closeDescription.classList.remove('disNone');
-    description.classList.remove('disNone');
-    if(!controlsBar.classList.contains('disNone')) {
-        return;
-    }else { gamePaused = true; }
+    if(!gameReloaded) {
+        openDescription.classList.add('disNone');
+        closeDescription.classList.remove('disNone');
+        description.classList.remove('disNone');
+        if(!controlsBar.classList.contains('disNone')) {
+            return;
+        }else { gamePaused = true; }
+    }else { hideDescription() }
 }
 
 function hideDescription() {
+    console.log('hideDescription');
     openDescription.classList.remove('disNone');
     closeDescription.classList.add('disNone');
     description.classList.add('disNone');
     if(!controlsBar.classList.contains('disNone')) {
         return;
     }else { gamePaused = false; }
+    localStorage.setItem('reloaded', JSON.stringify(true));
 }
 
 function muteGame() {
