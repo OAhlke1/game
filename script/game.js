@@ -63,6 +63,7 @@ let gameReloaded;
 
 function initFunctions() {
     gamePaused = true;
+    gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
     loadPlayer();
     createScreen();
     setScreenProperties();
@@ -76,10 +77,7 @@ function initFunctions() {
     createItems();
     presetMenuBarProperties();
     drawElements();
-    //if(inFullscreen) { sizeElements(); }
     sizeMenuBarProperties();
-    //gamePaused = false;
-    gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
     showDescription();
 }
 
