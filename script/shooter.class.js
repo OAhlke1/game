@@ -29,8 +29,12 @@ class Shooter extends Enemy {
         this.targeting = false;
         this.hasShot = false;
         this.walks = false;
-        this.player = new Audio();
-        this.shootingSound = './sounds/enemy-shoots.mp3';
+        this.shootingSound = new Audio();
+        this.shootingSound.src = './sounds/enemy-shoots.mp3';
+        this.shootingSound.volume = 0.25;
+        this.hittingSound = new Audio();
+        this.hittingSound.src = './sounds/enemy-got-hit.mp3';
+        this.hittingSound.volume = 0.5;
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/shooter/attack/shoot.svg';
         this.hitImagesArrays = {
@@ -67,7 +71,6 @@ class Shooter extends Enemy {
     }
 
     playShootingSound() {
-        this.player.src = this.shootingSound;
-        this.player.play();
+        this.shootingSound.play();
     }
 }

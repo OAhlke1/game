@@ -16,6 +16,9 @@ class GreenEnemy extends Enemy {
         this.lifeAmount = lifeAmount;
         this.maxLifeAmount = lifeAmount;
         this.standardImgPath = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
+        this.hittingSound = new Audio();
+        this.hittingSound.src = './sounds/enemy-got-hit.mp3';
+        this.hittingSound.volume = 0.5;
         this.distanceToSeeChar = distanceToSeeChar;
         this.canWalk = canWalk;
         this.hitImagesAmount = hitImagesAmount;

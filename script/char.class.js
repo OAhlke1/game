@@ -21,6 +21,7 @@ class Char {
     fallingAnimationId;
     hittingAnimationId;
     hitImagesAmount;
+    hittingSound;
     bulletAmount;
     stepLength;
     standardStepLength;
@@ -96,10 +97,13 @@ class Char {
         this.specialAmmoParts = specialAmmoParts;
         this.hittingSound = new Audio();
         this.hittingSound.src = './sounds/char-got-hit.ogg';
+        this.hittingSound.volume = 0.5;
         this.shootingSound = new Audio();
         this.shootingSound.src = './sounds/enemy-shoots.mp3';
+        this.shootingSound.volume = 0.5;
         this.jumpingSound = new Audio();
         this.jumpingSound.src = './sounds/jump.ogg';
+        this.jumpingSound.volume = 0.5;
         this.hitImagesArrays = {
             left: [],
             right: []
@@ -275,7 +279,7 @@ class Char {
                 this.decreaseHealth();
                 this.stopFalling();
                 if(this.healthAmount >= 0) {
-                    gamePaused = true;
+                    pauseGame();
                     this.hitChar();
                     this.scrollingStepAmount = 0;
                     shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrameRate);
@@ -423,9 +427,8 @@ class Char {
         this.healthAmount = 0;
         this.isAlive = false;
         this.healthAmount = 200;
-        gamePaused = true;
+        pauseGame();
         this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
-        //this.saveCharProperties();
         document.querySelector('.game-over-screen').classList.remove('disNone');
     }
 

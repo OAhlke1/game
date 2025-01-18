@@ -1,7 +1,4 @@
 function resizeCanvasProperties() {
-    /* if(pageJustLoaded) {
-        pageJustLoaded = false;
-    }else if(inFullscreen) {  } */
     canvas.setAttribute("width", inFullscreen ? 2*screen.width : 2*canCont.offsetWidth);
     canvas.setAttribute("height", inFullscreen ? screen.height : canCont.offsetHeight);
     resizePlatformsProperties();
@@ -107,11 +104,15 @@ function sizeMenuBarProperties() {
 
 function pauseGame() {
     if (gamePaused) {
-        document.querySelector('.pause-game').classList.remove('paused');
+        document.querySelector('.play-game').classList.add('disNone');
+        document.querySelector('.pause-game').classList.remove('disNone');
         gamePaused = false;
+        playAllPlayers();
     } else {
-        document.querySelector('.pause-game').classList.add('paused');
+        document.querySelector('.play-game').classList.remove('disNone');
+        document.querySelector('.pause-game').classList.add('disNone');
         gamePaused = true;
+        pauseAllPlayers();
     }
 }
 
@@ -177,17 +178,6 @@ function clearEnemies() {
     hitables.flyables = [];
 }
 
-function resetItems() {
-    /* items.lifeIncreasing.forEach((elem)=>{
-        elem.collected = false;
-    })
-    items.specialAmmo.forEach((elem)=>{
-        elem.collected = false;
-    }) */
-    items.lifeIncreasing = [];
-    items.specialAmmo = [];
-}
-
 function unholdAllKeys() {
     controller['left'].pressed = false;
     controller['right'].pressed = false;
@@ -227,10 +217,6 @@ function saveNotDefeatedEnemies() {
     for(let i=0; i<hitables.enemies.length; i++) { hitables.enemies[i].isAlive = alive[i]; }
 }
 
-function saveGameJson() {
-    gameJson.char = char;
-}
-
 function allAmmoKitsCollected() {
     if(char.specialAmmoParts === 3) {
         char.shootingSound = './sounds/special-shooting-sound.png';
@@ -242,12 +228,12 @@ function canContControlsToggle() {
         controlsBar.classList.remove('disNone');
         if(!description.classList.contains('disNone')) {
             return;
-        }else { gamePaused = true; }
+        }else if(!gamePaused) { pauseGame(); }
     }else {
         controlsBar.classList.add('disNone');
         if(!description.classList.contains('disNone')) {
             return;
-        }else { gamePaused = false; }
+        }else if(gamePaused){ pauseGame(); }
     }
 }
 
@@ -257,7 +243,7 @@ function showDescription() {
     description.classList.remove('disNone');
     if(!controlsBar.classList.contains('disNone')) {
         return;
-    }else { gamePaused = true; }
+    }else { pauseGame(); }
 }
 
 function hideDescription() {
@@ -269,8 +255,4 @@ function hideDescription() {
         return;
     }else { gamePaused = false; }
     localStorage.setItem('reloaded', JSON.stringify(true));
-}
-
-function muteGame() {
-    gameMuted = true;
 }

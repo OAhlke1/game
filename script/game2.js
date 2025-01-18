@@ -74,13 +74,13 @@ function addKeypressMovingCommands() {
             controller['run'].func();
         } else if (event.key.toLowerCase() === "p") {
             if (!gamePaused) {
-                gamePaused = true;
+                pauseGame();
             } else {
-                gamePaused = false;
+                pauseGame();
                 timer();
             }
         } else if (event.key.toLowerCase() === "m") {
-            gameSoundOnOffToggle();
+            gameSoundToggle();
         } else if(event.key.toLowerCase() === "f" && !inFullscreen) {
             turnOnFullScreen();
         }
@@ -149,7 +149,7 @@ function initStepLeftTouch() {
 }
 
 function showHideTouchControls() {
-    gamePaused = true;
+    pauseGame();
     document.querySelector('.touch-controls .pause-game').classList.add('paused');
     if (!document.querySelector('.touch-controls').classList.contains('shown') && !document.querySelector('.touch-controls').classList.contains('hidden')) {
         document.querySelector('.touch-controls').classList.add('shown');
@@ -157,7 +157,7 @@ function showHideTouchControls() {
         document.querySelector('.touch-controls').classList.add('shown');
         document.querySelector('.touch-controls').classList.remove('hidden');
     } else if (!document.querySelector('.touch-controls').classList.contains('hidden')) {
-        gamePaused = false;
+        pauseGame();
         document.querySelector('.touch-controls .pause-game').classList.remove('paused');
         document.querySelector('.touch-controls').classList.remove('shown');
         document.querySelector('.touch-controls').classList.add('hidden');
@@ -300,26 +300,62 @@ let setWholeVolume = function setWholeVolumeFunc(event) {
     if (!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem) => { elem.volume = gameVolume; }); }
 }
 
-function gameSoundOnOffToggle() {
-    if (!document.querySelector('.mute-game').classList.contains('muted')) {
+function gameSoundToggle() {
+    if (!gameMuted) {
         document.querySelector('.mute-game').classList.add('muted');
         audioPlayer.forEach((elem) => { elem.volume = 0; });
+        muteAllPlayers();
         gameMuted = true;
     } else {
         document.querySelector('.mute-game').classList.remove('muted');
-        audioPlayer.forEach((elem) => { elem.volume = gameVolume; });
+        //audioPlayer.forEach((elem) => { elem.volume = gameVolume; });
+        unmuteAllPlayers();
         gameMuted = false;
     }
 }
 
-function showHideFullScreenMenuButton() {
-    /* if(document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.contains('disNone')) {
-        document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.remove('disNone');
-    }else {
-        document.querySelector('.canvas-cont .canvas-cont-controls-toggle').classList.add('disNone');
-        document.querySelector('.canvas-cont .controls').classList.add('disNone');
-    } */
-    resetScreenProperties();
+function muteAllPlayers() {
+    hitables.enemies.forEach((elem)=>{
+        elem.hittingSound.volume = 0;
+        if(elem.shootingSound) { elem.shootingSound.volume = 0; }
+        if(elem.fallingSound) { elem.fallingSound.volume = 0; }
+    });
+    char.hittingSound.volume = 0;
+    char.shootingSound.volume = 0;
+    bgPlayer.volume = 0;
+}
+
+function unmuteAllPlayers() {
+    hitables.enemies.forEach((elem)=>{
+        elem.hittingSound.volume = 0.5;
+        if(elem.shootingSound) { elem.shootingSound.volume = 0.5; }
+        if(elem.fallingSound) { elem.fallingSound.volume = 0.5; }
+    });
+    char.hittingSound.volume = 0.5;
+    char.shootingSound.volume = 0.5;
+    bgPlayer.volume = 0.125;
+}
+
+function pauseAllPlayers() {
+    hitables.enemies.forEach((elem)=>{
+        if(elem.hittingSound.currentTime > 0) { elem.hittingSound.pause(); }
+        if(elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+        if(elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.pause(); }
+    });
+    if(char.hittingSound.currentTime > 0) { char.hittingSound.pause();}
+    if(char.shootingSound.currentTime > 0) { char.shootingSound.pause();}
+    bgPlayer.pause();
+}
+
+function playAllPlayers() {
+    hitables.enemies.forEach((elem)=>{
+        if(elem.hittingSound.currentTime > 0) { elem.hittingSound.play(); }
+        if(elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
+        if(elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
+    });
+    if(char.hittingSound.currentTime > 0) { char.hittingSound.play();}
+    if(char.shootingSound.currentTime > 0) { char.shootingSound.play();}
+    bgPlayer.play();
 }
 
 async function turnOnFullScreen() {
@@ -331,8 +367,8 @@ async function turnOnFullScreen() {
     await body.requestFullscreen().then(()=>{
         canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
-        gamePaused = false;
-        showHideFullScreenMenuButton();
+        pauseGame();
+        resetScreenProperties();
     })
 }
 
@@ -344,10 +380,10 @@ async function turnOffFullScreen() {
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
     document.querySelector('.game-headline').classList.remove('disNone');
-    gamePaused = false;
+    pauseGame();
     await document.exitFullscreen().then(()=>{
-        gamePaused = false;
-        showHideFullScreenMenuButton();
+        pauseGame();
+        resetScreenProperties();
     })
 }
 
@@ -355,7 +391,6 @@ function sizeElements() {
     setScreenProperties();
     standardFrameRate = inFullscreen ? standardFrameRate/ratioSmallBigScreenHeight : 12;
     fullScreenButtonToggle();
-    //resizeCanvasProperties();
     resizePlatformsProperties();
     resizeBackgroundsProperties();
     resizeHitablesProperties();
@@ -363,28 +398,11 @@ function sizeElements() {
     resizeItemsProperties();
 }
 
-/* function resizeElements() {
-    resetScreenProperties();
-    //standardFrameRate = inFullscreen ? standardFrameRate/ratioSmallBigScreenHeight : 12;
-}
-
-function presetScreenProperties() {
-    oldCancontSize = canCont.offsetWidth;
-    canCont.style.width = window.innerWidth < 801 ? `${window.innerWidth}px` : `${0.7*window.innerWidth}px`;
-    canCont.style.height = `${0.5625*parseInt(canCont.style.width)}px`;
-    widthUnit *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
-    heightUnit *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
-    return ratioSmallBigScreenHeight;
-} */
-
 function setScreenProperties() {
-    //aspectRatio = screen.height/screen.width;
     canCont.style.width = `${0.7*screen.width}px`;
     canCont.style.height = `${0.7*screen.height}px`;
     canvas.setAttribute('width', 2*canCont.offsetWidth);
     canvas.setAttribute('height', canCont.offsetHeight);
-    /* heightUnit = canvas.offsetHeight/27;
-    widthUnit = heightUnit/aspectRatio; */
 }
 
 function resetScreenProperties() {

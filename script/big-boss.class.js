@@ -28,12 +28,14 @@ class BigBoss extends Shooter {
         this.targeting = true;
         this.hasShot = false;
         this.walks = false;
-        this.player = new Audio();
-        this.player.src = './sounds/enemy-shoots.mp3';
+        this.shootingSound = new Audio();
+        this.shootingSound.src = './sounds/enemy-shoots.mp3';
         this.hittingSound = new Audio();
-        this.hittingSound.src = './sounds/big-boss-got-hit.mp3';
+        this.hittingSound.src = './sounds/enemy-got-hit.mp3';
+        this.hittingSound.volume = 0.5;
         this.fallingSound = new Audio();
-        this.hittingSound.src = './sounds/big-boss-got-hit.mp3';
+        this.fallingSound.src = './sounds/big-boss-falling.wav';
+        this.fallingSound.volume = 0.5;
         this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3*standardFrameRate);
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/big-boss/shoot.svg';
@@ -70,12 +72,11 @@ class BigBoss extends Shooter {
     animateFalling() {
         this.y += 0.5*heightUnit;
         if(this.y > canvas.offsetHeight) {
-            gamePaused = true;
+            pauseGame();
             clearInterval(this.animateLevitationId);
-            document.querySelector('.you-won-screen').classList.remove('disNone');
+            document.querySelector('.you-win-screen').classList.remove('disNone');
             return;
         }
-        this.playFallingSound();
     }
 
     animateShooting() {
@@ -87,6 +88,11 @@ class BigBoss extends Shooter {
 
     playFallingSound() {
         this.hittingSound.pause();
+        this.fallingSound.volume = 0.5;
         this.fallingSound.play();
+        this.fallingSound.addEventListener('ended', ()=>{
+            this.currentTime = 0;
+            this.pause();
+        });
     }
 }
