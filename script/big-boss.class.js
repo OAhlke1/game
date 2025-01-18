@@ -2,6 +2,7 @@ class BigBoss extends Shooter {
     animateLevitationId;
     isVisible;
     isDefeated;
+    fallingSound;
 
     constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
@@ -29,12 +30,14 @@ class BigBoss extends Shooter {
         this.walks = false;
         this.player = new Audio();
         this.player.src = './sounds/enemy-shoots.mp3';
+        this.hittingSound = new Audio();
+        this.hittingSound.src = './sounds/big-boss-got-hit.mp3';
+        this.fallingSound = new Audio();
+        this.hittingSound.src = './sounds/big-boss-got-hit.mp3';
         this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3*standardFrameRate);
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/big-boss/shoot.svg';
         this.isVisible = false;
-        this.hittingSound = './sounds/big-boss-got-hit.mp3';
-        this.hittingSoundPlayer = new Audio;
         this.isDefeated = false;
         this.isDangerous = true;
     }
@@ -83,6 +86,7 @@ class BigBoss extends Shooter {
     }
 
     playFallingSound() {
-        //console.log('I am defeated!');
+        this.hittingSound.pause();
+        this.fallingSound.play();
     }
 }
