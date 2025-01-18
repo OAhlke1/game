@@ -81,6 +81,8 @@ function initFunctions() {
     if(!gameReloaded) {
         showDescription();
     }else { gamePaused = false; }
+    window.addEventListener('blur', ()=>{ unholdAllKeys(); });
+    window.addEventListener('focus', ()=>{ pausePlayGameToggle(); });
 }
 
 function clearLocalStorage() {

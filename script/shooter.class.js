@@ -31,7 +31,7 @@ class Shooter extends Enemy {
         this.walks = false;
         this.shootingSound = new Audio();
         this.shootingSound.src = './sounds/enemy-shoots.mp3';
-        this.shootingSound.volume = 0.25;
+        this.shootingSound.volume = 0.5;
         this.hittingSound = new Audio();
         this.hittingSound.src = './sounds/enemy-got-hit.mp3';
         this.hittingSound.volume = 0.5;

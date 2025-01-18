@@ -102,7 +102,7 @@ function sizeMenuBarProperties() {
     })
 }
 
-function pauseGame() {
+function pausePlayGameToggle() {
     if (gamePaused) {
         document.querySelector('.play-game').classList.add('disNone');
         document.querySelector('.pause-game').classList.remove('disNone');
@@ -183,6 +183,7 @@ function unholdAllKeys() {
     controller['right'].pressed = false;
     controller['jump'].pressed = false;
     controller['run'].pressed = false;
+    if(!gamePaused) { pausePlayGameToggle(); }
 }
 
 function saveCharProperties() {
@@ -228,12 +229,12 @@ function canContControlsToggle() {
         controlsBar.classList.remove('disNone');
         if(!description.classList.contains('disNone')) {
             return;
-        }else if(!gamePaused) { pauseGame(); }
+        }else if(!gamePaused) { pausePlayGameToggle(); }
     }else {
         controlsBar.classList.add('disNone');
         if(!description.classList.contains('disNone')) {
             return;
-        }else if(gamePaused){ pauseGame(); }
+        }else if(gamePaused){ pausePlayGameToggle(); }
     }
 }
 
@@ -243,7 +244,7 @@ function showDescription() {
     description.classList.remove('disNone');
     if(!controlsBar.classList.contains('disNone')) {
         return;
-    }else { pauseGame(); }
+    }else { pausePlayGameToggle(); }
 }
 
 function hideDescription() {

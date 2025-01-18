@@ -1,7 +1,7 @@
 class Ammo extends Char {
     flyingDirection;
     decreaseLifeAmount;
-    shootingSoundPlayer;
+    shootingSound;
     leftCanvas;
 
     constructor(x, y, width, height, image, decreaseLifeAmount) {
@@ -14,7 +14,8 @@ class Ammo extends Char {
         this.flyingDirection = char.movingDirection;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.leftCanvas = false;
-        this.shootingSoundPlayer = new Audio();
+        this.shootingSound = new Audio();
+        this.shootingSound.src = './sounds/enemy-shoots.mp3';
         if(!gameMuted) { this.playShootingSound(); }
         this.trajectoryAnimationId = setInterval(()=>{ this.animateTrajectory(); }, standardFrameRate);
     }
@@ -50,7 +51,7 @@ class Ammo extends Char {
                             if(char.specialAmmoParts === 3) {
                                 //elem.isDangerous = false;
                                 elem.lifeAmount -= this.decreaseLifeAmount;
-                                elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrameRate);
+                                elem.hittingAnimationId = setInterval(() => { elem.animateBigBossGotHit(); }, 3*standardFrameRate);
                             }
                         }
                         this.leftCanvas = true;
@@ -67,9 +68,7 @@ class Ammo extends Char {
 
     playShootingSound() {
         if(!gameMuted && char.isAlive) {
-            this.shootingSound = './sounds/enemy-shoots.mp3';
-            this.shootingSoundPlayer.src = this.shootingSound;
-            this.shootingSoundPlayer.play();
+            this.shootingSound.play();
         }
     }
 }

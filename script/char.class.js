@@ -279,7 +279,7 @@ class Char {
                 this.decreaseHealth();
                 this.stopFalling();
                 if(this.healthAmount >= 0) {
-                    pauseGame();
+                    pausePlayGameToggle();
                     this.hitChar();
                     this.scrollingStepAmount = 0;
                     shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrameRate);
@@ -427,7 +427,7 @@ class Char {
         this.healthAmount = 0;
         this.isAlive = false;
         this.healthAmount = 200;
-        pauseGame();
+        pausePlayGameToggle();
         this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
         document.querySelector('.game-over-screen').classList.remove('disNone');
     }

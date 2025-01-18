@@ -74,9 +74,9 @@ function addKeypressMovingCommands() {
             controller['run'].func();
         } else if (event.key.toLowerCase() === "p") {
             if (!gamePaused) {
-                pauseGame();
+                pausePlayGameToggle();
             } else {
-                pauseGame();
+                pausePlayGameToggle();
                 timer();
             }
         } else if (event.key.toLowerCase() === "m") {
@@ -149,7 +149,7 @@ function initStepLeftTouch() {
 }
 
 function showHideTouchControls() {
-    pauseGame();
+    pausePlayGameToggle();
     document.querySelector('.touch-controls .pause-game').classList.add('paused');
     if (!document.querySelector('.touch-controls').classList.contains('shown') && !document.querySelector('.touch-controls').classList.contains('hidden')) {
         document.querySelector('.touch-controls').classList.add('shown');
@@ -157,7 +157,7 @@ function showHideTouchControls() {
         document.querySelector('.touch-controls').classList.add('shown');
         document.querySelector('.touch-controls').classList.remove('hidden');
     } else if (!document.querySelector('.touch-controls').classList.contains('hidden')) {
-        pauseGame();
+        pausePlayGameToggle();
         document.querySelector('.touch-controls .pause-game').classList.remove('paused');
         document.querySelector('.touch-controls').classList.remove('shown');
         document.querySelector('.touch-controls').classList.add('hidden');
@@ -342,6 +342,9 @@ function pauseAllPlayers() {
         if(elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
         if(elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.pause(); }
     });
+    hitables.flyables.forEach((elem)=>{
+        if(elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+    });
     if(char.hittingSound.currentTime > 0) { char.hittingSound.pause();}
     if(char.shootingSound.currentTime > 0) { char.shootingSound.pause();}
     bgPlayer.pause();
@@ -367,7 +370,7 @@ async function turnOnFullScreen() {
     await body.requestFullscreen().then(()=>{
         canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
-        pauseGame();
+        pausePlayGameToggle();
         resetScreenProperties();
     })
 }
@@ -380,9 +383,9 @@ async function turnOffFullScreen() {
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
     document.querySelector('.game-headline').classList.remove('disNone');
-    pauseGame();
+    pausePlayGameToggle();
     await document.exitFullscreen().then(()=>{
-        pauseGame();
+        pausePlayGameToggle();
         resetScreenProperties();
     })
 }
