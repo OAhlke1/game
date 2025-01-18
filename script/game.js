@@ -78,7 +78,9 @@ function initFunctions() {
     presetMenuBarProperties();
     drawElements();
     sizeMenuBarProperties();
-    if(!gameReloaded) { showDescription(); }
+    if(!gameReloaded) {
+        showDescription();
+    }else { gamePaused = false; }
 }
 
 function clearLocalStorage() {
