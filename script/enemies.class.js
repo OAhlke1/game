@@ -172,6 +172,7 @@ class Enemy {
                     if(this.enemyType != "big-boss") {
                         this.isAlive = false;
                     }else {
+                        this.isDefeated = true;
                         clearInterval(this.animateLevitationId);
                         this.animateLevitationId = setInterval(()=>{ this.animateFalling(); }, standardFrameRate);
                     }

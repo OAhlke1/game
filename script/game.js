@@ -78,7 +78,7 @@ function initFunctions() {
     presetMenuBarProperties();
     drawElements();
     sizeMenuBarProperties();
-    showDescription();
+    if(!gameReloaded) { showDescription(); }
 }
 
 function clearLocalStorage() {
@@ -1071,14 +1071,12 @@ function canContControlsToggle() {
 }
 
 function showDescription() {
-    if(!gameReloaded) {
-        openDescription.classList.add('disNone');
-        closeDescription.classList.remove('disNone');
-        description.classList.remove('disNone');
-        if(!controlsBar.classList.contains('disNone')) {
-            return;
-        }else { gamePaused = true; }
-    }else { hideDescription() }
+    openDescription.classList.add('disNone');
+    closeDescription.classList.remove('disNone');
+    description.classList.remove('disNone');
+    if(!controlsBar.classList.contains('disNone')) {
+        return;
+    }else { gamePaused = true; }
 }
 
 function hideDescription() {
