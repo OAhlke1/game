@@ -257,6 +257,7 @@ class Char {
 
     fall() {
         if (!gamePaused && this.isAlive) {
+            this.landedOnPlatform = false;
             if (!this.gotHit) { this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             if (this.checkPlatformXCords()) {
                 this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-0.png`);
@@ -320,7 +321,7 @@ class Char {
                 } else {
                     if (this.checkPlatformYCords(i)) {
                         this.standingPlatformIndex = i;
-                        this.landed = true;
+                        this.landedOnPlatform = true;
                         this.stepAmount = 0;
                         return true;
                     }
@@ -331,7 +332,7 @@ class Char {
 
     checkPlatformYCords(i) {
         if (!gamePaused && this.isAlive) {
-            if (platforms[i].y - (this.y + this.height) <= this.jumpFallStepHeight && platforms[i].y - (this.y + this.height) >= 0) {
+            if (platforms[i].y - (this.y + this.height) <= this.jumpFallStepHeight && platforms[i].y - (this.y + this.height) >= 0) { //
                 this.y = platforms[i].y - this.height;
                 return true;
             } else {
@@ -341,7 +342,7 @@ class Char {
     }
 
     movingWithPlatform() {
-        if (!gamePaused && this.isAlive) {
+        if (!gamePaused && this.isAlive && this.landedOnPlatform) {
             if (this.onMovingPlatform) {
                 if (this.checkPlatformEnd()) {
                     clearInterval(this.movingWidthPlatformAnimationId);
@@ -351,7 +352,7 @@ class Char {
                     if(platforms[this.standingPlatformIndex].sideways) {
                         this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.standardStepLength;
                     }else {
-                        this.onUpwardsMovingPlatform = true;
+                        //this.onUpwardsMovingPlatform = true;
                         this.y = platforms[this.standingPlatformIndex].y - this.height;
                     }
                 }
