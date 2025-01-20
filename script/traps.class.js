@@ -66,7 +66,7 @@ class Trap {
             if(this.orientation) {
                 this.image = this.animationImages[this.orientation][this.animationIndex % this.animationImagesAmount];
             }else { this.image.src = `./graphics/traps/stings/${this.trapType}-${this.animationIndex % this.animationImagesAmount}.png`; }
-            if(this.animationIndex % this.animationImagesAmount === 0 || this.animationIndex % this.animationImagesAmount === 1 || this.animationIndex % this.animationImagesAmount === 6 ||this.animationIndex % this.animationImagesAmount === 7) {//onDangerousState < 0.25 || onDangerousState >= 0.75
+            if(this.animationIndex % this.animationImagesAmount === 0 || this.animationIndex % this.animationImagesAmount === 1 || this.animationIndex % this.animationImagesAmount === 6 ||this.animationIndex % this.animationImagesAmount === 7) {
                 this.isDangerous = false;
             }else { this.isDangerous = true; }
             this.animationIndex++;

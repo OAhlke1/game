@@ -14,7 +14,7 @@ class BigBoss extends Shooter {
         this.width = width;
         this.height = height;
         this.image = new Image();
-        this.image.src = `./graphics/enemies/big-boss/putin.png`; //`./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`
+        this.image.src = `./graphics/enemies/big-boss/putin.png`;
         this.enemyType = enemyType;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.canShoot = canShoot;
@@ -46,6 +46,17 @@ class BigBoss extends Shooter {
         this.fallingEnded = false;
     }
 
+    levitateDown() {
+        if(!this.isDefeated) {
+            this.y += 0.125*heightUnit;
+            if(this.y + this.height >= canCont.offsetHeight) {
+                clearInterval(this.animateLevitationId);
+                this.animateLevitationId = setInterval(()=>{ this.levitateUp(); }, 3*standardFrameRate);
+                return;
+            }
+        }
+    }
+
     levitateUp() {
         if(!this.isDefeated) {
             this.y -= 0.125*heightUnit;
@@ -60,19 +71,8 @@ class BigBoss extends Shooter {
         }
     }
 
-    levitateDown() {
-        if(!this.isDefeated) {
-            this.y += 0.125*heightUnit;
-            if(this.y + this.height >= canCont.offsetHeight) {
-                clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(()=>{ this.levitateUp(); }, 3*standardFrameRate);
-                return;
-            }
-        }
-    }
-
     animateBigBossGotHit() {
-        this.image = this.hitImagesArrays[this.lookingDirection][this.hittingIndex]; //.src = `./graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`;
+        this.image = this.hitImagesArrays[this.lookingDirection][this.hittingIndex];
         this.hittingIndex++;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;

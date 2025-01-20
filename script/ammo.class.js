@@ -49,7 +49,6 @@ class Ammo extends Char {
                             elem.hittingAnimationId = setInterval(() => { elem.animateEnemyGotHit(); }, 3*standardFrameRate);
                         }else if(elem.enemyType === "big-boss" && bigBoss.isVisible) {
                             if(char.specialAmmoParts === 3) {
-                                //elem.isDangerous = false;
                                 elem.lifeAmount -= this.decreaseLifeAmount;
                                 elem.hittingAnimationId = setInterval(() => { elem.animateBigBossGotHit(); }, 3*standardFrameRate);
                             }

@@ -132,7 +132,6 @@ class Char {
                 checkForScrolling();
                 if (this.x <= this.stepLength + widthUnit) {
                     this.x = widthUnit + 1;
-                    //controller['left'].pressed = false;
                     return;
                 } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
             }
@@ -142,14 +141,12 @@ class Char {
     moveRight(key) {
         if (controller['right'].pressed) {
             if (!gamePaused && this.isAlive) {
-                //if(!this.atWallRight && !this.falls) { this.atWallRight = this.checkIfStandingAtPlatform(); }
                 if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
                     this.checkIfFalling();
                 }
                 this.setMovingState(key);
                 checkForScrolling();
                 if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
-                    //this.x = canvas.offsetWidth - this.width - widthUnit;
                     this.x += this.stepLength;
                     return;
                 } else {
@@ -164,7 +161,6 @@ class Char {
     moveLeftTouch(key) {
         if(controller['left'].pressed) {
             if (!gamePaused && this.isAlive) {
-                //checkIfStandingAtPlatform(if(!this.atWallLeft && !this.falls) { this.atWallLeft = this.checkIfStandingAtPlatform(); }
                 if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
                     this.checkIfFalling();
                 }
@@ -182,7 +178,6 @@ class Char {
     moveRightTouch(key) {
         if(controller['right'].pressed) {
             if (!gamePaused && this.isAlive) {
-                //if(!this.atWallRight && !this.falls) { this.atWallRight = this.checkIfStandingAtPlatform(); }
                 if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
                     this.checkIfFalling();
                 }
@@ -323,7 +318,7 @@ class Char {
 
     checkPlatformYCords(i) {
         if (!gamePaused && this.isAlive) {
-            if (platforms[i].y - (this.y + this.height) <= this.jumpFallStepHeight && platforms[i].y - (this.y + this.height) >= 0) { //
+            if (platforms[i].y - (this.y + this.height) <= this.jumpFallStepHeight && platforms[i].y - (this.y + this.height) >= 0) {
                 this.y = platforms[i].y - this.height;
                 return true;
             } else {
@@ -381,7 +376,7 @@ class Char {
 
     animateHit() {
         if (this.gotHit) {
-            if (this.isAlive) { this.figImage = this.hitImagesArrays[this.movingDirection][this.hittingAnimationIndex] } //this.setImagePath(`./graphics/main-char/hit/hit-${this.movingDirection}-${this.hittingAnimationIndex}.png`);
+            if (this.isAlive) { this.figImage = this.hitImagesArrays[this.movingDirection][this.hittingAnimationIndex] }
             this.hittingAnimationIndex++;
             if (this.hittingAnimationIndex === this.hitImagesAmount) {
                 this.hittingAnimationIndex = 0

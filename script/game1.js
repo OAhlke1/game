@@ -384,7 +384,6 @@ function drawElements() {
     drawHitables();
     drawItems();
     drawChar();
-    //drawMenuBar();
     drawCharObjects();
     requestAnimationFrame(()=>{ drawElements(); });
 }

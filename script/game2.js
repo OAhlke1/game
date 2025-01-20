@@ -67,7 +67,6 @@ function addKeypressMovingCommands() {
                 controller['right'].func();
             }
         } else if (event.key === " " && !char.jumps) {
-            //char.landedOnPlatform = false;
             controller['jump'].pressed = true;
             controller['jump'].func();
         } else if (event.key === "Shift") {
@@ -144,7 +143,6 @@ function initStepLeft() {
 
 function initStepLeftTouch() {
     if (controller['left'].pressed) {
-        //char.moveLeftTouch("ArrowLeft");
         char.movingAnimationId = setInterval(()=>{ char.moveLeftTouch("ArrowLeft"); }, standardFrameRate);
     }
 }
@@ -167,14 +165,12 @@ function showHideTouchControls() {
 
 function initStepRight() {
     if (controller['right'].pressed) {
-        //char.moveRight("ArrowRight");
         char.movingAnimationId = setInterval(()=>{ char.moveRight("ArrowRight"); }, standardFrameRate);
     }
 }
 
 function initStepRightTouch() {
     if (controller['right'].pressed) {
-        //char.moveRightTouch("ArrowRight");
         char.movingAnimationId = setInterval(()=>{ char.moveRightTouch("ArrowRight"); }, standardFrameRate);
     }
 }
@@ -263,8 +259,8 @@ function checkIfBigBossVisible() {
         bigBoss.animateShooting();
         bigBoss.isVisible = true;
     }else {
-        //bigBoss.isVisible = false;
-        //clearInterval(bigBoss.animateLevitationId);
+        bigBoss.isVisible = false;
+        clearInterval(bigBoss.animateLevitationId);
     }
 }
 
@@ -307,7 +303,6 @@ function gameSoundToggle() {
         gameMuted = true;
     } else {
         document.querySelector('.mute-game').classList.remove('muted');
-        //audioPlayer.forEach((elem) => { elem.volume = gameVolume; });
         unmuteAllPlayers();
         gameMuted = false;
     }

@@ -154,7 +154,7 @@ class Enemy {
     }
 
     animateEnemyGotHit() {
-        if (this.enemyType != "flyable" && this.enemyType != "big-boss") { this.image = this.hitImagesArrays[this.lookingDirection][this.hittingIndex] } //.src = `./graphics/enemies/${this.enemyType}/hit/hit-${this.lookingDirection}-${this.hittingIndex}.png`;
+        if (this.enemyType != "flyable" && this.enemyType != "big-boss") { this.image = this.hitImagesArrays[this.lookingDirection][this.hittingIndex] }
         this.hittingIndex++;
         if (this.hittingIndex === this.hitImagesAmount) {
             this.hittingIndex = 0;

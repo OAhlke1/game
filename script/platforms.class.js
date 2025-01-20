@@ -32,7 +32,7 @@ class Platform extends Wall {
                 this.checkIfCharStandsLeftAtPlatform();
                 this.checkIfCharStandsRightAtPlatform();
             }
-        }else {//f(Math.abs(char.x - this.x - this.width) <= 2*char.stepLength && char.movingDirection === "right" && !char.atWallLeft) {
+        }else {
             char.atWallRight = false;
             char.atWallLeft = false;
         }
