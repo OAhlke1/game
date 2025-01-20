@@ -194,7 +194,7 @@ p {
 }
 
 .canvas-cont .canvas-cont-controls-toggle {
-    width: calc(6.25%/3);
+    width: 28px;
     height: fit-content;
     position: absolute;
     bottom: 0.5%;
@@ -357,7 +357,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2%;
+    width: 27px;
     aspect-ratio: 1 / 1;
     background-color: rgba(0 0 0 / 0.8);
     position: absolute;

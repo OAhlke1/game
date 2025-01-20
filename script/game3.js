@@ -1,6 +1,9 @@
 function resizeCanvasProperties() {
     canvas.setAttribute("width", inFullscreen ? 2*screen.width : 2*canCont.offsetWidth);
     canvas.setAttribute("height", inFullscreen ? screen.height : canCont.offsetHeight);
+    if(inFullscreen) {
+        canvas.style.left = `${parseFloat(canvas.style.left)/0.7}px`;
+    }else { canvas.style.left = `${parseFloat(canvas.style.left)*0.7}px`; }
     resizePlatformsProperties();
 }
 

@@ -94,7 +94,7 @@ class Char {
         this.targeted = false;
         this.onUpwardsMovingPlatform = false;
         this.underGround = false;
-        this.specialAmmoParts = specialAmmoParts;
+        this.specialAmmoParts = specialAmmoParts > 3 ? 3 : specialAmmoParts;
         this.hittingSound = new Audio();
         this.hittingSound.src = './sounds/char-got-hit.ogg';
         this.hittingSound.volume = 0.5;
@@ -405,12 +405,13 @@ class Char {
         }
     }
 
-    charIsDead() {
+    async charIsDead() {
         this.healthAmount = 0;
         this.isAlive = false;
         this.healthAmount = 200;
         pausePlayGameToggle();
         this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
+        await clearLocalStorage();
         document.querySelector('.game-over-screen').classList.remove('disNone');
     }
 

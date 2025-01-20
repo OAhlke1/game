@@ -81,8 +81,11 @@ function addKeypressMovingCommands() {
             }
         } else if (event.key.toLowerCase() === "m") {
             gameSoundToggle();
-        } else if(event.key.toLowerCase() === "f" && !inFullscreen) {
-            turnOnFullScreen();
+        } else if(event.key.toLowerCase() === "f" && !fullscreenButtonPressed) {
+            fullscreenButtonPressed = true;
+            if(inFullscreen) {
+                turnOffFullScreen();
+            }else { turnOnFullScreen(); }
         }
     });
     body.addEventListener('keyup', (event) => {
@@ -97,7 +100,7 @@ function addKeypressMovingCommands() {
             slowDownChar();
         } else if (event.key.toLowerCase() === "d" && char.isAlive) {
             createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.75*widthUnit, 0.25*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
-        } else if (event.key === "Escape" && inFullscreen) { turnOffFullScreen(); }
+        } else if (event.key === "Escape") { turnOffFullScreen(); }
     });
 }
 
@@ -256,11 +259,10 @@ function checkForScrolling(movingDirection = char.movingDirection) {
 
 function checkIfBigBossVisible() {
     if(bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width/3) {
-        bigBoss.animateShooting();
         bigBoss.isVisible = true;
+        bigBoss.animateShooting();
     }else {
         bigBoss.isVisible = false;
-        clearInterval(bigBoss.animateLevitationId);
     }
 }
 
@@ -341,7 +343,7 @@ function pauseAllPlayers() {
     });
     if(char.hittingSound.currentTime > 0) { char.hittingSound.pause();}
     if(char.shootingSound.currentTime > 0) { char.shootingSound.pause();}
-    bgPlayer.pause();
+    if(bgPlayer) { bgPlayer.pause(); }
 }
 
 function playAllPlayers() {
@@ -352,7 +354,7 @@ function playAllPlayers() {
     });
     if(char.hittingSound.currentTime > 0) { char.hittingSound.play();}
     if(char.shootingSound.currentTime > 0) { char.shootingSound.play();}
-    bgPlayer.play();
+    if(bgPlayer) { bgPlayer.play(); };
 }
 
 async function turnOnFullScreen() {
@@ -364,7 +366,8 @@ async function turnOnFullScreen() {
     await body.requestFullscreen().then(()=>{
         canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
-        pausePlayGameToggle();
+        fullscreenButtonPressed = false;
+        if(gamePaused) { pausePlayGameToggle(); }
         resetScreenProperties();
     })
 }
@@ -379,7 +382,8 @@ async function turnOffFullScreen() {
     document.querySelector('.game-headline').classList.remove('disNone');
     pausePlayGameToggle();
     await document.exitFullscreen().then(()=>{
-        pausePlayGameToggle();
+        fullscreenButtonPressed = false;
+        if(gamePaused) { pausePlayGameToggle(); }
         resetScreenProperties();
     })
 }

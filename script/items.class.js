@@ -68,7 +68,7 @@ class Item {
 
     collectSpecialAmmoKit() {
         this.collected = true;
-        char.specialAmmoParts++;
+        char.specialAmmoParts = char.specialAmmoParts < 3 ? char.specialAmmoParts+1 : 3;
         saveNotCollectedItems("specialAmmo");
         setMenuBarProperties("specialAmmo");
         saveCharProperties();

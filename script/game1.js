@@ -18,6 +18,7 @@ let gamePaused = false;
 let gameMuted = false;
 let inFullscreen = false;
 let pageJustLoaded = true;
+let fullscreenButtonPressed = false;
 let ratioSmallBigScreenHeight;
 let aspectRatio;
 let walls = [];
@@ -61,13 +62,13 @@ let openDescription = document.querySelector('.open-description');
 let closeDescription = document.querySelector('.close-description');
 let gameReloaded;
 
-function initFunctions() {
+async function initFunctions() {
     gamePaused = true;
     gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
-    loadPlayer();
+    window.addEventListener('click', ()=>{ if(!bgPlayer) { loadPlayer(); }});
     createScreen();
     setScreenProperties();
-    setSizeUnits();
+    await setSizeUnits();
     createBackgrounds();
     if(!char) { createChar(); }
     addKeypressMovingCommands();
@@ -78,11 +79,11 @@ function initFunctions() {
     presetMenuBarProperties();
     drawElements();
     sizeMenuBarProperties();
-    if(!gameReloaded) {
-        showDescription();
-    }else { gamePaused = false; }
+    if(!gameReloaded) { showDescription(); }
     window.addEventListener('blur', ()=>{ unholdAllKeys(); });
     window.addEventListener('focus', ()=>{ pausePlayGameToggle(); });
+    window.addEventListener("deviceorientation", sizeElements, true);
+    gamePaused = false;
 }
 
 function clearLocalStorage() {
