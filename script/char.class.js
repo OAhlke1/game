@@ -90,7 +90,7 @@ class Char {
         this.sleeps = false;
         this.gotHit = false;
         this.isImmune = false;
-        this.landedOnPlatform = false;
+        this.landedOnPlatform = true;
         this.targeted = false;
         this.onUpwardsMovingPlatform = false;
         this.underGround = false;
@@ -217,7 +217,7 @@ class Char {
     }
 
     checkIfJumping() {
-        if (!gamePaused && this.isAlive) {
+        if (!gamePaused && this.isAlive && this.landedOnPlatform) {
             if (!this.jumps) {
                 if(!gameMuted) { this.playJumpingSound(); }
                 this.jumps = true;
@@ -228,7 +228,7 @@ class Char {
     }
 
     jump() {
-        if (!gamePaused && this.isAlive && !this.falls) {
+        if (!gamePaused && this.isAlive && !this.falls && this.landedOnPlatform) {
             this.onMovingPlatform = false;
             this.atWallLeft = false;
             this.atWallRight = false;
@@ -248,6 +248,7 @@ class Char {
     checkIfFalling() {
         if (!gamePaused && this.isAlive) {
             if (!this.falls) {
+                this.landedOnPlatform = false;
                 this.falls = true;
                 clearInterval(this.jumpingAnimationId);
                 this.fallingAnimationId = setInterval(() => { this.fall(); }, standardFrameRate);
@@ -257,7 +258,6 @@ class Char {
 
     fall() {
         if (!gamePaused && this.isAlive) {
-            this.landedOnPlatform = false;
             if (!this.gotHit) { this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             if (this.checkPlatformXCords()) {
                 this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-0.png`);
@@ -284,15 +284,8 @@ class Char {
                     this.hitChar();
                     this.scrollingStepAmount = 0;
                     shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrameRate);
-                }/* else {
-                    this.healthAmount = 0;
-                    setMenuBarProperties("char");
-                    this.isAlive = false;
-                    //resetGame();
-                    document.querySelector('.game-over-screen').classList.remove('disNone');
-                } */
+                }
             }
-
             if (this.startingYPos === this.y) {
                 this.jumps = false;
                 this.startingYPos = null;
@@ -306,7 +299,7 @@ class Char {
 
     stopFalling() {
         this.falls = false;
-        //this.onMovingPlatform = true;
+        this.landedOnPlatform = true;
         clearInterval(this.fallingAnimationId);
     }
 
@@ -318,13 +311,11 @@ class Char {
                         this.startingYPos = null;
                         return false;
                     }
-                } else {
-                    if (this.checkPlatformYCords(i)) {
-                        this.standingPlatformIndex = i;
-                        this.landedOnPlatform = true;
-                        this.stepAmount = 0;
-                        return true;
-                    }
+                } else if (this.checkPlatformYCords(i)) {
+                    this.standingPlatformIndex = i;
+                    this.landedOnPlatform = true;
+                    this.stepAmount = 0;
+                    return true;
                 }
             }
         }
@@ -342,20 +333,15 @@ class Char {
     }
 
     movingWithPlatform() {
-        if (!gamePaused && this.isAlive && this.landedOnPlatform) {
-            if (this.onMovingPlatform) {
-                if (this.checkPlatformEnd()) {
-                    clearInterval(this.movingWidthPlatformAnimationId);
-                    this.checkIfFalling();
-                    return;
-                }else {
-                    if(platforms[this.standingPlatformIndex].sideways) {
-                        this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.standardStepLength;
-                    }else {
-                        //this.onUpwardsMovingPlatform = true;
-                        this.y = platforms[this.standingPlatformIndex].y - this.height;
-                    }
-                }
+        if (!gamePaused && this.isAlive && this.landedOnPlatform && this.onMovingPlatform) {    
+            if (this.checkPlatformEnd()) {
+                clearInterval(this.movingWidthPlatformAnimationId);
+                this.checkIfFalling();
+                return;
+            }else {
+                if(platforms[this.standingPlatformIndex].sideways) {
+                    this.x = platforms[this.standingPlatformIndex].x + this.distanceCharMovingPlatformX + this.stepAmount * this.standardStepLength;
+                }else { this.y = platforms[this.standingPlatformIndex].y - this.height; }
             }
             return;
         }

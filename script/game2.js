@@ -67,6 +67,7 @@ function addKeypressMovingCommands() {
                 controller['right'].func();
             }
         } else if (event.key === " " && !char.jumps) {
+            //char.landedOnPlatform = false;
             controller['jump'].pressed = true;
             controller['jump'].func();
         } else if (event.key === "Shift") {
@@ -180,14 +181,14 @@ function initStepRightTouch() {
 
 function speedUpChar() {
     if(char.stepLength/char.standardStepLength >= 1.5) { return; }
-    console.log(char.stepLength, controller['run'].pressed);
     char.stepLength *= 1.5;
+    console.log(char.stepLength, controller['run'].pressed);
 }
 
 function slowDownChar() {
     if(char.stepLength/char.standardStepLength <= 1) { return; }
-    console.log(char.stepLength, controller['run'].pressed);
     char.stepLength /= 1.5;
+    console.log(char.stepLength, controller['run'].pressed);
 }
 
 function setRunningCharTouch() {
