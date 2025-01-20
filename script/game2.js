@@ -182,13 +182,11 @@ function initStepRightTouch() {
 function speedUpChar() {
     if(char.stepLength/char.standardStepLength >= 1.5) { return; }
     char.stepLength *= 1.5;
-    console.log(char.stepLength, controller['run'].pressed);
 }
 
 function slowDownChar() {
     if(char.stepLength/char.standardStepLength <= 1) { return; }
     char.stepLength /= 1.5;
-    console.log(char.stepLength, controller['run'].pressed);
 }
 
 function setRunningCharTouch() {

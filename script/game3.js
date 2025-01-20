@@ -248,7 +248,6 @@ function showDescription() {
 }
 
 function hideDescription() {
-    console.log('hideDescription');
     openDescription.classList.remove('disNone');
     closeDescription.classList.add('disNone');
     description.classList.add('disNone');
