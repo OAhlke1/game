@@ -56,51 +56,56 @@ function addKeypressMovingCommands() {
     body.addEventListener('keydown', async (event) => {
         char.sleeps = false;
         t = 0;
-        if (event.key === "ArrowLeft") {
-            if (!controller['left'].pressed) {
-                controller['left'].pressed = true;
-                controller['left'].func();
-            }
-        } else if (event.key === "ArrowRight") {
-            if (!controller['right'].pressed) {
-                controller["right"].pressed = true;
-                controller['right'].func();
-            }
-        } else if (event.key === " " && !char.jumps) {
-            controller['jump'].pressed = true;
-            controller['jump'].func();
-        } else if (event.key === "Shift") {
-            controller['run'].pressed = true;
-            controller['run'].func();
-        } else if (event.key.toLowerCase() === "p") {
+        if (event.key.toLowerCase() === "p") {
             if (!gamePaused) {
                 pausePlayGameToggle();
             } else {
                 pausePlayGameToggle();
                 timer();
             }
-        } else if (event.key.toLowerCase() === "m") {
-            gameSoundToggle();
-        } else if(event.key.toLowerCase() === "f" && !fullscreenButtonPressed) {
-            fullscreenButtonPressed = true;
-            if(inFullscreen) {
-                turnOffFullScreen();
-            }else { turnOnFullScreen(); }
+        }
+        if (!keysUnheld) {
+            if (event.key === "ArrowLeft") {
+                if (!controller['left'].pressed) {
+                    controller['left'].pressed = true;
+                    controller['left'].func();
+                }
+            } else if (event.key === "ArrowRight") {
+                if (!controller['right'].pressed) {
+                    controller["right"].pressed = true;
+                    controller['right'].func();
+                }
+            } else if (event.key === " " && !char.jumps) {
+                controller['jump'].pressed = true;
+                controller['jump'].func();
+            } else if (event.key === "Shift") {
+                controller['run'].pressed = true;
+                controller['run'].func();
+            } else if (event.key.toLowerCase() === "m") {
+                gameSoundToggle();
+            } else if (event.key.toLowerCase() === "f" && !fullscreenButtonPressed) {
+                fullscreenButtonPressed = true;
+                if (inFullscreen) {
+                    turnOffFullScreen();
+                } else { turnOnFullScreen(); }
+            }
         }
     });
     body.addEventListener('keyup', (event) => {
-        if (event.key === "ArrowLeft") {
-            controller['left'].pressed = false;
-            clearInterval(char.movingAnimationId);
-        } else if (event.key === "ArrowRight") {
-            controller['right'].pressed = false;
-            clearInterval(char.movingAnimationId);
-        } else if (event.key === "Shift") {
-            controller['run'].pressed = false;
-            slowDownChar();
-        } else if (event.key.toLowerCase() === "d" && char.isAlive) {
-            createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.75*widthUnit, 0.25*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
-        } else if (event.key === "Escape") { turnOffFullScreen(); }
+        if (!keysUnheld) {
+            if (event.key === "ArrowLeft") {
+                controller['left'].pressed = false;
+                clearInterval(char.movingAnimationId);
+            } else if (event.key === "ArrowRight") {
+                controller['right'].pressed = false;
+                clearInterval(char.movingAnimationId);
+            } else if (event.key === "Shift") {
+                controller['run'].pressed = false;
+                slowDownChar();
+            } else if (event.key.toLowerCase() === "e" && char.isAlive) {
+                createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.75 * widthUnit, 0.25 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
+            } else if (event.key === "Escape") { turnOffFullScreen(); }
+        }
     });
 }
 
@@ -140,13 +145,13 @@ function initJump() {
 
 function initStepLeft() {
     if (controller['left'].pressed) {
-        char.movingAnimationId = setInterval(()=>{ char.moveLeft("ArrowLeft"); }, standardFrameRate);
+        char.movingAnimationId = setInterval(() => { char.moveLeft("ArrowLeft"); }, standardFrameRate);
     }
 }
 
 function initStepLeftTouch() {
     if (controller['left'].pressed) {
-        char.movingAnimationId = setInterval(()=>{ char.moveLeftTouch("ArrowLeft"); }, standardFrameRate);
+        char.movingAnimationId = setInterval(() => { char.moveLeftTouch("ArrowLeft"); }, standardFrameRate);
     }
 }
 
@@ -168,23 +173,23 @@ function showHideTouchControls() {
 
 function initStepRight() {
     if (controller['right'].pressed) {
-        char.movingAnimationId = setInterval(()=>{ char.moveRight("ArrowRight"); }, standardFrameRate);
+        char.movingAnimationId = setInterval(() => { char.moveRight("ArrowRight"); }, standardFrameRate);
     }
 }
 
 function initStepRightTouch() {
     if (controller['right'].pressed) {
-        char.movingAnimationId = setInterval(()=>{ char.moveRightTouch("ArrowRight"); }, standardFrameRate);
+        char.movingAnimationId = setInterval(() => { char.moveRightTouch("ArrowRight"); }, standardFrameRate);
     }
 }
 
 function speedUpChar() {
-    if(char.stepLength/char.standardStepLength >= 1.5) { return; }
+    if (char.stepLength / char.standardStepLength >= 1.5) { return; }
     char.stepLength *= 1.5;
 }
 
 function slowDownChar() {
-    if(char.stepLength/char.standardStepLength <= 1) { return; }
+    if (char.stepLength / char.standardStepLength <= 1) { return; }
     char.stepLength /= 1.5;
 }
 
@@ -206,7 +211,7 @@ function restyleRunningTouchButton() {
 
 function touchShooting() {
     if (controller['shoot'].pressed) {
-        createCharAmmo(char.movingDirection === "left" ? char.x : char.x+char.width, char.y+0.35*widthUnit, 0.5*widthUnit, 0.125*heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char. ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
+        createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.5 * widthUnit, 0.125 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
         document.querySelector('.touch-control.shoot').classList.remove('pressed');
         controller['shoot'].pressed = false;
     }
@@ -238,41 +243,41 @@ function resetEnemies() {
 }
 
 function checkForScrolling(movingDirection = char.movingDirection) {
-    if (parseFloat(canvas.style.left) === 0 && char.x < 2*canCont.offsetWidth/3) {
+    if (parseFloat(canvas.style.left) === 0 && char.x < 2 * canCont.offsetWidth / 3) {
         return;
     } else {
-        if (movingDirection === "right" && canCont.offsetLeft+parseFloat(canvas.style.left)+char.x >= 2*canCont.offsetWidth/3) {
-            if (canvas.offsetLeft+canCont.offsetWidth <= 0) {
+        if (movingDirection === "right" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x >= 2 * canCont.offsetWidth / 3) {
+            if (canvas.offsetLeft + canCont.offsetWidth <= 0) {
                 return;
             }
             char.scrollingStepAmount++;
-        } else if (movingDirection === "left" && canCont.offsetLeft+parseFloat(canvas.style.left)+char.x <= canCont.offsetWidth/3) {
+        } else if (movingDirection === "left" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x <= canCont.offsetWidth / 3) {
             if (parseFloat(canvas.style.left) >= 0) {
                 return;
             }
             char.scrollingStepAmount--;
         }
-        canvas.style.left = `-${char.standardStepLength*char.scrollingStepAmount}px`;
+        canvas.style.left = `-${char.standardStepLength * char.scrollingStepAmount}px`;
         checkIfBigBossVisible();
     }
 }
 
 function checkIfBigBossVisible() {
-    if(bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width/3) {
+    if (bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width / 3) {
         bigBoss.isVisible = true;
         bigBoss.animateShooting();
-    }else {
+    } else {
         bigBoss.isVisible = false;
     }
 }
 
 function setMenubarPosition() {
-    menubar.x = canvas.offsetLeft-canCont.offsetLeft+canCont.offsetWidth;
-    menubarBackground.x = canvas.offsetLeft-canCont.offsetLeft+canCont.offsetWidth;
+    menubar.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+    menubarBackground.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
 }
 
 function setCanvasSize() {
-    canvas.style.width = `${2*canCont.offsetWidth}px`;
+    canvas.style.width = `${2 * canCont.offsetWidth}px`;
     canvas.style.height = `${canCont.offsetHeight}px`;
 }
 
@@ -291,9 +296,9 @@ let setWholeVolume = function setWholeVolumeFunc(event) {
     let volumeBarInner = event.target.closest('.volumebar').querySelector('.volumebar-inner');
     let volumeBarWidth = event.target.closest('.volumebar').offsetWidth;
     let x = event.clientX;
-    gameVolume = ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) >= 0 ? ((x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth) : 0;
+    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
     gameVolume = gameVolume > 1 ? 1 : gameVolume;
-    volumeBarInner.style.width = `${100*(x-volumeBarInner.getBoundingClientRect().left)/volumeBarWidth}%`;
+    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
     if (!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem) => { elem.volume = gameVolume; }); }
 }
 
@@ -311,10 +316,10 @@ function gameSoundToggle() {
 }
 
 function muteAllPlayers() {
-    hitables.enemies.forEach((elem)=>{
+    hitables.enemies.forEach((elem) => {
         elem.hittingSound.volume = 0;
-        if(elem.shootingSound) { elem.shootingSound.volume = 0; }
-        if(elem.fallingSound) { elem.fallingSound.volume = 0; }
+        if (elem.shootingSound) { elem.shootingSound.volume = 0; }
+        if (elem.fallingSound) { elem.fallingSound.volume = 0; }
     });
     char.hittingSound.volume = 0;
     char.shootingSound.volume = 0;
@@ -322,10 +327,10 @@ function muteAllPlayers() {
 }
 
 function unmuteAllPlayers() {
-    hitables.enemies.forEach((elem)=>{
+    hitables.enemies.forEach((elem) => {
         elem.hittingSound.volume = 0.5;
-        if(elem.shootingSound) { elem.shootingSound.volume = 0.5; }
-        if(elem.fallingSound) { elem.fallingSound.volume = 0.5; }
+        if (elem.shootingSound) { elem.shootingSound.volume = 0.5; }
+        if (elem.fallingSound) { elem.fallingSound.volume = 0.5; }
     });
     char.hittingSound.volume = 0.5;
     char.shootingSound.volume = 0.5;
@@ -333,28 +338,28 @@ function unmuteAllPlayers() {
 }
 
 function pauseAllPlayers() {
-    hitables.enemies.forEach((elem)=>{
-        if(elem.hittingSound.currentTime > 0) { elem.hittingSound.pause(); }
-        if(elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
-        if(elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.pause(); }
+    hitables.enemies.forEach((elem) => {
+        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.pause(); }
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.pause(); }
     });
-    hitables.flyables.forEach((elem)=>{
-        if(elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+    hitables.flyables.forEach((elem) => {
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
     });
-    if(char.hittingSound.currentTime > 0) { char.hittingSound.pause();}
-    if(char.shootingSound.currentTime > 0) { char.shootingSound.pause();}
-    if(bgPlayer) { bgPlayer.pause(); }
+    if (char.hittingSound.currentTime > 0) { char.hittingSound.pause(); }
+    if (char.shootingSound.currentTime > 0) { char.shootingSound.pause(); }
+    if (bgPlayer) { bgPlayer.pause(); }
 }
 
 function playAllPlayers() {
-    hitables.enemies.forEach((elem)=>{
-        if(elem.hittingSound.currentTime > 0) { elem.hittingSound.play(); }
-        if(elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
-        if(elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
+    hitables.enemies.forEach((elem) => {
+        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.play(); }
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
+        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
     });
-    if(char.hittingSound.currentTime > 0) { char.hittingSound.play();}
-    if(char.shootingSound.currentTime > 0) { char.shootingSound.play();}
-    if(bgPlayer) { bgPlayer.play(); };
+    if (char.hittingSound.currentTime > 0) { char.hittingSound.play(); }
+    if (char.shootingSound.currentTime > 0) { char.shootingSound.play(); }
+    if (bgPlayer) { bgPlayer.play(); };
 }
 
 async function turnOnFullScreen() {
@@ -363,34 +368,34 @@ async function turnOnFullScreen() {
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
     document.querySelector('.game-headline').classList.add('disNone');
-    await body.requestFullscreen().then(()=>{
+    await body.requestFullscreen().then(() => {
         canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
         fullscreenButtonPressed = false;
-        if(gamePaused) { pausePlayGameToggle(); }
+        if (gamePaused) { pausePlayGameToggle(); }
         resetScreenProperties();
     })
 }
 
 async function turnOffFullScreen() {
     inFullscreen = false;
-    canCont.style.width = `${0.7*screen.width}px`;
-    canCont.style.height = `${0.7*screen.height}px`;
+    canCont.style.width = `${0.7 * screen.width}px`;
+    canCont.style.height = `${0.7 * screen.height}px`;
     document.querySelector('.canvas-cont .controls').classList.add('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
     document.querySelector('.game-headline').classList.remove('disNone');
     pausePlayGameToggle();
-    await document.exitFullscreen().then(()=>{
+    await document.exitFullscreen().then(() => {
         fullscreenButtonPressed = false;
-        if(gamePaused) { pausePlayGameToggle(); }
+        if (gamePaused) { pausePlayGameToggle(); }
         resetScreenProperties();
     })
 }
 
 function sizeElements() {
     setScreenProperties();
-    standardFrameRate = inFullscreen ? standardFrameRate/ratioSmallBigScreenHeight : 12;
+    standardFrameRate = inFullscreen ? standardFrameRate / ratioSmallBigScreenHeight : 12;
     fullScreenButtonToggle();
     resizePlatformsProperties();
     resizeBackgroundsProperties();
@@ -400,9 +405,9 @@ function sizeElements() {
 }
 
 function setScreenProperties() {
-    canCont.style.width = `${0.7*screen.width}px`;
-    canCont.style.height = `${0.7*screen.height}px`;
-    canvas.setAttribute('width', 2*canCont.offsetWidth);
+    canCont.style.width = `${0.7 * screen.width}px`;
+    canCont.style.height = `${0.7 * screen.height}px`;
+    canvas.setAttribute('width', 2 * canCont.offsetWidth);
     canvas.setAttribute('height', canCont.offsetHeight);
 }
 
@@ -411,10 +416,10 @@ function resetScreenProperties() {
 }
 
 function fullScreenButtonToggle() {
-    if(inFullscreen) {
+    if (inFullscreen) {
         document.querySelector('.turn-fullscreen-on').classList.add('disNone');
         document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
-    }else {
+    } else {
         document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
         document.querySelector('.turn-fullscreen-off').classList.add('disNone');
     }

@@ -19,6 +19,7 @@ let gameMuted = false;
 let inFullscreen = false;
 let pageJustLoaded = true;
 let fullscreenButtonPressed = false;
+let keysUnheld;
 let ratioSmallBigScreenHeight;
 let aspectRatio;
 let walls = [];
@@ -81,8 +82,10 @@ async function initFunctions() {
     sizeMenuBarProperties();
     if(!gameReloaded) { showDescription(); }
     window.addEventListener('blur', ()=>{ unholdAllKeys(); });
-    window.addEventListener('focus', ()=>{ pausePlayGameToggle(); });
-    window.addEventListener("deviceorientation", sizeElements, true);
+    window.addEventListener('focus', ()=>{
+        pausePlayGameToggle();
+        unholdAllKeys();
+    });
     gamePaused = false;
 }
 
@@ -281,7 +284,7 @@ function createEnemies() {
     hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-    hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 1000, 50*widthUnit/3, false, 5, 7));
+    hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 1000, 70*widthUnit/3, false, 5, 7));
     hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 32*widthUnit, true, 5, 7));
     hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 4*widthUnit, false, 5, 7));
     hitables.enemies.push(new Shooter(24*widthUnit, 2.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'shooter', 60, true, 'right', 100, 5*widthUnit, true, 5, 7));

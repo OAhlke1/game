@@ -197,19 +197,19 @@ p {
     width: 28px;
     height: fit-content;
     position: absolute;
-    bottom: 0.5%;
-    left: 0.5%;
+    top: 53px;
+    left: 10px;
     z-index: 5000;
     cursor: pointer;
 }
 
 .canvas-cont .controls {
     justify-content: space-evenly;
-    width: calc(100% - 6.25%/3);
+    width: calc(100% - 48px);
     background-color: black;
     position: absolute;
-    bottom: calc(3*6.25%/8);
-    left: calc(6.25%/6);
+    top: 18px;
+    left: 24px;
     z-index: 4999;
     border: 1px dashed yellow;
 }
@@ -361,8 +361,8 @@ p {
     aspect-ratio: 1 / 1;
     background-color: rgba(0 0 0 / 0.8);
     position: absolute;
-    left: 2.8125%;
-    top: 5%;
+    left: 10px;
+    top: 10px;
     border-radius: 100%;
     z-index: 10;
 }
@@ -382,14 +382,14 @@ p {
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
-    width: 88%;
+    width: calc(100% - 47px);
     min-height: 10%;
     max-height: 50%;
     overflow: hidden scroll;
     background-color: white;
     position: absolute;
-    top: 6%;
-    left: 6%;
+    top: 23.5px;
+    left: 23.5px;
     z-index: 9;
     padding: 1% 0;
 }

@@ -110,12 +110,15 @@ function pausePlayGameToggle() {
         document.querySelector('.play-game').classList.add('disNone');
         document.querySelector('.pause-game').classList.remove('disNone');
         gamePaused = false;
+        keysUnheld = false;
         playAllPlayers();
     } else {
         document.querySelector('.play-game').classList.remove('disNone');
         document.querySelector('.pause-game').classList.add('disNone');
         gamePaused = true;
+        keysUnheld = true;
         pauseAllPlayers();
+        unholdAllKeys();
     }
 }
 
@@ -231,8 +234,11 @@ function canContControlsToggle() {
     if(controlsBar.classList.contains('disNone')) {
         controlsBar.classList.remove('disNone');
         if(!description.classList.contains('disNone')) {
+            hideDescription();
             return;
-        }else if(!gamePaused) { pausePlayGameToggle(); }
+        }else if(!gamePaused) {
+            pausePlayGameToggle();
+        }
     }else {
         controlsBar.classList.add('disNone');
         if(!description.classList.contains('disNone')) {
@@ -246,6 +252,7 @@ function showDescription() {
     closeDescription.classList.remove('disNone');
     description.classList.remove('disNone');
     if(!controlsBar.classList.contains('disNone')) {
+        canContControlsToggle();
         return;
     }else { pausePlayGameToggle(); }
 }
@@ -256,6 +263,6 @@ function hideDescription() {
     description.classList.add('disNone');
     if(!controlsBar.classList.contains('disNone')) {
         return;
-    }else { gamePaused = false; }
+    }else { pausePlayGameToggle(); }
     localStorage.setItem('reloaded', JSON.stringify(true));
 }
