@@ -63,6 +63,13 @@ function addKeypressMovingCommands() {
                 pausePlayGameToggle();
                 timer();
             }
+        } else if (event.key.toLowerCase() === "f" && !fullscreenButtonPressed) {
+            fullscreenButtonPressed = true;
+            if (inFullscreen) {
+                turnOffFullScreen();
+            } else { turnOnFullScreen(); }
+        } else if (event.key.toLowerCase() === "m") {
+            gameSoundToggle();
         }
         if (!keysUnheld) {
             if (event.key === "ArrowLeft") {
@@ -81,13 +88,6 @@ function addKeypressMovingCommands() {
             } else if (event.key === "Shift") {
                 controller['run'].pressed = true;
                 controller['run'].func();
-            } else if (event.key.toLowerCase() === "m") {
-                gameSoundToggle();
-            } else if (event.key.toLowerCase() === "f" && !fullscreenButtonPressed) {
-                fullscreenButtonPressed = true;
-                if (inFullscreen) {
-                    turnOffFullScreen();
-                } else { turnOnFullScreen(); }
             }
         }
     });
@@ -104,7 +104,7 @@ function addKeypressMovingCommands() {
                 slowDownChar();
             } else if (event.key.toLowerCase() === "e" && char.isAlive) {
                 createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.75 * widthUnit, 0.25 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
-            } else if (event.key === "Escape") { turnOffFullScreen(); }
+            } //else if (event.key === "Escape") { turnOffFullScreen(); }
         }
     });
 }

@@ -23,7 +23,7 @@ class BigBoss extends Shooter {
         this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
         this.maxLifeAmount = lifeAmount;
-        this.standardImgPath = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
+        this.standardImgPath = `./graphics/enemies/big-boss/attack/attack-left-0.png`;
         this.distanceToSeeChar = distanceToSeeChar;
         this.canWalk = canWalk;
         this.hitImagesAmount = hitImagesAmount;
