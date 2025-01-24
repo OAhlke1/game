@@ -411,7 +411,7 @@ p {
         align-items: flex-end;
         justify-content: center;
         column-gap: 5%;
-        width: 95%;
+        width: 100%;
         height: calc(100%/27);
         background-color: transparent;
         position: absolute;
