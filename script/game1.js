@@ -79,7 +79,6 @@ async function initFunctions() {
     createItems();
     presetMenuBarProperties();
     drawElements();
-    sizeMenuBarProperties();
     if(!gameReloaded) { showDescription(); }
     window.addEventListener('blur', ()=>{ unholdAllKeys(); });
     window.addEventListener('focus', ()=>{

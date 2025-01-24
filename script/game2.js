@@ -31,7 +31,7 @@ function drawCharObjects() {
     });
 }
 
-function dispatchKeypress(event) {
+function dispatchKeypressLeft(event) {
     const keyPressEvent = new KeyboardEvent('keydown', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
         code: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -41,13 +41,74 @@ function dispatchKeypress(event) {
     body.dispatchEvent(keyPressEvent);
 }
 
-function dispatchKeypressStop(event) {
+function dispatchKeypressStopLeft(event) {
     const keyUpEvent = new KeyboardEvent('keyup', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
         code: event.target.closest('.touch-control').getAttribute('button-type'),
         keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
         bubbles: true
     });
+    body.dispatchEvent(keyUpEvent);
+}
+
+function dispatchKeypressRight(event) {
+    const keyPressEvent = new KeyboardEvent('keydown', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    body.dispatchEvent(keyPressEvent);
+}
+
+function dispatchKeypressStopRight(event) {
+    const keyUpEvent = new KeyboardEvent('keyup', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    body.dispatchEvent(keyUpEvent);
+}
+
+function dispatchKeypressJump(event) {
+    const keyPressEvent = new KeyboardEvent('keydown', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    body.dispatchEvent(keyPressEvent);
+}
+
+function dispatchKeypressStopJump(event) {
+    const keyUpEvent = new KeyboardEvent('keyup', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    body.dispatchEvent(keyUpEvent);
+}
+
+function dispatchKeypressShoot(event) {
+    const keyPressEvent = new KeyboardEvent('keydown', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    body.dispatchEvent(keyPressEvent);
+}
+
+function dispatchKeypressStopShoot(event) {
+    const keyUpEvent = new KeyboardEvent('keyup', {
+        key: event.target.closest('.touch-control').getAttribute('button-type'),
+        code: event.target.closest('.touch-control').getAttribute('button-type'),
+        keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
+        bubbles: true
+    });
+    console.log(keyUpEvent);
     body.dispatchEvent(keyUpEvent);
 }
 

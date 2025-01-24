@@ -94,7 +94,7 @@ function resizeItemsProperties() {
         elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
-    sizeMenuBarProperties();
+    //sizeMenuBarProperties();
 }
 
 function sizeMenuBarProperties() {

@@ -22,8 +22,8 @@
             <div class="description-inner">
                 <h2>What's this game about?</h2>
                 <p>
-                    You have to collect all three ammo-crystals <img
-                        src="./graphics/items/special-ammo/rotation-0.png" alt=""> to get the special ammo
+                    You have to collect all three ammo-crystals <img src="./graphics/items/special-ammo/rotation-0.png"
+                        alt=""> to get the special ammo
                     <br>so that you can defeat the main boss.
                 </p>
                 <p>
@@ -37,17 +37,18 @@
             </div>
         </div>
         <canvas width="1600" height="450" style="left: 0px;" lo></canvas>
-        <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypress(event)"
-            onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)"
-            ontouchend="dispatchKeypressStop(event)"></div>
-        <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypress(event)"
-            onmouseup="dispatchKeypressStop(event)"></div>
-        <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypress(event)"
-            onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)"
-            ontouchend="dispatchKeypressStop(event)"></div>
-        <div class="touch-control shoot" button-type="d" button-code="83" onmousedown="dispatchKeypress(event)"
-            onmouseup="dispatchKeypressStop(event)" ontouchstart="dispatchKeypress(event)"
-            ontouchend="dispatchKeypressStop(event)"></div>
+        <div class="touch-control shoot" button-type="e" button-code="69" onmousedown="dispatchKeypressShoot(event)" onmouseup="dispatchKeypressStopShoot(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
+        <div class="touch-controls-bar">
+            <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypressLeft(event)" onmouseup="dispatchKeypressStopLeft(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
+                <img src="./graphics/controls/run-left.svg" alt="">
+            </div>
+            <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypressJump(event)" onmouseup="dispatchKeypressStopJump(event)">
+                <img src="./graphics/controls/jump.svg" alt="">
+            </div>
+            <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypressRight(event)" onmouseup="dispatchKeypressStopRight(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
+                <img src="./graphics/controls/run-right.svg" alt="">
+            </div>
+        </div>
         <div class="menu-bar">
             <div class="life-amount">
                 <img src="./graphics/items/heart.png" alt="">
@@ -81,7 +82,8 @@
                 <img src="./graphics/controls/play-game.svg" class="fullscreen-off-svg" alt="" onclick="pauseGame()">
             </div>
             <div class="turn-fullscreen-off disNone">
-                <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt="" onclick="turnOffFullScreen()">
+                <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt=""
+                    onclick="turnOffFullScreen()">
             </div>
             <div class="turn-fullscreen-on">
                 <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen()">

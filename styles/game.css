@@ -53,11 +53,6 @@ p {
     overflow: hidden;
 }
 
-.canvas-cont .touch-control.left,
-.canvas-cont .touch-control.right {
-    display: block;
-}
-
 .canvas-cont canvas {
     display: block;
     background-color: black;
@@ -78,7 +73,7 @@ p {
 }
 
 .touch-controls {
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     width: 100%;
@@ -141,28 +136,20 @@ p {
 
 .canvas-cont .touch-control.left,
 .canvas-cont .touch-control.right {
-    width: 25%;
-    height: 80%;
-    position: absolute;
-    top: 0;
+    display: block;
+    width: fit-content;
+    height: 95%;
+    aspect-ratio: 1 / 1;
     background-color: transparent;
 }
 
-.canvas-cont .touch-control.jump {
-    width: 50%;
-    height: 80%;
+.canvas-cont .shoot {
+    width: 100%;
+    height: calc(2600%/27);
     position: absolute;
     top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.canvas-cont .touch-control.shoot {
-    width: 100%;
-    height: 20%;
-    position: absolute;
-    bottom: 0;
     left: 0;
+    z-index: 1;
 }
 
 .canvas-cont .touch-control.left {
@@ -197,8 +184,8 @@ p {
     width: 28px;
     height: fit-content;
     position: absolute;
-    top: 53px;
-    left: 10px;
+    top: 10px;
+    right: 10px;
     z-index: 5000;
     cursor: pointer;
 }
@@ -217,9 +204,12 @@ p {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
+    width: 80%;
+    aspect-ratio: 20 / 1;
     position: absolute;
-    right: 0;
-    bottom: 0;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: black;
 }
 
@@ -228,6 +218,10 @@ p {
     align-items: center;
     justify-content: space-evenly;
     width: 30%;
+}
+
+.canvas-cont .menu-bar img {
+    height: 100%;
 }
 
 .canvas-cont .menu-bar p {
@@ -311,16 +305,6 @@ p {
     height: 100%;
 }
 
-/* .turn-fullscreen-off {
-    position: absolute;
-    top: 30px;
-    right: 30px;
-    background-image: url('../graphics/controls/fullscreen-off.svg');
-    background-color: white;
-    border-radius: 100%;
-    z-index: 5000;
-} */
-
 .pause-game {
     width: 30px;
     height: 30px;
@@ -346,6 +330,7 @@ p {
     position: absolute;
     top: 0;
     left: 0;
+    z-index: 500;
 }
 
 .you-win-screen h1, .game-over-screen h1 {
@@ -415,8 +400,38 @@ p {
 }
 
 @media only screen and (max-width: 800px) {
-    .touch-controls {
+    .touch-controls-bar {
         display: flex;
+        align-items: center;
+        justify-content: center;
+        column-gap: 5%;
+        width: 95%;
+        height: calc(100%/27);
+        background-color: white;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .touch-controls-bar .left,
+    .touch-controls-bar .right {
+        display: flex;
+        width: fit-content;
+        height: 95%;
+    }
+
+    .touch-controls-bar .left {
+        transform: rotate(-90deg);
+    }
+
+    .touch-controls-bar .right {
+        transform: rotate(90deg);
+    }
+
+    .touch-controls-bar .jump {
+        width: 50%;
+        height: 95%;
     }
 
     .controls {
@@ -426,10 +441,5 @@ p {
     .canvas-cont {
         width: 100vw;
         height: 56.25vw;
-    }
-
-    .canvas-cont .touch-control.left,
-    .canvas-cont .touch-control.right {
-        display: block;
     }
 }
