@@ -399,7 +399,7 @@ p {
     margin-bottom: 1%;
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1000px) {
     .touch-controls-bar {
         display: flex;
         align-items: center;
