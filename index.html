@@ -42,7 +42,9 @@
                 <img src="./graphics/controls/run-left.svg" alt="">
             </div>
             <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypressJump(event)" onmouseup="dispatchKeypressStopJump(event)">
-                <p>jump</p>
+                <div class="jump-inner">
+                    <p>jump</p>
+                </div>
             </div>
             <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypressRight(event)" onmouseup="dispatchKeypressStopRight(event)" ontouchstart="dispatchKeypressRight(event)" ontouchend="dispatchKeypressStopRight(event)">
                 <img src="./graphics/controls/run-right.svg" alt="">
@@ -59,7 +61,7 @@
                 <img src="./graphics/items/special-ammo/rotation-0.png" alt="">
                 <p class="items-collected">0 / 3</p>
             </div>
-            <div class="defeated-enemies">
+            <div class="defeated-enemies disNone">
                 <img src="./graphics/enemies/green/attack/attack-left-0.png" alt="">
                 <p class="defeated-enemies-amount">0</p>
             </div>

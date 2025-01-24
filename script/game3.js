@@ -122,6 +122,23 @@ function pausePlayGameToggle() {
     }
 }
 
+function pauseGame() {
+    document.querySelector('.play-game').classList.remove('disNone');
+    document.querySelector('.pause-game').classList.add('disNone');
+    gamePaused = true;
+    keysUnheld = true;
+    pauseAllPlayers();
+    unholdAllKeys();
+}
+
+function unpauseGame() {
+    document.querySelector('.play-game').classList.add('disNone');
+    document.querySelector('.pause-game').classList.remove('disNone');
+    gamePaused = false;
+    keysUnheld = false;
+    playAllPlayers();
+}
+
 function timer() {
     if (!gamePaused) {
         t++;
@@ -189,7 +206,8 @@ function unholdAllKeys() {
     controller['right'].pressed = false;
     controller['jump'].pressed = false;
     controller['run'].pressed = false;
-    if(!gamePaused) { pausePlayGameToggle(); }
+    //if(!gamePaused) { pausePlayGameToggle(); }
+    
 }
 
 function saveCharProperties() {

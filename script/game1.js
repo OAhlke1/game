@@ -80,9 +80,9 @@ async function initFunctions() {
     presetMenuBarProperties();
     drawElements();
     if(!gameReloaded) { showDescription(); }
-    window.addEventListener('blur', ()=>{ unholdAllKeys(); });
+    window.addEventListener('blur', ()=>{ pauseGame(); });
     window.addEventListener('focus', ()=>{
-        pausePlayGameToggle();
+        unpauseGame();
         unholdAllKeys();
     });
     gamePaused = false;
