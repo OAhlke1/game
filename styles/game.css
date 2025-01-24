@@ -410,7 +410,6 @@ p {
         display: flex;
         align-items: flex-end;
         justify-content: center;
-        column-gap: 5%;
         width: 100%;
         height: calc(100%/27);
         background-color: transparent;
@@ -430,7 +429,7 @@ p {
         display: flex !important;
         align-items: flex-end;
         justify-content: center;
-        width: calc(100%/3) !important;
+        min-width: calc(100%/3) !important;
         height: 500% !important;
     }
 
@@ -450,7 +449,7 @@ p {
         display: flex !important;
         align-items: flex-end;
         justify-content: center;
-        width: 50%;
+        min-width: 50%;
         height: 500% !important;
     }
 
