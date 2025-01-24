@@ -22,30 +22,29 @@
             <div class="description-inner">
                 <h2>What's this game about?</h2>
                 <p>
-                    You have to collect all three ammo-crystals <img src="./graphics/items/special-ammo/rotation-0.png"
-                        alt=""> to get the special ammo
+                    You have to collect all three ammo-crystals <img src="./graphics/items/special-ammo/rotation-0.png" alt=""> to get the special ammo
                     <br>so that you can defeat the main boss.
                 </p>
                 <p>
                     <b>Controls:</b>
-                    <br>go left: left key / touch the left side of the gaming screen.
-                    <br>go left: right key / touch the right side of the gaming screen.
+                    <br>go left: left key / touch the go-left-touchbutton.
+                    <br>go left: right key / touch the go-right-touchbutton.
                     <br>run: hold SHIFT / touch the running-button.
-                    <br>jump: the spacebar / touch the center of the gaming screen.
+                    <br>jump: the spacebar / touch the go-jump-touchbutton.
                     <br>shoot: 'e' / touch the bottom of the gaming screen.
                 </p>
             </div>
         </div>
         <canvas width="1600" height="450" style="left: 0px;" lo></canvas>
-        <div class="touch-control shoot" button-type="e" button-code="69" onmousedown="dispatchKeypressShoot(event)" onmouseup="dispatchKeypressStopShoot(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)"></div>
+        <div class="touch-control shoot" button-type="e" button-code="69" onmousedown="dispatchKeypressShoot(event)" onmouseup="dispatchKeypressStopShoot(event)" ontouchstart="dispatchKeypressShoot(event)" ontouchend="dispatchKeypressStopShoot(event)"></div>
         <div class="touch-controls-bar">
-            <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypressLeft(event)" onmouseup="dispatchKeypressStopLeft(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
+            <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypressLeft(event)" onmouseup="dispatchKeypressStopLeft(event)" ontouchstart="dispatchKeypressLeft(event)" ontouchend="dispatchKeypressStopLeft(event)">
                 <img src="./graphics/controls/run-left.svg" alt="">
             </div>
             <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypressJump(event)" onmouseup="dispatchKeypressStopJump(event)">
-                <img src="./graphics/controls/jump.svg" alt="">
+                <p>jump</p>
             </div>
-            <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypressRight(event)" onmouseup="dispatchKeypressStopRight(event)" ontouchstart="dispatchKeypress(event)" ontouchend="dispatchKeypressStop(event)">
+            <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypressRight(event)" onmouseup="dispatchKeypressStopRight(event)" ontouchstart="dispatchKeypressRight(event)" ontouchend="dispatchKeypressStopRight(event)">
                 <img src="./graphics/controls/run-right.svg" alt="">
             </div>
         </div>

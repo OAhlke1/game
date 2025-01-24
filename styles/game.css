@@ -145,7 +145,7 @@ p {
 
 .canvas-cont .shoot {
     width: 100%;
-    height: calc(2600%/27);
+    height: calc(2300%/27);
     position: absolute;
     top: 0;
     left: 0;
@@ -412,6 +412,7 @@ p {
         bottom: 0;
         left: 50%;
         transform: translateX(-50%);
+        z-index: 400;
     }
 
     .touch-controls-bar .left,
@@ -431,7 +432,17 @@ p {
 
     .touch-controls-bar .jump {
         width: 50%;
-        height: 95%;
+        height: 100%;
+        background-color: black;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .touch-controls-bar .jump p {
+        font-family: 'nexion';
+        font-size: 12px;
+        color: white;
     }
 
     .controls {
