@@ -19,6 +19,7 @@ let gameMuted = false;
 let inFullscreen = false;
 let pageJustLoaded = true;
 let fullscreenButtonPressed = false;
+let keysBlockedForShifting = false;
 let keysUnheld;
 let ratioSmallBigScreenHeight;
 let aspectRatio;

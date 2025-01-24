@@ -131,7 +131,7 @@ function addKeypressMovingCommands() {
         } else if (event.key.toLowerCase() === "m") {
             gameSoundToggle();
         }
-        if (!keysUnheld) {
+        if (!keysUnheld && !keysBlockedForShifting) {
             if (event.key === "ArrowLeft") {
                 if (!controller['left'].pressed) {
                     controller['left'].pressed = true;
@@ -152,7 +152,7 @@ function addKeypressMovingCommands() {
         }
     });
     body.addEventListener('keyup', (event) => {
-        if (!keysUnheld) {
+        if (!keysUnheld && !keysBlockedForShifting) {
             if (event.key === "ArrowLeft") {
                 controller['left'].pressed = false;
                 clearInterval(char.movingAnimationId);
@@ -164,7 +164,7 @@ function addKeypressMovingCommands() {
                 slowDownChar();
             } else if (event.key.toLowerCase() === "e" && char.isAlive) {
                 createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.75 * widthUnit, 0.25 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
-            } //else if (event.key === "Escape") { turnOffFullScreen(); }
+            } else if (event.key === "Escape") { turnOffFullScreen(); }
         }
     });
 }
@@ -458,10 +458,6 @@ function sizeElements() {
     standardFrameRate = inFullscreen ? standardFrameRate / ratioSmallBigScreenHeight : 12;
     fullScreenButtonToggle();
     resizePlatformsProperties();
-    resizeBackgroundsProperties();
-    resizeHitablesProperties();
-    resizeCharProperties();
-    resizeItemsProperties();
 }
 
 function setScreenProperties() {

@@ -53,6 +53,7 @@ class Char {
     jumpingImages;
     ammoImages;
     underGround;
+    floorPosition;
 
     constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0, healthAmount) {
         this.width = width;
@@ -104,6 +105,7 @@ class Char {
         this.jumpingSound = new Audio();
         this.jumpingSound.src = './sounds/jump.ogg';
         this.jumpingSound.volume = 0.5;
+        this.floorPosition = y;
         this.hitImagesArrays = {
             left: [],
             right: []

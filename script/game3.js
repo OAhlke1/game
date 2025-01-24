@@ -68,6 +68,7 @@ function resizeHitablesProperties() {
 function resizeCharProperties() {
     char.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     char.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
+    char.floorPosition *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     char.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     char.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     char.stepLength *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -94,7 +95,6 @@ function resizeItemsProperties() {
         elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
-    //sizeMenuBarProperties();
 }
 
 function sizeMenuBarProperties() {
@@ -152,21 +152,30 @@ function timer() {
 }
 
 function shiftCanvasBack() {
+    let startingOffset = parseFloat(canvas.style.left);
     if(char.isAlive) {
+        if(parseFloat(canvas.style.left) === startingOffset) { unholdAllKeys(); }
+        keysBlockedForShifting = true;
         canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
+        pauseGame();
         if(parseFloat(canvas.style.left) >= 0) {
             canvas.style.left = '0px';
             resetCharPosition();
-            gamePaused = false;
+            keysBlockedForShifting = false;
+            char.stepLength = char.standardStepLength;
+            unpauseGame();
             clearInterval(shiftingCanvasBackAnimationId);
             return;
         }
     }else { clearInterval(shiftingCanvasBackAnimationId); }
+    return;
 }
 
 function resetCharPosition() {
+    console.log(widthUnit, heightUnit);
     char.x = widthUnit;
-    char.y = 25*heightUnit;
+    char.y = char.floorPosition;
+    slowDownChar();
 }
 
 async function resetGame() {
@@ -206,7 +215,6 @@ function unholdAllKeys() {
     controller['right'].pressed = false;
     controller['jump'].pressed = false;
     controller['run'].pressed = false;
-    //if(!gamePaused) { pausePlayGameToggle(); }
     
 }
 
