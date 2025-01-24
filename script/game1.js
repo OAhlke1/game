@@ -85,7 +85,12 @@ async function initFunctions() {
         unpauseGame();
         unholdAllKeys();
     });
+    document.addEventListener('deviceorientation', (event)=>{ handleOrientation(event); }, true);
     gamePaused = false;
+}
+
+function handleOrientation(event) {
+    console.log(event);
 }
 
 function clearLocalStorage() {

@@ -108,7 +108,6 @@ function dispatchKeypressStopShoot(event) {
         keyCode: +event.target.closest('.touch-control').getAttribute('button-code'),
         bubbles: true
     });
-    console.log(keyUpEvent);
     body.dispatchEvent(keyUpEvent);
 }
 
