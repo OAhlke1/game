@@ -70,17 +70,17 @@
             <img src="./graphics/open-menu-bar.svg" alt="">
         </div>
         <div class="controls disNone">
-            <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
+            <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
                 <div class="volumebar">
                     <div class="volumebar-inner"></div>
                 </div>
             </div>
             <div class="mute-game" onclick="muteGame()"></div>
-            <div class="pause-game disNone">
-                <img src="./graphics/controls/pause-game.svg" class="fullscreen-off-svg" alt="" onclick="pauseGame()">
-            </div>
+            <!-- <div class="pause-game disNone">
+                <img src="./graphics/controls/pause-game.svg" class="fullscreen-off-svg" alt="" onclick="pausePlayGameToggle()">
+            </div> -->
             <div class="play-game disNone">
-                <img src="./graphics/controls/play-game.svg" class="fullscreen-off-svg" alt="" onclick="pauseGame()">
+                <img src="./graphics/controls/play-game.svg" class="fullscreen-off-svg" alt="" onclick="canContControlsToggle()">
             </div>
             <div class="turn-fullscreen-off disNone">
                 <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt=""

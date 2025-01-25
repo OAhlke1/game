@@ -107,14 +107,10 @@ function sizeMenuBarProperties() {
 
 function pausePlayGameToggle() {
     if (gamePaused) {
-        document.querySelector('.play-game').classList.add('disNone');
-        document.querySelector('.pause-game').classList.remove('disNone');
         gamePaused = false;
         keysUnheld = false;
         playAllPlayers();
     } else {
-        document.querySelector('.play-game').classList.remove('disNone');
-        document.querySelector('.pause-game').classList.add('disNone');
         gamePaused = true;
         keysUnheld = true;
         pauseAllPlayers();
@@ -123,8 +119,6 @@ function pausePlayGameToggle() {
 }
 
 function pauseGame() {
-    document.querySelector('.play-game').classList.remove('disNone');
-    document.querySelector('.pause-game').classList.add('disNone');
     gamePaused = true;
     keysUnheld = true;
     pauseAllPlayers();
@@ -132,8 +126,6 @@ function pauseGame() {
 }
 
 function unpauseGame() {
-    document.querySelector('.play-game').classList.add('disNone');
-    document.querySelector('.pause-game').classList.remove('disNone');
     gamePaused = false;
     keysUnheld = false;
     playAllPlayers();
@@ -215,7 +207,6 @@ function unholdAllKeys() {
     controller['right'].pressed = false;
     controller['jump'].pressed = false;
     controller['run'].pressed = false;
-    
 }
 
 function saveCharProperties() {
@@ -262,9 +253,7 @@ function canContControlsToggle() {
         if(!description.classList.contains('disNone')) {
             hideDescription();
             return;
-        }else if(!gamePaused) {
-            pausePlayGameToggle();
-        }
+        }else if(!gamePaused) { pausePlayGameToggle(); }
     }else {
         controlsBar.classList.add('disNone');
         if(!description.classList.contains('disNone')) {

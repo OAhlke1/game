@@ -353,8 +353,8 @@ function checkVolumeBarEvent(event) {
 }
 
 let setWholeVolume = function setWholeVolumeFunc(event) {
-    let volumeBarInner = event.target.closest('.volumebar').querySelector('.volumebar-inner');
-    let volumeBarWidth = event.target.closest('.volumebar').offsetWidth;
+    let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
+    let volumeBarWidth = event.target.closest('.volumebar-cont').offsetWidth;
     let x = event.clientX;
     gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
     gameVolume = gameVolume > 1 ? 1 : gameVolume;
