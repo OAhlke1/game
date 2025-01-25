@@ -433,7 +433,7 @@ async function turnOnFullScreen() {
         canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
         fullscreenButtonPressed = false;
         if (gamePaused) { pausePlayGameToggle(); }
-        resetScreenProperties();
+        fullScreenButtonToggle();
     })
 }
 
@@ -449,15 +449,8 @@ async function turnOffFullScreen() {
     await document.exitFullscreen().then(() => {
         fullscreenButtonPressed = false;
         if (gamePaused) { pausePlayGameToggle(); }
-        resetScreenProperties();
+        fullScreenButtonToggle();
     })
-}
-
-function sizeElements() {
-    setScreenProperties();
-    standardFrameRate = inFullscreen ? standardFrameRate / ratioSmallBigScreenHeight : 12;
-    fullScreenButtonToggle();
-    resizePlatformsProperties();
 }
 
 function setScreenProperties() {
@@ -465,19 +458,4 @@ function setScreenProperties() {
     canCont.style.height = `${0.7 * screen.height}px`;
     canvas.setAttribute('width', 2 * canCont.offsetWidth);
     canvas.setAttribute('height', canCont.offsetHeight);
-}
-
-function resetScreenProperties() {
-    fullScreenButtonToggle();
-}
-
-function fullScreenButtonToggle() {
-    if (inFullscreen) {
-        document.querySelector('.turn-fullscreen-on').classList.add('disNone');
-        document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
-    } else {
-        document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
-        document.querySelector('.turn-fullscreen-off').classList.add('disNone');
-    }
-    resizeCanvasProperties();
 }

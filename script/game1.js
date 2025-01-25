@@ -20,6 +20,7 @@ let inFullscreen = false;
 let pageJustLoaded = true;
 let fullscreenButtonPressed = false;
 let keysBlockedForShifting = false;
+let deviceRotated = false;
 let keysUnheld;
 let ratioSmallBigScreenHeight;
 let aspectRatio;
@@ -64,13 +65,13 @@ let openDescription = document.querySelector('.open-description');
 let closeDescription = document.querySelector('.close-description');
 let gameReloaded;
 
-async function initFunctions() {
+function initFunctions() {
     gamePaused = true;
     gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
     window.addEventListener('click', ()=>{ if(!bgPlayer) { loadPlayer(); }});
     createScreen();
     setScreenProperties();
-    await setSizeUnits();
+    setSizeUnits();
     createBackgrounds();
     if(!char) { createChar(); }
     addKeypressMovingCommands();
@@ -83,16 +84,15 @@ async function initFunctions() {
     if(!gameReloaded) { showDescription(); }
     document.addEventListener('blur', ()=>{ pauseGame(); });
     document.addEventListener('focus', ()=>{
-        console.log('Hello world!');
         if(document.querySelector('.controls').classList.contains('disNone') && document.querySelector('.description').classList.contains('disNone')) { unpauseGame(); }
         unholdAllKeys();
     });
-    document.addEventListener('deviceorientation', (event)=>{ handleOrientation(event); }, true);
+    window.addEventListener('resize', handleOrientation);
     gamePaused = false;
 }
 
-function handleOrientation(event) {
-    alert(screen.width, screen.height);
+function handleOrientation() {
+    if(!inFullscreen) { location.reload(); }
 }
 
 function clearLocalStorage() {

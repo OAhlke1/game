@@ -1,3 +1,14 @@
+function fullScreenButtonToggle() {
+    if (inFullscreen) {
+        document.querySelector('.turn-fullscreen-on').classList.add('disNone');
+        document.querySelector('.turn-fullscreen-off').classList.remove('disNone');
+    } else {
+        document.querySelector('.turn-fullscreen-on').classList.remove('disNone');
+        document.querySelector('.turn-fullscreen-off').classList.add('disNone');
+    }
+    resizeCanvasProperties();
+}
+
 function resizeCanvasProperties() {
     canvas.setAttribute("width", inFullscreen ? 2*screen.width : 2*canCont.offsetWidth);
     canvas.setAttribute("height", inFullscreen ? screen.height : canCont.offsetHeight);
@@ -95,6 +106,8 @@ function resizeItemsProperties() {
         elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
+    deviceRotated = false;
+    window.addEventListener('resize', handleOrientation);
 }
 
 function sizeMenuBarProperties() {
