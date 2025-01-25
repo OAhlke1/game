@@ -92,7 +92,7 @@ async function initFunctions() {
 }
 
 function handleOrientation(event) {
-    console.log(event);
+    alert(screen.width, screen.height);
 }
 
 function clearLocalStorage() {
