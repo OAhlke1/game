@@ -21,6 +21,21 @@ body {
     margin: 0;
 }
 
+button {
+    width: fit-content;
+    height: fit-content;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+button.reset-button {
+    font-family: 'space-armor';
+    font-size: 15px;
+    color: white;
+}
+
 h1, h2 {
     font-family: 'space-armor', Verdana, sans-serif;
 }
@@ -338,7 +353,7 @@ p {
 }
 
 .you-win-screen h1, .game-over-screen h1, .rotate-device-screen h1 {
-    font-size: 16px;
+    font-size: 30px;
     margin: 0;
     padding: 0;
 }
@@ -412,7 +427,7 @@ p {
     display: none;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen and (max-width: 800px) {
     .touch-controls-bar {
         display: flex;
         align-items: flex-end;

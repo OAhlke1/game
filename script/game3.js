@@ -1,3 +1,76 @@
+function checkIfBigBossVisible() {
+    if (bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width / 3) {
+        bigBoss.isVisible = true;
+        bigBoss.animateShooting();
+    } else { bigBoss.isVisible = false; }
+}
+
+function setMenubarPosition() {
+    menubar.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+    menubarBackground.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+}
+
+function setCanvasSize() {
+    canvas.style.width = `${2 * canCont.offsetWidth}px`;
+    canvas.style.height = `${canCont.offsetHeight}px`;
+}
+
+function checkVolumeBarEvent(event) {
+    if (event.type === "mousedown" || event.type === "touchstart") {
+        controller['volume'].pressed = true;
+        document.querySelector('.controls .volumebar-cont').addEventListener('mousemove', setWholeVolume);
+    } else if (event.type === "mouseup" || event.type === "touchend") {
+        controller['volume'].pressed = false;
+        event.target.closest('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
+        event.target.closest('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
+    }
+}
+
+let setWholeVolume = function setWholeVolumeFunc(event) {
+    let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
+    let volumeBarWidth = event.target.closest('.volumebar-cont').offsetWidth;
+    let x = event.clientX;
+    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
+    gameVolume = gameVolume > 1 ? 1 : gameVolume;
+    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
+    if (!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem) => { elem.volume = gameVolume; }); }
+}
+
+function gameSoundToggle() {
+    if (!gameMuted) {
+        document.querySelector('.mute-game').classList.add('muted');
+        audioPlayer.forEach((elem) => { elem.volume = 0; });
+        muteAllPlayers();
+        gameMuted = true;
+    } else {
+        document.querySelector('.mute-game').classList.remove('muted');
+        unmuteAllPlayers();
+        gameMuted = false;
+    }
+}
+
+function muteAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        elem.hittingSound.volume = 0;
+        if (elem.shootingSound) { elem.shootingSound.volume = 0; }
+        if (elem.fallingSound) { elem.fallingSound.volume = 0; }
+    });
+    char.hittingSound.volume = 0;
+    char.shootingSound.volume = 0;
+    bgPlayer.volume = 0;
+}
+
+function unmuteAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        elem.hittingSound.volume = 0.5;
+        if (elem.shootingSound) { elem.shootingSound.volume = 0.5; }
+        if (elem.fallingSound) { elem.fallingSound.volume = 0.5; }
+    });
+    char.hittingSound.volume = 0.5;
+    char.shootingSound.volume = 0.5;
+    bgPlayer.volume = 0.125;
+}
+
 function pauseAllPlayers() {
     hitables.enemies.forEach((elem) => {
         if (elem.hittingSound.currentTime > 0) { elem.hittingSound.pause(); }
@@ -328,54 +401,4 @@ function saveNotCollectedItems() {
         collected.lifeIncreasing.push(elem.collected);
     });
     localStorage.setItem("items", JSON.stringify(collected));
-}
-
-function saveNotDefeatedEnemies() {
-    let alive = [];
-    hitables.enemies.forEach((elem)=>{
-        alive.push(elem.isAlive);
-    });
-    localStorage.setItem("enemies", JSON.stringify(alive));
-    for(let i=0; i<hitables.enemies.length; i++) { hitables.enemies[i].isAlive = alive[i]; }
-}
-
-function allAmmoKitsCollected() {
-    if(char.specialAmmoParts === 3) {
-        char.shootingSound = './sounds/special-shooting-sound.png';
-    }
-}
-
-function canContControlsToggle() {
-    if(controlsBar.classList.contains('disNone')) {
-        controlsBar.classList.remove('disNone');
-        if(!description.classList.contains('disNone')) {
-            hideDescription();
-            return;
-        }else if(!gamePaused) { pausePlayGameToggle(); }
-    }else {
-        controlsBar.classList.add('disNone');
-        if(!description.classList.contains('disNone')) {
-            return;
-        }else if(gamePaused){ pausePlayGameToggle(); }
-    }
-}
-
-function showDescription() {
-    openDescription.classList.add('disNone');
-    closeDescription.classList.remove('disNone');
-    description.classList.remove('disNone');
-    if(!controlsBar.classList.contains('disNone')) {
-        canContControlsToggle();
-        return;
-    }else { pausePlayGameToggle(); }
-}
-
-function hideDescription() {
-    openDescription.classList.remove('disNone');
-    closeDescription.classList.add('disNone');
-    description.classList.add('disNone');
-    if(!controlsBar.classList.contains('disNone')) {
-        return;
-    }else { pausePlayGameToggle(); }
-    localStorage.setItem('reloaded', JSON.stringify(true));
 }

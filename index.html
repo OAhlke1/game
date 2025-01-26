@@ -19,12 +19,12 @@
                 <br><span>(After rotating, the page reloads automatically)</span>
             </p>
         </div>
-        <div class="open-description" onclick="showDescription()" ontouch="descriptionToggle()">
+        <button class="open-description" onclick="showDescription()" ontouch="descriptionToggle()">
             <p>?</p>
-        </div>
-        <div class="close-description disNone" onclick="hideDescription()">
+        </button>
+        <button class="close-description disNone" onclick="hideDescription()">
             <img src="./graphics/close.svg" alt="">
-        </div>
+        </button>
         <div class="description disNone">
             <div class="description-inner">
                 <h2>What's this game about?</h2>
@@ -74,37 +74,37 @@
                 <p class="defeated-enemies-amount">0</p>
             </div>
         </div>
-        <div class="canvas-cont-controls-toggle" onclick="canContControlsToggle()">
+        <button class="canvas-cont-controls-toggle" onclick="canContControlsToggle()">
             <img src="./graphics/open-menu-bar.svg" alt="">
-        </div>
+        </button>
         <div class="controls disNone">
             <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
                 <div class="volumebar">
                     <div class="volumebar-inner"></div>
                 </div>
             </div>
-            <div class="mute-game" onclick="muteGame()"></div>
+            <button class="mute-game" onclick="pauseAllPlayers()"></button>
             <!-- <div class="pause-game disNone">
                 <img src="./graphics/controls/pause-game.svg" class="fullscreen-off-svg" alt="" onclick="pausePlayGameToggle()">
             </div> -->
-            <div class="play-game">
+            <button class="play-game">
                 <img src="./graphics/controls/play-game.svg" class="fullscreen-off-svg" alt="" onclick="canContControlsToggle()">
-            </div>
-            <div class="turn-fullscreen-off disNone">
+            </button>
+            <button class="turn-fullscreen-off disNone">
                 <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt=""
                     onclick="turnOffFullScreen(event)">
-            </div>
-            <div class="turn-fullscreen-on">
+            </button>
+            <button class="turn-fullscreen-on">
                 <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen(event)">
-            </div>
+            </button>
         </div>
         <div class="you-win-screen disNone">
             <h1>YOU MADE IT!!</h1>
-            <button onclick="resetGame()">Restart game</button>
+            <button class="reset-button" onclick="resetGame()">Restart game</button>
         </div>
         <div class="game-over-screen disNone">
             <h1>GAME OVER</h1>
-            <button onclick="resetGame()">Restart game</button>
+            <button class="reset-button" onclick="resetGame()">Restart game</button>
         </div>
     </div>
 </body>
@@ -129,5 +129,6 @@
 <script src="script/game1.js"></script>
 <script src="script/game2.js"></script>
 <script src="script/game3.js"></script>
+<script src="script/game4.js"></script>
 
 </html>

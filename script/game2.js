@@ -1,3 +1,66 @@
+
+
+function createSpecialAmmosAnimationImages() {
+    for(let i=0; i<items.specialAmmo.length; i++) {
+        for(let j=0; j<7; j++) {
+            let rotationImage = new Image();
+            rotationImage.src = `./graphics/items/special-ammo/rotation-${j}.png`;
+            items.specialAmmo[i].rotationImages.push(rotationImage);
+        }
+    }
+}
+
+function presetMenuBarProperties() {
+    menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${char.specialAmmoParts}/3`;
+    menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
+    menuBar.querySelector('.life-amount .life-amount-bar .life-amount-bar-inner').style.width = `${100*char.healthAmount/char.maxHealthAmount}%`;
+}
+
+function setMenuBarProperties(menuType) {
+    switch(menuType) {
+        case "specialAmmo":
+            menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${char.specialAmmoParts}/3`;
+            break;
+        case "enemy":
+            menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
+            break;
+        case "char":
+            menuBar.querySelector('.life-amount .life-amount-bar .life-amount-bar-inner').style.width = `${100*char.healthAmount/char.maxHealthAmount}%`;
+    }
+}
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, 2*canCont.offsetWidth, canCont.offsetHeight);
+    debugger;
+}
+
+function drawElements() {
+    drawBackgrounds();
+    drawPlatforms();
+    drawHitables();
+    drawItems();
+    drawChar();
+    drawCharObjects();
+    requestAnimationFrame(()=>{ drawElements(); });
+}
+
+function drawBackgrounds() {
+    backgrounds.forEach((elem) => {
+        ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
+    });
+}
+
+function drawMenuBar() {
+    menubarBackground.createMenubarBackground();
+    menuBar.writeMenuTexts();
+}
+
+function drawPlatforms() {
+    platforms.forEach((elem) => {
+        ctx.drawImage(elem.platformImage, elem.x, elem.y, elem.width, elem.height);
+    });
+}
+
 function drawHitables() {
     hitables.traps.forEach((elem) => {
         if (elem || elem.isDangerous) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
@@ -340,77 +403,4 @@ function checkForScrolling(movingDirection = char.movingDirection) {
         canvas.style.left = `-${char.standardStepLength * char.scrollingStepAmount}px`;
         checkIfBigBossVisible();
     }
-}
-
-function checkIfBigBossVisible() {
-    if (bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width / 3) {
-        bigBoss.isVisible = true;
-        bigBoss.animateShooting();
-    } else { bigBoss.isVisible = false; }
-}
-
-function setMenubarPosition() {
-    menubar.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
-    menubarBackground.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
-}
-
-function setCanvasSize() {
-    canvas.style.width = `${2 * canCont.offsetWidth}px`;
-    canvas.style.height = `${canCont.offsetHeight}px`;
-}
-
-function checkVolumeBarEvent(event) {
-    if (event.type === "mousedown" || event.type === "touchstart") {
-        controller['volume'].pressed = true;
-        document.querySelector('.controls .volumebar-cont').addEventListener('mousemove', setWholeVolume);
-    } else if (event.type === "mouseup" || event.type === "touchend") {
-        controller['volume'].pressed = false;
-        event.target.closest('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
-        event.target.closest('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
-    }
-}
-
-let setWholeVolume = function setWholeVolumeFunc(event) {
-    let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
-    let volumeBarWidth = event.target.closest('.volumebar-cont').offsetWidth;
-    let x = event.clientX;
-    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
-    gameVolume = gameVolume > 1 ? 1 : gameVolume;
-    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
-    if (!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem) => { elem.volume = gameVolume; }); }
-}
-
-function gameSoundToggle() {
-    if (!gameMuted) {
-        document.querySelector('.mute-game').classList.add('muted');
-        audioPlayer.forEach((elem) => { elem.volume = 0; });
-        muteAllPlayers();
-        gameMuted = true;
-    } else {
-        document.querySelector('.mute-game').classList.remove('muted');
-        unmuteAllPlayers();
-        gameMuted = false;
-    }
-}
-
-function muteAllPlayers() {
-    hitables.enemies.forEach((elem) => {
-        elem.hittingSound.volume = 0;
-        if (elem.shootingSound) { elem.shootingSound.volume = 0; }
-        if (elem.fallingSound) { elem.fallingSound.volume = 0; }
-    });
-    char.hittingSound.volume = 0;
-    char.shootingSound.volume = 0;
-    bgPlayer.volume = 0;
-}
-
-function unmuteAllPlayers() {
-    hitables.enemies.forEach((elem) => {
-        elem.hittingSound.volume = 0.5;
-        if (elem.shootingSound) { elem.shootingSound.volume = 0.5; }
-        if (elem.fallingSound) { elem.fallingSound.volume = 0.5; }
-    });
-    char.hittingSound.volume = 0.5;
-    char.shootingSound.volume = 0.5;
-    bgPlayer.volume = 0.125;
 }
