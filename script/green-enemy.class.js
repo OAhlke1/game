@@ -1,5 +1,5 @@
 class GreenEnemy extends Enemy {
-    constructor(x, y, width, height, enemyType, imagePath, decreaseHealthAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount, isAlive) {
+    constructor(x, y, width, height, enemyType, decreaseHealthAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount, isAlive) {
         super();
         this.x = x;
         this.standardX = x;
@@ -8,7 +8,7 @@ class GreenEnemy extends Enemy {
         this.width = width;
         this.height = height,
         this.image = new Image();
-        this.image.src = imagePath;
+        this.image.src = './graphics/enemies/green/attack/attack-left-0.png';
         this.enemyType = enemyType;
         this.decreaseHealthAmount = decreaseHealthAmount;
         this.canShoot = canShoot;

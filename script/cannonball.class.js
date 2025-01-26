@@ -18,32 +18,27 @@ class Cannonball extends Enemy {
     }
 
     animateTrajectory() {
-        if(this.inCanvas){
-            if(!gamePaused) {
-                switch(this.flyingDirection) {
-                    case "left":
-                        if(this.x + this.width <= 0) { return; }
-                        this.x -= 5;
-                        break;
-                    case "right":
-                        if(this.x + this.width >= canvas.offsetWidth) { return; }
-                        this.x += 5;
-                        break;
-                }
-                if(this.checkIfCannonballLeftCanvas()) {
-                    this.inCanvas = false;
-                    this.isDangerous = false;
-                }
-                if(this.checkIfHittingChar() && this.isDangerous) {
-                    this.inCanvas = false;
-                    this.isDangerous = false;
-                    this.hittingChar();
-                }
+        if(this.inCanvas && !gamePaused){
+            switch(this.flyingDirection) {
+                case "left":
+                    if(this.x + this.width <= 0) { return; }
+                    this.x -= 5;
+                    break;
+                case "right":
+                    if(this.x + this.width >= canvas.offsetWidth) { return; }
+                    this.x += 5;
+                    break;
             }
-        }else {
-            clearInterval(this.trajectoryIntervalId);
-            return;
-        }
+            if(this.checkIfCannonballLeftCanvas()) {
+                this.inCanvas = false;
+                this.isDangerous = false;
+            }
+            if(this.checkIfHittingChar() && this.isDangerous) {
+                this.inCanvas = false;
+                this.isDangerous = false;
+                this.hittingChar();
+            }
+        }else { clearInterval(this.trajectoryIntervalId); }
     }
     
     checkIfCannonballLeftCanvas () {

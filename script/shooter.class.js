@@ -13,12 +13,12 @@ class Shooter extends Enemy {
         this.standardY = y;
         this.width = width;
         this.height = height,
+        this.enemyType = enemyType;
+        this.lookingDirection = lookingDirection;
         this.image = new Image();
         this.image.src = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;
-        this.enemyType = enemyType;
         this.decreaseHealthAmount = decreaseHealthAmount;
         this.canShoot = canShoot;
-        this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
         this.maxLifeAmount = lifeAmount;
         this.standardImgPath = `./graphics/enemies/${enemyType}/attack/attack-${lookingDirection}-0.png`;

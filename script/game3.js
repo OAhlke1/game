@@ -1,3 +1,67 @@
+function pauseAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.pause(); }
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.pause(); }
+    });
+    hitables.flyables.forEach((elem) => {
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+    });
+    if (char.hittingSound.currentTime > 0) { char.hittingSound.pause(); }
+    if (char.shootingSound.currentTime > 0) { char.shootingSound.pause(); }
+    if (bgPlayer) { bgPlayer.pause(); }
+}
+
+function playAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.play(); }
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
+        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
+    });
+    if (char.hittingSound.currentTime > 0) { char.hittingSound.play(); }
+    if (char.shootingSound.currentTime > 0) { char.shootingSound.play(); }
+    if (bgPlayer) { bgPlayer.play(); };
+}
+
+async function turnOnFullScreen() {
+    inFullscreen = true;
+    setScreenProperties();
+    window.removeEventListener('resize', showHideRotateScreen);
+    document.querySelector('.canvas-cont .controls').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
+    document.querySelector('.game-headline').classList.add('disNone');
+    await body.requestFullscreen().then(() => {
+        fullscreenButtonPressed = false;
+        fullScreenButtonToggle();
+    })
+}
+
+async function turnOffFullScreen() {
+    inFullscreen = false;
+    setScreenProperties();
+    document.querySelector('.canvas-cont .controls').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
+    document.querySelector('.game-headline').classList.remove('disNone');
+    await document.exitFullscreen().then(() => {
+        fullscreenButtonPressed = false;
+        fullScreenButtonToggle();
+    })
+}
+
+function setScreenProperties() {
+    if(inFullscreen) {
+        canCont.style.width = `${screen.width}px`;
+        canCont.style.height = `${screen.height}px`;
+    }else {
+        canCont.style.width = `${0.7 * screen.width}px`;
+        canCont.style.height = `${0.7 * screen.height}px`;
+    }
+    canvas.setAttribute('width', 32*canCont.offsetHeight/9);
+    canvas.setAttribute('height', canCont.offsetHeight);
+}
+
 function fullScreenButtonToggle() {
     if (inFullscreen) {
         document.querySelector('.turn-fullscreen-on').classList.add('disNone');
@@ -43,6 +107,13 @@ function resizeBackgroundsProperties() {
 }
 
 function resizeHitablesProperties() {
+    resizeEnemies();
+    resizeTraps();
+    resizeFlyables();
+    resizeCharProperties();
+}
+
+function resizeEnemies() {
     hitables.enemies.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -54,6 +125,9 @@ function resizeHitablesProperties() {
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.distanceToSeeChar *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
+}
+
+function resizeTraps() {
     hitables.traps.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -65,6 +139,9 @@ function resizeHitablesProperties() {
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.startingXPos *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
+}
+
+function resizeFlyables() {
     hitables.flyables.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -73,7 +150,6 @@ function resizeHitablesProperties() {
         elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
-    resizeCharProperties();
 }
 
 function resizeCharProperties() {
@@ -90,6 +166,11 @@ function resizeCharProperties() {
 }
 
 function resizeItemsProperties() {
+    resizeLifeIncreaser();
+    resizeSpecialAmmoParts();
+}
+
+function resizeLifeIncreaser() {
     items.lifeIncreasing.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -98,6 +179,9 @@ function resizeItemsProperties() {
         elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
+}
+
+function resizeSpecialAmmoParts() {
     items.specialAmmo.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.standardX *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -106,8 +190,6 @@ function resizeItemsProperties() {
         elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
         elem.height *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     })
-    deviceRotated = false;
-    window.addEventListener('resize', handleOrientation);
 }
 
 function sizeMenuBarProperties() {
@@ -164,16 +246,20 @@ function shiftCanvasBack() {
         canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
         pauseGame();
         if(parseFloat(canvas.style.left) >= 0) {
-            canvas.style.left = '0px';
-            resetCharPosition();
-            keysBlockedForShifting = false;
-            char.stepLength = char.standardStepLength;
-            unpauseGame();
-            clearInterval(shiftingCanvasBackAnimationId);
+            whenCanvasIsShiftedBack();
             return;
         }
-    }else { clearInterval(shiftingCanvasBackAnimationId); }
+    }else {clearInterval(shiftingCanvasBackAnimationId); }
     return;
+}
+
+function whenCanvasIsShiftedBack() {
+    canvas.style.left = '0px';
+    resetCharPosition();
+    keysBlockedForShifting = false;
+    char.stepLength = char.standardStepLength;
+    unpauseGame();
+    clearInterval(shiftingCanvasBackAnimationId);
 }
 
 function resetCharPosition() {
@@ -242,7 +328,6 @@ function saveNotCollectedItems() {
         collected.lifeIncreasing.push(elem.collected);
     });
     localStorage.setItem("items", JSON.stringify(collected));
-    
 }
 
 function saveNotDefeatedEnemies() {

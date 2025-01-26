@@ -30,6 +30,8 @@ class Enemy {
     hitImagesArrays;
 
     constructor(x, y, width, height, imgPath, enemyType, decreaseHealthAmount, canShoot, lookingDirection, lifeAmount, walks, hitImagesAmount, attackingImagesAmount) {
+        this.enemyType = enemyType;
+        this.lookingDirection = lookingDirection;
         this.x = x;
         this.standardX = x;
         this.y = y;
@@ -38,14 +40,10 @@ class Enemy {
         this.maxX = canvas.offsetWidth - widthUnit;
         this.width = width;
         this.height = height;
-        this.image = new Image();
-        this.image.src = imgPath;
         this.standardImgPath = imgPath;
-        this.enemyType = enemyType;
         this.decreaseHealthAmount = decreaseHealthAmount;
         this.isDangerous = true;
         this.canShoot = canShoot;
-        this.lookingDirection = lookingDirection;
         this.lifeAmount = lifeAmount;
         this.maxLifeAmount = lifeAmount;
         this.hitImagesAmount = hitImagesAmount;
@@ -161,28 +159,29 @@ class Enemy {
             if (this.hittingIndex === 0 && this.hittingAnimationIndex === 0 && !gameMuted) { this.playHittingSound(); }
             this.hittingAnimationIndex++;
             if (this.hittingAnimationIndex === 2) {
-                this.hittingAnimationIndex = 0;
-                if (this.lifeAmount <= 0) {
-                    this.lifeAmount = 0;
-                    this.isDangerous = false;
-                    if (this.enemyType != "big-boss") {
-                        this.isAlive = false;
-                    } else {
-                        this.isDefeated = true;
-                        clearInterval(this.animateLevitationId);
-                        this.animateLevitationId = setInterval(() => { this.animateFalling(); }, standardFrameRate);
-                        if (this.fallingSound.paused) { this.playFallingSound(); }
-                    }
-                    saveNotDefeatedEnemies();
-                    setMenuBarProperties("enemy");
-                } else if (this.lifeAmount > 0) {
-                    this.isDangerous = true;
-                }
-                clearInterval(this.hittingAnimationId);
+                this.atEndOfHittingEnemyAnimation();
                 return;
             }
         }
         return;
+    }
+
+    atEndOfHittingEnemyAnimation() {this.hittingAnimationIndex = 0;
+        if (this.lifeAmount <= 0) {
+            this.lifeAmount = 0;
+            this.isDangerous = false;
+            if (this.enemyType != "big-boss") {
+                this.isAlive = false;
+            } else {
+                this.isDefeated = true;
+                clearInterval(this.animateLevitationId);
+                this.animateLevitationId = setInterval(() => { this.animateFalling(); }, standardFrameRate);
+                if (this.fallingSound.paused) { this.playFallingSound(); }
+            }
+            saveNotDefeatedEnemies();
+            setMenuBarProperties("enemy");
+        } else if (this.lifeAmount > 0) { this.isDangerous = true; }
+        clearInterval(this.hittingAnimationId);
     }
 
     isHitableAgain() {

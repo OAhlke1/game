@@ -125,75 +125,61 @@ class Char {
     }
 
     moveLeft(key) {
-        if (controller['left'].pressed) {
-            if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
-                    this.checkIfFalling();
-                }
-                this.setMovingState(key);
-                checkForScrolling();
-                if (this.x <= this.stepLength + widthUnit) {
-                    this.x = widthUnit + 1;
-                    return;
-                } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
-            }
+        if (controller['left'].pressed && !gamePaused && this.isAlive) {
+            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) { this.checkIfFalling(); }
+            this.setMovingState(key);
+            checkForScrolling();
+            if (this.x <= this.stepLength + widthUnit) {
+                this.x = widthUnit + 1;
+                return;
+            } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
         }
     }
 
     moveRight(key) {
-        if (controller['right'].pressed) {
-            if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
-                    this.checkIfFalling();
-                }
-                this.setMovingState(key);
-                checkForScrolling();
-                if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
-                    this.x += this.stepLength;
-                    return;
-                } else {
-                    if (this.x + this.width - canvas.offsetWidth >= 0) {
-                        this.x += (canvas.offsetWidth - this.x - this.width);
-                    } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
-                }
+        if (controller['right'].pressed && !gamePaused && this.isAlive) {
+            if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) { this.checkIfFalling(); }
+            this.setMovingState(key);
+            checkForScrolling();
+            if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
+                this.x += this.stepLength;
+                return;
+            } else {
+                if (this.x + this.width - canvas.offsetWidth >= 0) {
+                    this.x += (canvas.offsetWidth - this.x - this.width);
+                } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
             }
         }
     }
 
     moveLeftTouch(key) {
-        if(controller['left'].pressed) {
-            if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
-                    this.checkIfFalling();
-                }
-                this.setMovingState(key);
-                checkForScrolling();
-                if (this.x <= this.stepLength + widthUnit) {
-                    this.x = widthUnit + 1;
-                    controller['left'].pressed = false;
-                    return;
-                } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
+        if(controller['left'].pressed && !gamePaused && this.isAlive) {
+            if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
+                this.checkIfFalling();
             }
+            this.setMovingState(key);
+            checkForScrolling();
+            if (this.x <= this.stepLength + widthUnit) {
+                this.x = widthUnit + 1;
+                controller['left'].pressed = false;
+                return;
+            } else { this.x = this.atWallLeft ? this.x : this.x - this.stepLength; }
         }
     }
 
     moveRightTouch(key) {
-        if(controller['right'].pressed) {
-            if (!gamePaused && this.isAlive) {
-                if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
-                    this.checkIfFalling();
-                }
-                this.setMovingState(key);
-                checkForScrolling();
-                if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
-                    this.x = canvas.offsetWidth - this.width - widthUnit;
-                    controller['right'].pressed = false;
-                    return;
-                } else {
-                    if (this.x + this.width - canvas.offsetWidth >= 0) {
-                        this.x += (canvas.offsetWidth - this.x - this.width);
-                    } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
-                }
+        if(controller['right'].pressed && !gamePause && this.isAlive) {
+            if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) { this.checkIfFalling(); }
+            this.setMovingState(key);
+            checkForScrolling();
+            if (canvas.offsetWidth - this.x - this.width - widthUnit <= this.stepLength) {
+                this.x = canvas.offsetWidth - this.width - widthUnit;
+                controller['right'].pressed = false;
+                return;
+            } else {
+                if (this.x + this.width - canvas.offsetWidth >= 0) {
+                    this.x += (canvas.offsetWidth - this.x - this.width);
+                } else { this.x = this.atWallRight ? this.x : this.x + this.stepLength; }
             }
         }
     }
@@ -257,32 +243,9 @@ class Char {
         if (!gamePaused && this.isAlive) {
             if (!this.gotHit) { this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             if (this.checkPlatformXCords()) {
-                this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-0.png`);
-                this.startingYPos = null;
-                this.jumps = false;
-                if (platforms[this.standingPlatformIndex].isMoving) {
-                    this.onMovingPlatform = true;
-                    this.movingWidthPlatformAnimationId = setInterval(()=>{ this.movingWithPlatform(); }, standardFrameRate);
-                    this.startingPointX = this.x;
-                    this.distanceCharMovingPlatformX = this.x - platforms[this.standingPlatformIndex].x;
-                    this.movingWithPlatform();
-                }
-                this.stopFalling();
+                this.whenReachingPlatform();
                 return;
-            } else if (this.y >= canvas.offsetHeight) {
-                this.jumps = false;
-                this.falls = false;
-                this.underGround = true;
-                setMenuBarProperties("char");
-                this.decreaseHealth();
-                this.stopFalling();
-                if(this.healthAmount >= 0) {
-                    pausePlayGameToggle();
-                    this.hitChar();
-                    this.scrollingStepAmount = 0;
-                    shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrameRate);
-                }
-            }
+            } else if (this.y >= canvas.offsetHeight) { this.whenUnderPlatform(); }
             if (this.startingYPos === this.y) {
                 this.jumps = false;
                 this.startingYPos = null;
@@ -291,6 +254,34 @@ class Char {
                 return;
             }
             this.y += this.jumpFallStepHeight;
+        }
+    }
+
+    whenReachingPlatform() {
+        this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-0.png`);
+        this.startingYPos = null;
+        this.jumps = false;
+        if (platforms[this.standingPlatformIndex].isMoving) {
+            this.onMovingPlatform = true;
+            this.movingWidthPlatformAnimationId = setInterval(()=>{ this.movingWithPlatform(); }, standardFrameRate);
+            this.startingPointX = this.x;
+            this.distanceCharMovingPlatformX = this.x - platforms[this.standingPlatformIndex].x;
+            this.movingWithPlatform();
+        }
+        this.stopFalling();
+    }
+
+    whenUnderPlatform() {this.jumps = false;
+        this.falls = false;
+        this.underGround = true;
+        setMenuBarProperties("char");
+        this.decreaseHealth();
+        this.stopFalling();
+        if(this.healthAmount >= 0) {
+            pausePlayGameToggle();
+            this.hitChar();
+            this.scrollingStepAmount = 0;
+            shiftingCanvasBackAnimationId = setInterval(()=>{shiftCanvasBack();}, standardFrameRate);
         }
     }
 
@@ -345,23 +336,19 @@ class Char {
     }
 
     checkPlatformEnd() {
-        if(!this.jumps) {
-            if (!gamePaused && this.isAlive) {
-                if (this.movingDirection === 'left') {
-                    if (platforms[this.standingPlatformIndex].x - this.x - this.width <= 0) {
-                        return false;
-                    } else {
-                        this.startingYPos = null;
-                        return true;
-                    }
-                } else if (this.movingDirection === 'right') {
-                    if (platforms[this.standingPlatformIndex].x + platforms[this.standingPlatformIndex].width <= this.x) {
-                        this.startingYPos = null;
-                        return true;
-                    } else {
-                        return false;
-                    }
+        if(!this.jumps && !gamePaused && this.isAlive) {
+            if (this.movingDirection === 'left') {
+                if (platforms[this.standingPlatformIndex].x - this.x - this.width <= 0) {
+                    return false;
+                } else {
+                    this.startingYPos = null;
+                    return true;
                 }
+            } else if (this.movingDirection === 'right') {
+                if (platforms[this.standingPlatformIndex].x + platforms[this.standingPlatformIndex].width <= this.x) {
+                    this.startingYPos = null;
+                    return true;
+                } else { return false; }
             }
         }
     }
@@ -387,9 +374,7 @@ class Char {
                     clearInterval(this.hittingAnimationId);
                 }
             }
-        } else if (this.isAlive) {
-            this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`);
-        }
+        } else if (this.isAlive) { this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
     }
 
     decreaseHealth(decreasingAmount = 50) {
@@ -437,6 +422,4 @@ class Char {
     playJumpingSound() {
         this.jumpingSound.play();
     }
-
-
 }

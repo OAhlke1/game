@@ -14,15 +14,17 @@ let canContWidthSmall;
 let standardFrameRate = 12;
 let gameVolume = 0.5;
 let t = -1;
+let ratioSmallBigScreenHeight = 1;
+let oldWindowHeight = window.innerHeight;
 let gamePaused = false;
 let gameMuted = false;
 let inFullscreen = false;
 let pageJustLoaded = true;
 let fullscreenButtonPressed = false;
 let keysBlockedForShifting = false;
-let deviceRotated = false;
+let inWideScreenMode = false;
+let afterRotatingDevice;
 let keysUnheld;
-let ratioSmallBigScreenHeight;
 let aspectRatio;
 let walls = [];
 let platforms = [];
@@ -67,8 +69,20 @@ let gameReloaded;
 
 function initFunctions() {
     gamePaused = true;
+    loadBasicValues();
+    creator();
+    if(!gameReloaded) { showDescription(); }
+    addEventListeners();
+    gamePaused = false;
+}
+
+function loadBasicValues() {
+    if(screen.width < screen.height) { document.querySelector('.rotate-device-screen').classList.remove('disNone'); }
+    afterRotatingDevice = localStorage.afterRotatingDevice ? true : false;
     gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
-    window.addEventListener('click', ()=>{ if(!bgPlayer) { loadPlayer(); }});
+}
+
+function creator() {
     createScreen();
     setScreenProperties();
     setSizeUnits();
@@ -81,18 +95,24 @@ function initFunctions() {
     createItems();
     presetMenuBarProperties();
     drawElements();
-    if(!gameReloaded) { showDescription(); }
+}
+
+function addEventListeners() {
+    window.addEventListener('click', ()=>{ if(!bgPlayer) { loadPlayer(); }});
     document.addEventListener('blur', ()=>{ pauseGame(); });
     document.addEventListener('focus', ()=>{
         if(document.querySelector('.controls').classList.contains('disNone') && document.querySelector('.description').classList.contains('disNone')) { unpauseGame(); }
         unholdAllKeys();
     });
-    window.addEventListener('resize', handleOrientation);
-    gamePaused = false;
+    window.addEventListener('resize', showHideRotateScreen);
 }
 
-function handleOrientation() {
-    if(!inFullscreen) { location.reload(); }
+function showHideRotateScreen() {
+    if(screen.width < screen.height) {
+        pausePlayGameToggle();
+        setScreenProperties();
+        document.querySelector('.rotate-device-screen').classList.remove('disNone');
+    }else if(oldWindowHeight >= window.innerHeight) { location.reload(); }
 }
 
 function clearLocalStorage() {
@@ -209,6 +229,12 @@ function createCharAmmo(x, y, width, height, image, decreaseLifeAmount) {
 }
 
 function createPlatforms() {
+    createBottomPlatforms();
+    createNonMovingPlatforms();
+    createMovingPlatforms();
+}
+
+function createBottomPlatforms() {
     platforms.push(new Platform(0, 26*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
     platforms.push(new Platform(5*widthUnit, 26*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
     platforms.push(new Platform(10*widthUnit, 26*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
@@ -223,6 +249,9 @@ function createPlatforms() {
     platforms.push(new Platform(162*widthUnit, 26*heightUnit, 3*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-3.png'));
     platforms.push(new Platform(168*widthUnit, 26*heightUnit, 4*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-4.png'));
     platforms.push(new Platform(5*widthUnit, 26*heightUnit, widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-1.png'));
+}
+
+function createNonMovingPlatforms() {
     platforms.push(new Platform(10*widthUnit, 20*heightUnit, 2*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-2.png'));
     platforms.push(new Platform(20*widthUnit, 20*heightUnit, 5*widthUnit, heightUnit, './graphics/platforms/non-moving-length-5.png'));
     platforms.push(new Platform(5*widthUnit, 11*heightUnit, 4*widthUnit, 0.5*heightUnit, './graphics/walls/ground/ground-tile-length-4.png'));
@@ -244,7 +273,6 @@ function createPlatforms() {
     platforms.push(new Platform(56*widthUnit, 19*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
     platforms.push(new Platform(64*widthUnit, 16*heightUnit, 3*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-3.png'));
     platforms.push(new Platform(70*widthUnit, 19*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
-    createMovingPlatforms();
 }
 
 function createMovingPlatforms() {
@@ -256,26 +284,29 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(2*widthUnit, 0.25*heightUnit, 41.5*widthUnit, 48*widthUnit, 20*heightUnit, 20*heightUnit, 20*heightUnit, './graphics/walls/ground/ground-tile-length-2.png', true));
     platforms.push(new MovingPlatform(3*widthUnit, heightUnit, 48*widthUnit, 58*widthUnit, 12*heightUnit, 12*heightUnit, 12*heightUnit, './graphics/walls/ground/ground-tile-length-3.png', true));
     platforms.push(new MovingPlatform(2*widthUnit, heightUnit, 59*widthUnit, 65*widthUnit, 12*heightUnit, 12*heightUnit, 12*heightUnit, './graphics/walls/ground/ground-tile-length-2.png', true));
-    //createFloor();
-}
-
-function createFloor() {
-    platforms.push(new Platform(0, 26*heightUnit, 56*widthUnit, heightUnit, './graphics/walls/ground/floor.png'));
 }
 
 function createTraps() {
+    createStingingTraps();
+    createSaws();
+    createTrapAnimationImages();
+}
+
+function createStingingTraps() {
     hitables.traps.push(new Trap(5*widthUnit, 25*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(6*widthUnit, 25*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(11*widthUnit, 25*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, true, false, -1, 8, 6));
-    hitables.traps.push(new Trap(5.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
-    hitables.traps.push(new Trap(8.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
     hitables.traps.push(new Trap(38*widthUnit, 11*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(34*widthUnit, 7*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(30*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(45*widthUnit, 11*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(12*widthUnit, 16*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, true, true, 35, 8, 0));
     hitables.traps.push(new Trap(2.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 25, true, true, 36, 8, 0));
-    createTrapAnimationImages();
+}
+
+function createSaws() {
+    hitables.traps.push(new Trap(5.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
+    hitables.traps.push(new Trap(8.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
 }
 
 function createTrapAnimationImages() {
@@ -291,9 +322,9 @@ function createTrapAnimationImages() {
 }
 
 function createEnemies() {
-    hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-    hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-    hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', './graphics/enemies/green/attack/attack-left-0.png', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
+    hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 1000, 70*widthUnit/3, false, 5, 7));
     hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 2*widthUnit, true, 5, 7));
     hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 4*widthUnit, false, 5, 7));
@@ -342,20 +373,28 @@ function setEnemiesAliveAndDangerousProperties() {
 
 function createItems() {
     let collected;
-    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
-    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
-    items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
-    items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
-    items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
-    items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
-    items.specialAmmo.push(new SpecialAmmoKit(22*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
-    items.specialAmmo.push(new SpecialAmmoKit(58*widthUnit, 18*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    createLifeIncreasingItems();
+    createSpecialAmmoKitParts();
     if(localStorage.items) {
         collected = JSON.parse(localStorage.items);
         for(let i=0; i<items.lifeIncreasing.length; i++) { items.lifeIncreasing[i].collected = collected.lifeIncreasing[i]; }
         for(let i=0; i<items.specialAmmo.length; i++) { items.specialAmmo[i].collected = collected.specialAmmo[i]; }
     }
     createSpecialAmmosAnimationImages();
+}
+
+function createLifeIncreasingItems() {
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
+    items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+    items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+}
+
+function createSpecialAmmoKitParts() {
+    items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(22*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(58*widthUnit, 18*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
 }
 
 function createSpecialAmmosAnimationImages() {

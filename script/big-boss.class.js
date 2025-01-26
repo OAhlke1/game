@@ -15,8 +15,6 @@ class BigBoss extends Shooter {
         this.standardY = y;
         this.width = width;
         this.height = height;
-        this.image = new Image();
-        this.image.src = `./graphics/enemies/big-boss/putin.png`;
         this.enemyType = enemyType;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.canShoot = canShoot;
@@ -45,6 +43,8 @@ class BigBoss extends Shooter {
         this.fallingSound.src = './sounds/big-boss-falling.wav';
         this.fallingSound.volume = 0.5;
         this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3 * standardFrameRate);
+        this.image = new Image();
+        this.image.src = './graphics/enemies/green/attack/attack-left-0.png';
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/big-boss/shoot.svg';
     }
@@ -88,24 +88,25 @@ class BigBoss extends Shooter {
                 if (this.hittingAnimationIndex === 2) {
                     this.hittingAnimationIndex = 0;
                     if (this.lifeAmount <= 0) {
-                        this.lifeAmount = 0;
-                        this.isDangerous = false;
-                        //this.isAlive = false;
-                        this.isDefeated = true;
-                        clearInterval(this.animateLevitationId);
-                        this.animateLevitationId = setInterval(() => { this.animateFalling(); }, standardFrameRate);
-                        if (this.fallingSound.paused) { this.playFallingSound(); }
-                        saveNotDefeatedEnemies();
-                        setMenuBarProperties("enemy");
-                    } else if (this.lifeAmount > 0) {
-                        this.isDangerous = true;
-                    }
+                        this.whenBigBossIsDead();
+                    } else if (this.lifeAmount > 0) { this.isDangerous = true; }
                     clearInterval(this.hittingAnimationId);
                     return;
                 }
             }
         }
         return;
+    }
+
+    whenBigBossIsDead() {
+        this.lifeAmount = 0;
+        this.isDangerous = false;
+        this.isDefeated = true;
+        clearInterval(this.animateLevitationId);
+        this.animateLevitationId = setInterval(() => { this.animateFalling(); }, standardFrameRate);
+        if (this.fallingSound.paused) { this.playFallingSound(); }
+        saveNotDefeatedEnemies();
+        setMenuBarProperties("enemy");
     }
 
     async animateFalling() {

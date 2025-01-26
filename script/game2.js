@@ -113,6 +113,11 @@ function dispatchKeypressStopShoot(event) {
 
 function addKeypressMovingCommands() {
     setController();
+    setKeyDownEvents();
+    setKeyUpEvents();
+}
+
+function setKeyDownEvents() {
     body.addEventListener('keydown', async (event) => {
         char.sleeps = false;
         t = 0;
@@ -132,25 +137,48 @@ function addKeypressMovingCommands() {
             gameSoundToggle();
         }
         if (!keysUnheld && !keysBlockedForShifting) {
-            if (event.key === "ArrowLeft") {
-                if (!controller['left'].pressed) {
-                    controller['left'].pressed = true;
-                    controller['left'].func();
-                }
-            } else if (event.key === "ArrowRight") {
-                if (!controller['right'].pressed) {
-                    controller["right"].pressed = true;
-                    controller['right'].func();
-                }
-            } else if (event.key === " " && !char.jumps) {
-                controller['jump'].pressed = true;
-                controller['jump'].func();
-            } else if (event.key === "Shift") {
-                controller['run'].pressed = true;
-                controller['run'].func();
-            }
+            whenKeysAreUsable(event);
         }
     });
+}
+
+function whenKeysAreUsable(event) {
+    if (event.key === "ArrowLeft") {
+        gotLeftPressed();
+    } else if (event.key === "ArrowRight") {
+        goRightPressed();
+    } else if (event.key === " " && !char.jumps) {
+        jumpPressed();
+    } else if (event.key === "Shift") {
+        runningKeyHeld();
+    }
+}
+
+function gotLeftPressed() {
+    if (!controller['left'].pressed) {
+        controller['left'].pressed = true;
+        controller['left'].func();
+    }
+}
+
+function goRightPressed() {
+    if (!controller['right'].pressed) {
+        controller["right"].pressed = true;
+        controller['right'].func();
+    }
+}
+
+function jumpPressed() {
+    controller['jump'].pressed = true;
+    controller['jump'].func();
+}
+
+function runningKeyHeld() {
+    controller['run'].pressed = true;
+    controller['run'].func();
+}
+
+function setKeyUpEvents() {
     body.addEventListener('keyup', (event) => {
         if (!keysUnheld && !keysBlockedForShifting) {
             if (event.key === "ArrowLeft") {
@@ -174,20 +202,16 @@ function setController() {
         "jump": {
             pressed: false,
             func: initJump
-        },
-        "left": {
+        }, "left": {
             pressed: false,
             func: initStepLeft
-        },
-        "right": {
+        }, "right": {
             pressed: false,
             func: initStepRight
-        },
-        "run": {
+        }, "run": {
             pressed: false,
             func: speedUpChar
-        },
-        "volume": {
+        }, "volume": {
             pressed: false,
             func: checkVolumeBarEvent
         }
@@ -307,14 +331,10 @@ function checkForScrolling(movingDirection = char.movingDirection) {
         return;
     } else {
         if (movingDirection === "right" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x >= 2 * canCont.offsetWidth / 3) {
-            if (canvas.offsetLeft + canCont.offsetWidth <= 0) {
-                return;
-            }
+            if (canvas.offsetLeft + canCont.offsetWidth <= 0) { return; }
             char.scrollingStepAmount++;
         } else if (movingDirection === "left" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x <= canCont.offsetWidth / 3) {
-            if (parseFloat(canvas.style.left) >= 0) {
-                return;
-            }
+            if (parseFloat(canvas.style.left) >= 0) { return; }
             char.scrollingStepAmount--;
         }
         canvas.style.left = `-${char.standardStepLength * char.scrollingStepAmount}px`;
@@ -326,9 +346,7 @@ function checkIfBigBossVisible() {
     if (bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width / 3) {
         bigBoss.isVisible = true;
         bigBoss.animateShooting();
-    } else {
-        bigBoss.isVisible = false;
-    }
+    } else { bigBoss.isVisible = false; }
 }
 
 function setMenubarPosition() {
@@ -395,67 +413,4 @@ function unmuteAllPlayers() {
     char.hittingSound.volume = 0.5;
     char.shootingSound.volume = 0.5;
     bgPlayer.volume = 0.125;
-}
-
-function pauseAllPlayers() {
-    hitables.enemies.forEach((elem) => {
-        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.pause(); }
-        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
-        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.pause(); }
-    });
-    hitables.flyables.forEach((elem) => {
-        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
-    });
-    if (char.hittingSound.currentTime > 0) { char.hittingSound.pause(); }
-    if (char.shootingSound.currentTime > 0) { char.shootingSound.pause(); }
-    if (bgPlayer) { bgPlayer.pause(); }
-}
-
-function playAllPlayers() {
-    hitables.enemies.forEach((elem) => {
-        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.play(); }
-        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
-        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
-    });
-    if (char.hittingSound.currentTime > 0) { char.hittingSound.play(); }
-    if (char.shootingSound.currentTime > 0) { char.shootingSound.play(); }
-    if (bgPlayer) { bgPlayer.play(); };
-}
-
-async function turnOnFullScreen() {
-    inFullscreen = true;
-    document.querySelector('.canvas-cont .controls').classList.add('disNone');
-    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
-    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
-    document.querySelector('.game-headline').classList.add('disNone');
-    await body.requestFullscreen().then(() => {
-        canCont.style.width = inFullscreen ? `${screen.width}px` : '80vw';
-        canCont.style.height = inFullscreen ? `${screen.height}px` : '45vw';
-        fullscreenButtonPressed = false;
-        if (gamePaused) { pausePlayGameToggle(); }
-        fullScreenButtonToggle();
-    })
-}
-
-async function turnOffFullScreen() {
-    inFullscreen = false;
-    canCont.style.width = `${0.7 * screen.width}px`;
-    canCont.style.height = `${0.7 * screen.height}px`;
-    document.querySelector('.canvas-cont .controls').classList.add('disNone');
-    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
-    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
-    document.querySelector('.game-headline').classList.remove('disNone');
-    pausePlayGameToggle();
-    await document.exitFullscreen().then(() => {
-        fullscreenButtonPressed = false;
-        if (gamePaused) { pausePlayGameToggle(); }
-        fullScreenButtonToggle();
-    })
-}
-
-function setScreenProperties() {
-    canCont.style.width = `${0.7 * screen.width}px`;
-    canCont.style.height = `${0.7 * screen.height}px`;
-    canvas.setAttribute('width', 2 * canCont.offsetWidth);
-    canvas.setAttribute('height', canCont.offsetHeight);
 }

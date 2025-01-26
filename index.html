@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +11,14 @@
 <body onload="initFunctions()">
     <h1 class="game-headline">SPACE JUMPER</h1>
     <div class="canvas-cont" fullscreen="allow">
+        <div class="rotate-device-screen disNone">
+            <h1>Rotate your device</h1>
+            <p>
+                <br>Game only works properly in widescreen-mode!
+                <br>
+                <br><span>(After rotating, the page reloads automatically)</span>
+            </p>
+        </div>
         <div class="open-description" onclick="showDescription()" ontouch="descriptionToggle()">
             <p>?</p>
         </div>
@@ -27,11 +34,12 @@
                 </p>
                 <p>
                     <b>Controls:</b>
-                    <br>go left: left key / touch the go-left-touchbutton.
-                    <br>go left: right key / touch the go-right-touchbutton.
-                    <br>run: hold SHIFT / touch the running-button.
-                    <br>jump: the spacebar / touch the go-jump-touchbutton.
-                    <br>shoot: 'e' / touch the bottom of the gaming screen.
+                    <br>go left: left key / touch the go-left-touchbutton
+                    <br>go left: right key / touch the go-right-touchbutton
+                    <br>run: hold SHIFT / touch the running-button
+                    <br>jump: the spacebar / touch the go-jump-touchbutton
+                    <br>shoot: 'e' / touch the screen everywhere above the moving-buttons
+                    <br>turn fullscreen on/off: 'f' / the button in the controls-bar
                 </p>
             </div>
         </div>
@@ -84,10 +92,10 @@
             </div>
             <div class="turn-fullscreen-off disNone">
                 <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt=""
-                    onclick="turnOffFullScreen()">
+                    onclick="turnOffFullScreen(event)">
             </div>
             <div class="turn-fullscreen-on">
-                <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen()">
+                <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen(event)">
             </div>
         </div>
         <div class="you-win-screen disNone">
@@ -99,24 +107,8 @@
             <button onclick="resetGame()">Restart game</button>
         </div>
     </div>
-    <div class="controls disNone">
-        <p>left: key left</p>
-        <p>right: key right</p>
-        <p>shoot: r</p>
-        <p>jump: SPACE</p>
-        <p>run: hold SHIFT</p>
-        <p>pause: p</p>
-        <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
-            <div class="volumebar">
-                <div class="volumebar-inner"></div>
-            </div>
-        </div>
-        <div class="mute-game" onclick="muteGame()"></div>
-        <div class="turn-fullscreen-on">
-            <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen()">
-        </div>
-    </div>
 </body>
+
 <script src="script/char.class.js"></script>
 <script src="script/ammo.class.js"></script>
 <script src="script/wall.class.js"></script>
