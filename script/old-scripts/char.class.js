@@ -54,102 +54,77 @@ class Char {
     ammoImages;
     underGround;
     floorPosition;
-    walkingFrameRate;
 
-    /**
-     * 
-     * @param {number} width is the width of the char
-     * @param {number} height is the height of the char
-     * @param {number} x is the x-coordinate of the char
-     * @param {number} y is the y-coordinate of the char
-     * @param {string} standardImgPath is the path to the char-image
-     * @param {number} stepLength is the length of a single step the char goes
-     * @param {number} maxJumpHeight the maximum jump-height
-     * @param {number} specialAmmoParts the amount of already collected special-ammo-parts
-     * @param {number} healthAmount the amount of life the char has
-     * @param {boolean} onMovingPlatform says wether the char stands on a moving platform or not
-     * @param {number} standingPlatformIndex is the index of the platform in the platform-array that the char stands on
-     */
-    constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0, healthAmount, onMovingPlatform, standingPlatformIndex) {
+    constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0, healthAmount) {
         this.width = width;
         this.height = height;
         this.x = x;
-        this.standardX = x; /** @var {number} standardX is the first x-coordinate of the char when the game is opened at first */
+        this.standardX = x;
         this.y = y;
-        this.standardY = y; /** @var {number} standardY is the first y-coordinate of the char when the game is opened at first */
+        this.standardY = y;
         this.standardImgPath = standardImgPath;
         this.stepLength = stepLength;
-        this.standardStepLength = stepLength; /** @var {number} standardStepLength is the normal steplength of the char when it is not running */
-        this.atWallLeft = false; /** @var {boolean} atWallLeft says wether the char stands left at a wall */
-        this.atWallRight = false; /** @var {boolean} atWallRight says wether the char stands right at a wall */
-        this.jumps = false; /** @var {boolean} jumps says wether the char jumps or not */
-        this.jumpFallStepHeight = heightUnit / 3; /** @var {number} jumpFallStepHeight is the standard height unit for jumping and falling */
-        this.maxJumpHeight = maxJumpHeight; /** @var {number} maxJumpHeight is the maximum jump-height */
-        this.sleeps = false; /** @var {boolean} sleeps says wether the char sleeps or not */
-        this.headJumpAmount = 50; /** @var {number} headJumpAmount is the amount that the char takes away from an enemy when jumping on its */
-        this.hitImagesAmount = 8; /** @var {number} hitImagesAmount is the amount of images of the chars animation when it gets hit */
-        this.bulletAmount = 10; /** @var {number} bulletAmount is the amount that a bullet takes away from an enemies health amount */
-        this.maxHealthAmount = 200; /** @var {number} maxHealthAmount is the chars maximum health amount */
-        this.standingPlatformIndex = standingPlatformIndex; /** @var {number} standingPlatformIndex is the index of the platform the char stands on */
-        this.scrollingStepAmount = 0; /** @var {number} scrollingStepAmount is the amount of steps the char has shifted the canvas to the left while walking */
-        this.hittingAnimationIndex = 0; /** @var {number} hittingAnimationIndex is the actual index of the animation when the char got hit */
-        this.hittingAnimationStep = 0; /** @var {number} hittingAnimationStep is the amount of cycles the animation when the char got hit is been going through */
-        this.healthAmount = healthAmount; /** @var {number} healthAmount is the actual amount of the chars health */
+        this.standardStepLength = stepLength;
+        this.atWallLeft = false;
+        this.atWallRight = false;
+        this.jumps = false;
+        this.jumpFallStepHeight = heightUnit / 3;
+        this.maxJumpHeight = maxJumpHeight;
+        this.sleeps = false;
+        this.headJumpAmount = 50;
+        this.hitImagesAmount = 8;
+        this.bulletAmount = 10;
+        this.maxHealthAmount = 200;
+        this.standingPlatformIndex = 0;
+        this.scrollingStepAmount = 0;
+        this.hittingAnimationIndex = 0;
+        this.hittingAnimationStep = 0;
+        this.healthAmount = healthAmount;
         this.timeNextHit = 0;
-        this.stepAmount = 0; /** @var {number} stepAmount is the amount of steps the enemy has been making ????????????????????????????? */
-        this.totalStepAmount = 0; /** @var totalStepAmount is the entire amount of all steps of the char ????????????????????????????? */
-        this.enemiesKilled = 0; /** @var {number} enemiesKilled is the amount of defeated enemies */
-        this.movingDirection = 'right'; /** @var movingDirection is the direction the char is moving at */
-        this.figImage = new Image(); /** is the DOM-element of the char-image */
+        this.stepAmount = 0;
+        this.totalStepAmount = 0;
+        this.enemiesKilled = 0;
+        this.movingDirection = 'right';
+        this.figImage = new Image();
         this.figImage.src = this.standardImgPath;
-        this.isAlive = true; /** @var {boolean} says wether the char is alive or not */
-        this.sleeps = false; /** @var {boolean} sleeps says wether the char sleeps or not */
-        this.gotHit = false; /** @var {boolean} gotHit says wether the char got hit by an enemy/trap or not */
-        this.isImmune = false; /** @var {boolean} isImmune says wether the char is immune against attacks or not */
-        this.landedOnPlatform = true; /** @var {boolean} landedOnPlatform says wether the char landed on a platform or not */
-        this.targeted = false; /** @var {boolean} targeted says wether the char got hit by an enemy/trap or not */
-        this.onUpwardsMovingPlatform = false; /** @var {boolean} onUpwardsMovingPlatform says wether the char is on an upwards moving platform or not */
-        this.underGround = false; /** @var {boolean} underGround says wether the char is under the ground or not */
-        this.specialAmmoParts = specialAmmoParts > 3 ? 3 : specialAmmoParts; /** @var {number} specialAmmoParts is the amount of the colleced special-ammo-parts */
-        this.hittingSound = new Audio(); /** @var {Audio} hittingSound is the sound for when the char got hit */
+        this.isAlive = true;
+        this.sleeps = false;
+        this.gotHit = false;
+        this.isImmune = false;
+        this.landedOnPlatform = true;
+        this.targeted = false;
+        this.onUpwardsMovingPlatform = false;
+        this.underGround = false;
+        this.specialAmmoParts = specialAmmoParts > 3 ? 3 : specialAmmoParts;
+        this.hittingSound = new Audio();
         this.hittingSound.src = './sounds/char-got-hit.ogg';
         this.hittingSound.volume = 0.5;
-        this.shootingSound = new Audio(); /** @var {Audio} shootingSound is the sound for when the char shoots ??????????????????????????????????????????????? */
+        this.shootingSound = new Audio();
         this.shootingSound.src = './sounds/enemy-shoots.mp3';
         this.shootingSound.volume = 0.5;
-        this.jumpingSound = new Audio();/** @var {Audio} jumpingSound is the sound for when the char jumps */
+        this.jumpingSound = new Audio();
         this.jumpingSound.src = './sounds/jump.ogg';
         this.jumpingSound.volume = 0.5;
-        this.floorPosition = y; /** @var {number} floorPosition is the chars y-coordinate on the floor */
+        this.floorPosition = y;
         this.hitImagesArrays = {
             left: [],
             right: []
-        }; /** @var {array} hitImagesArrays is the array for the images of the animation when the char got hit */
+        };
         this.runImagesArrays = {
             left: [],
             right: []
-        }; /** @var {array} runImagesArrays is the array for all running-images */
+        };
         this.jumpingImages = {
             left: "",
             right: ""
-        }; /** @var {array} hitImagesArrays is the array for all jumping-images */
+        };
         this.ammoImages = {
             ammo: "",
             specialAmmo: ""
-        } /** @var {array} hitImagesArrays is the array for both amma-iamges (the normal and special shoot) */
-        this.onMovingPlatform = onMovingPlatform; /** @var {boolean} onMovingPlatform says wether the char is on a sideways moving platform or not */
-        this.hasDoneAnything = false; /** @var {boolean} hasDoneAnything says wether the char has done anything yet or not ?????????????????????????????????????????????????? */
-        this.walkingFrameRate = 18; /** @var {number} walkingFrameRate is the frame-rate for the walking-animation */
+        }
     }
 
-    /**
-     * 
-     * @param {string} key is the code of the pressed key
-     * @method moveLeft lets the char go left.
-     * When the char is on a platform or on the beginning of the game, it stops walking.
-     */
     moveLeft(key) {
-        startSavingChar();
         if (controller['left'].pressed && !gamePaused && this.isAlive) {
             if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) { this.checkIfFalling(); }
             this.setMovingState(key);
@@ -161,14 +136,7 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @param {string} key is the code of the pressed key
-     * @method moveRight lets the char go right.
-     * When the char is on a platform it stops walking.
-     */
     moveRight(key) {
-        startSavingChar();
         if (controller['right'].pressed && !gamePaused && this.isAlive) {
             if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) { this.checkIfFalling(); }
             this.setMovingState(key);
@@ -184,14 +152,7 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @param {string} key 
-     * @method moveLeftTouch does the same as @method moveLeft but it simply is for the
-     * touch-controls.
-     */
     moveLeftTouch(key) {
-        startSavingChar();
         if(controller['left'].pressed && !gamePaused && this.isAlive) {
             if (this.standingPlatformIndex >= 0 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) {
                 this.checkIfFalling();
@@ -206,14 +167,7 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @param {string} key 
-     * @method moveRightTouch does the same as @method moveRight but it simply is for the
-     * touch-controls.
-     */
     moveRightTouch(key) {
-        startSavingChar();
         if(controller['right'].pressed && !gamePause && this.isAlive) {
             if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) { this.checkIfFalling(); }
             this.setMovingState(key);
@@ -230,19 +184,13 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @param {string} key is the code to the pressed key (left or right arrow)
-     * @method setMovingState checks if the left or the right arrow is pressed.
-     * As long as the char is alive and the game not paused, the char walks.
-     */
     setMovingState(key) {
-        if (!gamePaused && this.isAlive && !keysBlockedForShifting) {
+        if (!gamePaused && this.isAlive) {
             if (key === "ArrowRight") {
                 this.movingDirection = 'right';
                 this.stepAmount++;
                 checkForScrolling();
-            } else if (key === "ArrowLeft") {
+            } else {
                 this.movingDirection = 'left';
                 this.stepAmount--;
                 checkForScrolling();
@@ -251,27 +199,18 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method checkIfJumping checks wether the char jumps or not.
-     * If not, and if the game is not paused and the char is alive and has landed on a platform (to avoid double-jumps),
-     * the jumping animation starts.
-     */
     checkIfJumping() {
-        if (!gamePaused && this.isAlive && this.landedOnPlatform && !this.jumps) {
-            if(!gameMuted) { this.playJumpingSound(); }
-            this.jumps = true;
-            this.jumpingIntervalStep = this.maxJumpHeight / this.jumpFallStepHeight;
-            this.jumpingAnimationId = setInterval(()=>{ this.jump(); }, standardFrameRate);
+        if (!gamePaused && this.isAlive && this.landedOnPlatform) {
+            if (!this.jumps) {
+                if(!gameMuted) { this.playJumpingSound(); }
+                this.jumps = true;
+                this.jumpingIntervalStep = this.maxJumpHeight / this.jumpFallStepHeight;
+                this.jumpingAnimationId = setInterval(()=>{ this.jump(); }, standardFrameRate);
+            }
         }
     }
 
-    /**
-     * 
-     * @method jump makes the char jump.
-     */
     jump() {
-        startSavingChar();
         if (!gamePaused && this.isAlive && !this.falls && this.landedOnPlatform) {
             this.onMovingPlatform = false;
             this.atWallLeft = false;
@@ -289,10 +228,6 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method checkIfFalling checks if the char falls and resets the depending variables.
-     */
     checkIfFalling() {
         if (!gamePaused && this.isAlive) {
             if (!this.falls) {
@@ -304,12 +239,7 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method fall makes the char fall.
-     */
     fall() {
-        startSavingChar();
         if (!gamePaused && this.isAlive) {
             if (!this.gotHit) { this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
             if (this.checkPlatformXCords()) {
@@ -327,17 +257,13 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method whenReachingPlatform resets all the depending variables, when the char landed on a platform / the ground.
-     */
     whenReachingPlatform() {
         this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-0.png`);
         this.startingYPos = null;
         this.jumps = false;
         if (platforms[this.standingPlatformIndex].isMoving) {
             this.onMovingPlatform = true;
-            this.movingWithPlatformAnimationId = setInterval(()=>{ this.movingWithPlatform(); }, standardFrameRate);
+            this.movingWidthPlatformAnimationId = setInterval(()=>{ this.movingWithPlatform(); }, standardFrameRate);
             this.startingPointX = this.x;
             this.distanceCharMovingPlatformX = this.x - platforms[this.standingPlatformIndex].x;
             this.movingWithPlatform();
@@ -345,11 +271,6 @@ class Char {
         this.stopFalling();
     }
 
-    /**
-     * 
-     * @method whenUnderPlatform resets the depending variables and invokes the depending functions when the char is
-     * under the ground.
-     */
     whenUnderPlatform() {this.jumps = false;
         this.falls = false;
         this.underGround = true;
@@ -364,21 +285,12 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method stopFalling resets all the depending variables and stops the falling animation
-     */
     stopFalling() {
         this.falls = false;
         this.landedOnPlatform = true;
         clearInterval(this.fallingAnimationId);
     }
 
-    /**
-     * 
-     * @method checkPlatformXCords checks the x-coordinates of each platform.
-     * When the char is in the range of a platforms x-coordinates the @method checkPlatformYCords is being invoked.
-     */
     checkPlatformXCords() {
         if (!gamePaused && this.isAlive) {
             for (let i = 0; i < platforms.length; i++) {
@@ -397,12 +309,6 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @param {number} i is the index of the platform in the platforms-array.
-     * @returns {boolean} that says wether the char also stands on that specific platform or not.
-     * @method checkPlatformYCords checks wether the char is on the platform with the index i.
-     */
     checkPlatformYCords(i) {
         if (!gamePaused && this.isAlive) {
             if (platforms[i].y - (this.y + this.height) <= this.jumpFallStepHeight && platforms[i].y - (this.y + this.height) >= 0) {
@@ -414,15 +320,10 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method movingWithPlatform adds the actual x- or y-coordinate of the moving-platform to the x- or y-coordinate of the char.
-     * When the platform moves sideways, the distance from the char to the the platforms left edge is also being involved.
-     */
     movingWithPlatform() {
-        if (!gamePaused && this.isAlive && this.landedOnPlatform && this.onMovingPlatform) {
+        if (!gamePaused && this.isAlive && this.landedOnPlatform && this.onMovingPlatform) {    
             if (this.checkPlatformEnd()) {
-                clearInterval(this.movingWithPlatformAnimationId);
+                clearInterval(this.movingWidthPlatformAnimationId);
                 this.checkIfFalling();
                 return;
             }else {
@@ -434,10 +335,6 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method checkPlatformEnd checks wether the char is at the left or right end of the platform and returns the respective boolean
-     */
     checkPlatformEnd() {
         if(!this.jumps && !gamePaused && this.isAlive) {
             if (this.movingDirection === 'left') {
@@ -456,25 +353,16 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method hitChar initiates the animation when the char gets hit by a trap / an enemy
-     * @param {number} decreasingAmount is the amount that is subtracted from the chars health-amount.
-     */
     hitChar(decreasingAmount) {
         this.gotHit = true;
         this.decreaseHealth(decreasingAmount);
         if(this.healthAmount > 0) {
             this.hittingAnimationId = setInterval(()=>{ this.animateHit(); }, 3*standardFrameRate);
-            startSavingChar();
+            saveCharProperties();
             setTimeout(() => { this.gotHit = false; }, 1500);
         }
     }
 
-    /**
-     * 
-     * @method animateHit is the animation when the char gets hit by a trap / an enemy
-     */
     animateHit() {
         if (this.gotHit) {
             if (this.isAlive) { this.figImage = this.hitImagesArrays[this.movingDirection][this.hittingAnimationIndex] }
@@ -489,11 +377,6 @@ class Char {
         } else if (this.isAlive) { this.setImagePath(`./graphics/main-char/run/run-${this.movingDirection}-${Math.abs(this.stepAmount % 12)}.png`); }
     }
 
-    /**
-     * 
-     * @method decreasehealth decreases the health of the char and sets the appropriate variables.
-     * @param {number} decreasingAmount is the amount that is being subtracted by the char.
-     */
     decreaseHealth(decreasingAmount = 50) {
         if (!this.isImmune) {
             if(!gameMuted) { this.playHittingSound(); }
@@ -503,31 +386,27 @@ class Char {
                 this.charIsDead();
                 return;
             }
-            startSavingChar();
+            saveCharProperties();
             setMenuBarProperties("char");
             setTimeout(() => {this.isImmune = false }, 1500);
         }
     }
 
-    /**
-     * 
-     * @method charIsDead sets the appropriate variables and shows the game-over-screen.
-     */
     async charIsDead() {
         this.healthAmount = 0;
         this.isAlive = false;
         this.healthAmount = 200;
-        this.hasDoneAnything = "char is dead now!";
         pausePlayGameToggle();
+        this.setImagePath(`./graphics/main-char/dead/dead-${this.movingDirection}.png`);
         await clearLocalStorage();
         document.querySelector('.game-over-screen').classList.remove('disNone');
     }
 
-    /**
-     * 
-     * @method setImagePath sets the path for @this figImage
-     * @param {string} path is the image-path
-     */
+    saveCharProperties() {
+        gameJson.char = char;
+        localStorage.setItem('gameJson', JSON.stringify(gameJson));
+    }
+
     setImagePath(path) {
         if (this.isAlive) {
             this.figImage.src = path;
@@ -536,18 +415,10 @@ class Char {
         }
     }
 
-    /**
-     * 
-     * @method playHittingSound plays the sound when the char gets hit
-     */
     playHittingSound() {
         this.hittingSound.play();
     }
 
-    /**
-     * 
-     * @method playJumpingSound plays the sound when the char jumps
-     */
     playJumpingSound() {
         this.jumpingSound.play();
     }

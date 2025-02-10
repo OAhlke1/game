@@ -1,18 +1,9 @@
 class Ammo extends Char {
-    flyingDirection; /** the direction of @this ammo (left or right) depending on the looking-direction of the char. */
-    decreaseLifeAmount; /** the amount of life @this ammo can take subtract. */
-    shootingSound; /** the audio player for @this ammo */
-    leftCanvas; /** a boolean whether @this ammo left canvas. */
+    flyingDirection;
+    decreaseLifeAmount;
+    shootingSound;
+    leftCanvas;
 
-    /**
-     * 
-     * @param {number} x the starting x-coordinate of @this Ammo
-     * @param {number} y the starting y-coordinate of @this Ammo
-     * @param {number} width the width of @this Ammo
-     * @param {number} height the height of @this Ammo
-     * @param {Image} image the image of @this Ammo
-     * @param {number} decreaseLifeAmount the life-amount @this ammo can take away from the char
-     */
     constructor(x, y, width, height, image, decreaseLifeAmount) {
         super();
         this.x = x;
@@ -29,13 +20,6 @@ class Ammo extends Char {
         this.trajectoryAnimationId = setInterval(() => { this.animateTrajectory(); }, standardFrameRate);
     }
 
-    /**
-     * 
-     * This @method animateTrajectory animates the trajectory of @this ammo of the character.
-     * With every iteration, the ammo flies half of a width unit further.
-     * Its direction depends on the looking-direction of the char.
-     * The function stops when the ammo left the canvas and the animation is being cleared.
-     */
     animateTrajectory() {
         if (!gamePaused) {
             if (!this.leftCanvas) {
@@ -53,13 +37,6 @@ class Ammo extends Char {
         }
     }
 
-    /**
-     * 
-     * @method checkForEnemies checks whether an enemy gets hit by @this ammo ,
-     * looking at the x- and y-coordinates of each enemy.
-     * When the ammo is within the enemies y-space and directly in front or behind
-     * the enemy, the enemy gets hit, loses that life amount that the ammo subtracts. (@var decreaseLifeAmount)
-     */
     checkForEnemies() {
         hitables.enemies.forEach((elem) => {
             if (this.y + this.height > elem.y && elem.y + elem.height > this.y) {
@@ -81,12 +58,6 @@ class Ammo extends Char {
         })
     }
 
-    /**
-     * 
-     * @param {BigBoss} elem is the big boss.
-     * Only if the char has collected all 3 special ammo parts, the @BigBoss can get hit.
-     * After hitting the BigBoss, it is not hitable for the next 0.5 seconds.
-     */
     whenBigBossIsVisibleAndDangerous(elem) {
         if (char.specialAmmoParts === 3) {
             elem.lifeAmount -= this.decreaseLifeAmount;
@@ -102,18 +73,10 @@ class Ammo extends Char {
         }
     }
 
-    /**
-     * @method checkIfStillInCanvas checks whether @this ammo is still in canvas.
-     * If so, its @var leftCanvas variable gets the value of true.
-     */
     checkIfStillInCanvas() {
         if (this.x + this.width <= 0 || this.x >= canvas.offsetWidth) { this.leftCanvas = true; }
     }
 
-    /**
-     * 
-     * @method playShootingSound plays the shooting-sound of @this ammo
-     */
     playShootingSound() {
         if (!gameMuted && char.isAlive) {
             this.shootingSound.play();

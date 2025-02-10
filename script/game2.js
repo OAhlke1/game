@@ -1,5 +1,107 @@
+/**
+ * 
+ * @function createEnemiesHitImagesArrays stores the hitting-animation-images of each enemy into the respective @var {array} hitImagesArrays.left and @var {array} hitImagesArrays.right
+ * because the enemy can either look left or right.
+ * (@var {number} i is the index of the enemy) and
+ * @var {number} j is the index of each animation index (there are always 8)
+ */
+function createEnemiesHitImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].hitImagesAmount; j++) {
+            let hitImageLeft = new Image();
+            hitImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-left-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.left.push(hitImageLeft);
+            let hitImageRight = new Image();
+            hitImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-right-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.right.push(hitImageRight);
+        }
+    }
+    createEnemiesAttackingImagesArrays();
+}
 
+/**
+ * 
+ * @function createEnemiesAttackingImagesArrays stores the hitting-animation-images of each enemy into the respective @var {array} attackingImagesArrays.left and @var {array} attackingImagesArrays.right
+ * because the enemy can either look left or right.
+ * (@var {number} i is the index of the enemy) and
+ * @var {number} j is the index of each animation index (there are always 8 because there are 8 animation images)
+ */
+function createEnemiesAttackingImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].attackingImagesAmount; j++) {
+            let attackingImageLeft = new Image();
+            attackingImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-left-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.left.push(hitImageLeft);
+            let attackingImageRight = new Image();
+            attackingImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-right-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.right.push(attackingImageRight);
+        }
+    }
+    setEnemiesAliveAndDangerousProperties();
+}
 
+/**
+ * 
+ * @function setEnemiesAliveAndDangerousProperties checks the enemies @var {boolean} alive and @var {boolean} dangerous stored to the browsers local-storage
+ * because only the alive and dangerous enemies are considered.
+ */
+function setEnemiesAliveAndDangerousProperties() {
+    if(localStorage.enemies) {
+        alive = JSON.parse(localStorage.enemies);
+        for(let i=0; i<hitables.enemies.length; i++) {
+            hitables.enemies[i].isAlive = alive[i];
+            hitables.enemies[i].isDangerous = alive[i];
+        }
+    }
+}
+
+/**
+ * 
+ * @function createItems invokes the items-creating functions.
+ * It then sets the @var {boolean} collected of each @var {Item} item to true or false, depending on the value in @var collected
+ * The reason is that the already collected items shall not be collectable again after reloading the game, because only the´items
+ * that are not collected are considered.
+ */
+function createItems() {
+    let collected; /** @var {JSON} collected stores the item-JSON when it is set to the browsers local-storage */
+    createLifeIncreasingItems();
+    createSpecialAmmoKitParts();
+    if(localStorage.items) {
+        collected = JSON.parse(localStorage.items);
+        for(let i=0; i<items.lifeIncreasing.length; i++) { items.lifeIncreasing[i].collected = collected.lifeIncreasing[i]; }
+        for(let i=0; i<items.specialAmmo.length; i++) { items.specialAmmo[i].collected = collected.specialAmmo[i]; }
+    }
+    createSpecialAmmosAnimationImages();
+}
+
+/**
+ * 
+ * @function createLifeIncreasingItems creates the heart-items
+ */
+function createLifeIncreasingItems() {
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
+    items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+    items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+}
+
+/**
+ * 
+ * @function createLifeIncreasingItems creates the special-ammo-parts
+ */
+function createSpecialAmmoKitParts() {
+    items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(22*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(58*widthUnit, 18*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+}
+
+/**
+ * 
+ * @function createSpecialAmmosAnimationImages stores the images for the rotating-animation of each special-ammo-part
+ * to its respective @var {array} rotationImages
+ * @var {number} i is the items index, @var {number} j is the index of the animation index (which is always 8 because there are 8 animation images)
+ */
 function createSpecialAmmosAnimationImages() {
     for(let i=0; i<items.specialAmmo.length; i++) {
         for(let j=0; j<7; j++) {
@@ -10,12 +112,19 @@ function createSpecialAmmosAnimationImages() {
     }
 }
 
+/**
+ * 
+ * @function presetMenuBarProperties sets the saved life-amount of the char and the the saved amount of already collected special-amm-parts to the game-menu when the game is being loaded.
+ */
 function presetMenuBarProperties() {
     menuBar.querySelector('.special-ammo .items-collected').innerHTML = `${char.specialAmmoParts}/3`;
-    menuBar.querySelector('.defeated-enemies-amount').innerHTML = `${(7 - hitables.enemies.length) <= 0 ? 0 : (7 - hitables.enemies.length)}`;
     menuBar.querySelector('.life-amount .life-amount-bar .life-amount-bar-inner').style.width = `${100*char.healthAmount/char.maxHealthAmount}%`;
 }
 
+/**
+ * @function setMenuBarProperties actualizes the menu-bar.
+ * @param {string} menuType the type of Element that has to be updated in the menu-bar
+ */
 function setMenuBarProperties(menuType) {
     switch(menuType) {
         case "specialAmmo":
@@ -29,11 +138,19 @@ function setMenuBarProperties(menuType) {
     }
 }
 
+/**
+ * 
+ * @function clearCanvas clears the canvas
+ */
 function clearCanvas() {
     ctx.clearRect(0, 0, 2*canCont.offsetWidth, canCont.offsetHeight);
     debugger;
 }
 
+/**
+ * 
+ * @function drawElements invokes the functions that draw the elements
+ */
 function drawElements() {
     drawBackgrounds();
     drawPlatforms();
@@ -42,25 +159,42 @@ function drawElements() {
     drawChar();
     drawCharObjects();
     requestAnimationFrame(()=>{ drawElements(); });
+    if(char.onMovingPlatform) { char.movingWithPlatform(); }
 }
 
+/**
+ * 
+ * @function drawBackgrounds draws the backgrounds to the canvas
+ */
 function drawBackgrounds() {
     backgrounds.forEach((elem) => {
         ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height);
     });
 }
 
+/**
+ * 
+ * @function drawMenuBar draws the menu-bar to the canvas
+ */
 function drawMenuBar() {
     menubarBackground.createMenubarBackground();
     menuBar.writeMenuTexts();
 }
 
+/**
+ * 
+ * @function drawPlatforms draws the menu-bar to the canvas
+ */
 function drawPlatforms() {
     platforms.forEach((elem) => {
         ctx.drawImage(elem.platformImage, elem.x, elem.y, elem.width, elem.height);
     });
 }
 
+/**
+ * 
+ * @function drawMenuBar draws the hitable elements (traps, enemies, and enemie-ammos) to the canvas
+ */
 function drawHitables() {
     hitables.traps.forEach((elem) => {
         if (elem || elem.isDangerous) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
@@ -75,6 +209,10 @@ function drawHitables() {
     }
 }
 
+/**
+ * 
+ * @function drawMenuBar draws the items to the canvas
+ */
 function drawItems() {
     items.lifeIncreasing.forEach((elem) => {
         if (!elem.collected) { ctx.drawImage(elem.image, elem.x, elem.y, elem.width, elem.height); }
@@ -84,6 +222,10 @@ function drawItems() {
     })
 }
 
+/**
+ * 
+ * @function drawMenuBar draws the char to the canvas
+ */
 function drawChar() {
     if (char.isAlive) { ctx.drawImage(char.figImage, char.x, char.y, char.width, char.height); }
 }
@@ -94,6 +236,11 @@ function drawCharObjects() {
     });
 }
 
+/**
+ * 
+ * @function dispatchKeypressLeft converts the touch-event on the go-left-button into a keydown-event on the left-arrow-key
+ * @param {event} event is the touch-event given to the function
+ */
 function dispatchKeypressLeft(event) {
     const keyPressEvent = new KeyboardEvent('keydown', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -104,6 +251,11 @@ function dispatchKeypressLeft(event) {
     body.dispatchEvent(keyPressEvent);
 }
 
+/**
+ * 
+ * @function dispatchKeypressStopLeft converts the touchend-event on the go-left-button into a keyup-event on the left-arrow-key
+ * @param {event} event is the touch-event given to the function
+ */
 function dispatchKeypressStopLeft(event) {
     const keyUpEvent = new KeyboardEvent('keyup', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -114,6 +266,11 @@ function dispatchKeypressStopLeft(event) {
     body.dispatchEvent(keyUpEvent);
 }
 
+/**
+ * 
+ * @function dispatchKeypressRight converts the touch-event on the go-left-button into a keydown-event on the right-arrow-key
+ * @param {event} es the touch-event given to the function
+ */
 function dispatchKeypressRight(event) {
     const keyPressEvent = new KeyboardEvent('keydown', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -124,6 +281,11 @@ function dispatchKeypressRight(event) {
     body.dispatchEvent(keyPressEvent);
 }
 
+/**
+ * 
+ * @function dispatchKeypressStopRight converts the touchend-event on the go-left-button into a keyup-event on the right-arrow-key
+ * @param {event} event is the touch-event given to the function
+ */
 function dispatchKeypressStopRight(event) {
     const keyUpEvent = new KeyboardEvent('keyup', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -134,6 +296,11 @@ function dispatchKeypressStopRight(event) {
     body.dispatchEvent(keyUpEvent);
 }
 
+/**
+ * 
+ * @function dispatchKeypressJump converts the touch-event on the jump-button into a keydown-event on the left-arrow-key
+ * @param {event} event is the touch-event given to the function
+ */
 function dispatchKeypressJump(event) {
     const keyPressEvent = new KeyboardEvent('keydown', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -144,6 +311,11 @@ function dispatchKeypressJump(event) {
     body.dispatchEvent(keyPressEvent);
 }
 
+/**
+ * 
+ * @function dispatchKeypressStopJump converts the touchend-event on the jump-button into a keyup-event on the right-arrow-key
+ * @param {event} event is the touch-event given to the function
+ */
 function dispatchKeypressStopJump(event) {
     const keyUpEvent = new KeyboardEvent('keyup', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -154,6 +326,11 @@ function dispatchKeypressStopJump(event) {
     body.dispatchEvent(keyUpEvent);
 }
 
+/**
+ * 
+ * @function dispatchKeypressShoot converts the touch-event on the shoot-button into a keydown-event on the left-arrow-key
+ * @param {event} event is the touch-event given to the function
+ */
 function dispatchKeypressShoot(event) {
     const keyPressEvent = new KeyboardEvent('keydown', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -164,6 +341,11 @@ function dispatchKeypressShoot(event) {
     body.dispatchEvent(keyPressEvent);
 }
 
+/**
+ * 
+ * @function dispatchKeypressStopShoot converts the touchend-event on the shoot-button into a keyup-event on the right-arrow-key
+ * @param {event} event is the touch-event given to the function
+ */
 function dispatchKeypressStopShoot(event) {
     const keyUpEvent = new KeyboardEvent('keyup', {
         key: event.target.closest('.touch-control').getAttribute('button-type'),
@@ -174,12 +356,20 @@ function dispatchKeypressStopShoot(event) {
     body.dispatchEvent(keyUpEvent);
 }
 
+/**
+ * 
+ * @function addKeypressMovingCommands invokes the functions belonging to the key commands
+ */
 function addKeypressMovingCommands() {
     setController();
     setKeyDownEvents();
     setKeyUpEvents();
 }
 
+/**
+ * 
+ * @function setKeyDownEvents adds the keydown-events to the @var body
+ */
 function setKeyDownEvents() {
     body.addEventListener('keydown', async (event) => {
         char.sleeps = false;
@@ -203,204 +393,4 @@ function setKeyDownEvents() {
             whenKeysAreUsable(event);
         }
     });
-}
-
-function whenKeysAreUsable(event) {
-    if (event.key === "ArrowLeft") {
-        gotLeftPressed();
-    } else if (event.key === "ArrowRight") {
-        goRightPressed();
-    } else if (event.key === " " && !char.jumps) {
-        jumpPressed();
-    } else if (event.key === "Shift") {
-        runningKeyHeld();
-    }
-}
-
-function gotLeftPressed() {
-    if (!controller['left'].pressed) {
-        controller['left'].pressed = true;
-        controller['left'].func();
-    }
-}
-
-function goRightPressed() {
-    if (!controller['right'].pressed) {
-        controller["right"].pressed = true;
-        controller['right'].func();
-    }
-}
-
-function jumpPressed() {
-    controller['jump'].pressed = true;
-    controller['jump'].func();
-}
-
-function runningKeyHeld() {
-    controller['run'].pressed = true;
-    controller['run'].func();
-}
-
-function setKeyUpEvents() {
-    body.addEventListener('keyup', (event) => {
-        if (!keysUnheld && !keysBlockedForShifting) {
-            if (event.key === "ArrowLeft") {
-                controller['left'].pressed = false;
-                clearInterval(char.movingAnimationId);
-            } else if (event.key === "ArrowRight") {
-                controller['right'].pressed = false;
-                clearInterval(char.movingAnimationId);
-            } else if (event.key === "Shift") {
-                controller['run'].pressed = false;
-                slowDownChar();
-            } else if (event.key.toLowerCase() === "e" && char.isAlive) {
-                createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.75 * widthUnit, 0.25 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
-            } else if (event.key === "Escape") { turnOffFullScreen(); }
-        }
-    });
-}
-
-function setController() {
-    controller = {
-        "jump": {
-            pressed: false,
-            func: initJump
-        }, "left": {
-            pressed: false,
-            func: initStepLeft
-        }, "right": {
-            pressed: false,
-            func: initStepRight
-        }, "run": {
-            pressed: false,
-            func: speedUpChar
-        }, "volume": {
-            pressed: false,
-            func: checkVolumeBarEvent
-        }
-    }
-}
-
-function initJump() {
-    if (controller['jump'].pressed) {
-        controller['jump'].pressed = false;
-        char.startingYPos = char.y;
-        char.jumps = false;
-        char.checkIfJumping();
-    }
-}
-
-function initStepLeft() {
-    if (controller['left'].pressed) {
-        char.movingAnimationId = setInterval(() => { char.moveLeft("ArrowLeft"); }, standardFrameRate);
-    }
-}
-
-function initStepLeftTouch() {
-    if (controller['left'].pressed) {
-        char.movingAnimationId = setInterval(() => { char.moveLeftTouch("ArrowLeft"); }, standardFrameRate);
-    }
-}
-
-function showHideTouchControls() {
-    pausePlayGameToggle();
-    document.querySelector('.touch-controls .pause-game').classList.add('paused');
-    if (!document.querySelector('.touch-controls').classList.contains('shown') && !document.querySelector('.touch-controls').classList.contains('hidden')) {
-        document.querySelector('.touch-controls').classList.add('shown');
-    } else if (!document.querySelector('.touch-controls').classList.contains('shown')) {
-        document.querySelector('.touch-controls').classList.add('shown');
-        document.querySelector('.touch-controls').classList.remove('hidden');
-    } else if (!document.querySelector('.touch-controls').classList.contains('hidden')) {
-        pausePlayGameToggle();
-        document.querySelector('.touch-controls .pause-game').classList.remove('paused');
-        document.querySelector('.touch-controls').classList.remove('shown');
-        document.querySelector('.touch-controls').classList.add('hidden');
-    }
-}
-
-function initStepRight() {
-    if (controller['right'].pressed) {
-        char.movingAnimationId = setInterval(() => { char.moveRight("ArrowRight"); }, standardFrameRate);
-    }
-}
-
-function initStepRightTouch() {
-    if (controller['right'].pressed) {
-        char.movingAnimationId = setInterval(() => { char.moveRightTouch("ArrowRight"); }, standardFrameRate);
-    }
-}
-
-function speedUpChar() {
-    if (char.stepLength / char.standardStepLength >= 1.5) { return; }
-    char.stepLength *= 1.5;
-}
-
-function slowDownChar() {
-    if (char.stepLength / char.standardStepLength <= 1) { return; }
-    char.stepLength /= 1.5;
-}
-
-function setRunningCharTouch() {
-    if (!document.querySelector('.touch-control.run').classList.contains('pressed')) {
-        document.querySelector('.touch-control.run').classList.add('pressed');
-    } else { document.querySelector('.touch-control.run').classList.remove('pressed'); }
-    restyleRunningTouchButton();
-    return document.querySelector('.touch-control.run').classList.contains('pressed');
-}
-
-function restyleRunningTouchButton() {
-    document.querySelectorAll('.touch-control.run svg rect').forEach((elem) => {
-        if (elem.closest('.touch-control').classList.contains('pressed')) {
-            elem.setAttribute('fill', 'blue');
-        } else { elem.setAttribute('fill', 'red'); }
-    })
-}
-
-function touchShooting() {
-    if (controller['shoot'].pressed) {
-        createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.5 * widthUnit, 0.125 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
-        document.querySelector('.touch-control.shoot').classList.remove('pressed');
-        controller['shoot'].pressed = false;
-    }
-}
-
-function playSound(fileName) {
-    if (!gameMuted) {
-        let audio = new Audio();
-        audio.src = fileName;
-        audio.volume = gameVolume;
-        audioPlayer.push(audio);
-        audio.play();
-    }
-}
-
-function checkIfAllEnemiesAreDead() {
-    if (hitables.enemies.length === char.enemiesKilled) {
-        setTimeout(this.resetEnemies, 30000);
-    }
-}
-
-function resetEnemies() {
-    hitables.enemies.forEach((elem) => {
-        elem.lifeAmount = elem.maxLifeAmount;
-        elem.isAlive = true;
-        elem.hitable = true;
-        elem.isDangerous = true;
-    })
-}
-
-function checkForScrolling(movingDirection = char.movingDirection) {
-    if (parseFloat(canvas.style.left) === 0 && char.x < 2 * canCont.offsetWidth / 3) {
-        return;
-    } else {
-        if (movingDirection === "right" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x >= 2 * canCont.offsetWidth / 3) {
-            if (canvas.offsetLeft + canCont.offsetWidth <= 0) { return; }
-            char.scrollingStepAmount++;
-        } else if (movingDirection === "left" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x <= canCont.offsetWidth / 3) {
-            if (parseFloat(canvas.style.left) >= 0) { return; }
-            char.scrollingStepAmount--;
-        }
-        canvas.style.left = `-${char.standardStepLength * char.scrollingStepAmount}px`;
-        checkIfBigBossVisible();
-    }
 }

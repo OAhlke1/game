@@ -3,17 +3,10 @@ class Wall {
     y;
     width;
     height;
-    wallImage; /** DOM-element for the wall-image */
+    backgroundColor;
+    wallImage;
     wallImageSrc;
 
-    /**
-     * 
-     * @param {number} x 
-     * @param {number} y 
-     * @param {number} width 
-     * @param {number} height 
-     * @param {string} wallImageSrc 
-     */
     constructor(x, y, width, height, wallImageSrc) {
         this.x = x;
         this.y = y;

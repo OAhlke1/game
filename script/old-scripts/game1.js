@@ -1,86 +1,91 @@
-let canvas; /** @var canvas is the DOM-element of the game-canvas */
-let ctx; /** @var ctx is the context of the canvas */
-let char; /** @var {Char} char is the char */
-let widthUnit; /** @var {number} widthUnit is the basic unit for the width */
-let controller; /** @var controller is the game controller */
-let bgPlayer; /** @var {Audio} is the DOM-element of the audio-player */
-let canCont; /** @var canCont is the parent-container of the canvas */
-let bigBoss; /** @var {BigBoss} is the last enemy */
-let shiftingCanvasBackAnimationId; /** @var {number} shiftingCanvasBackAnimationId is the id for the animation that scrolls the canvas back to 0 */
-let standardFrameRate = 12; /** @var {number} standardFrameRate is the standard interval frequency */
-let gameVolume = 0.5; /** @var {number} is the standard volume of the game */
-let t = -1; /** @var {number} t is the amount of seconds before the game pauses because nothing is done */
-let ratioSmallBigScreenHeight = 0.7; /** @var ratioSmallBigScreenHeight is the ratio of the height of @var canCont and the screen height */
-let gamePaused = false; /** @var {boolean} gamePaused says wether the game is paused or not */
-let gameMuted = false; /** @var {boolean} gameMuted says wether the game is muted or not */
-let inFullscreen = false; /** @var {boolean} inFullscreen says wether the game is in fullscreen or not */
-let fullscreenButtonPressed = false; /** @var {boolean} fullscreenButtonPressed says wether the fullscreen-button is pressed or not */
-let keysBlockedForShifting = false; /** @var {boolean} keysBlockedForShifting says wether the keys are blocked or not */
-let keysUnheld; /** @var {boolean} keysUnheld says wether any key is pressed or not ????????????????????????? */
-let platforms = []; /** @var {Platforms} is the array of the platforms */
-let backgrounds = []; /** @var {Backgrounds} is the array of the backgrounds */
+let canvas;
+let canvasWidt;
+let ctx;
+let char, wall;
+let widthUnit;
+let menubarBackground;
+let canvasBackground;
+let controller;
+let bgPlayer;
+let canCont;
+let bigBoss;
+let shiftingCanvasBackAnimationId;
+let canContWidthSmall;
+let standardFrameRate = 12;
+let gameVolume = 0.5;
+let t = -1;
+let ratioSmallBigScreenHeight = 1;
+let oldWindowHeight = window.innerHeight;
+let gamePaused = false;
+let gameMuted = false;
+let inFullscreen = false;
+let pageJustLoaded = true;
+let fullscreenButtonPressed = false;
+let keysBlockedForShifting = false;
+let inWideScreenMode = false;
+let afterRotatingDevice;
+let keysUnheld;
+let aspectRatio;
+let walls = [];
+let platforms = [];
+let standables = [];
+let backgrounds = [];
+let audioPlayer = [];
 let charObjects = {
-    ammo: [] /** @var ammo is the array of the char ammos that has been shot */
-}; /** @var {JSON} charObjects is the JSON for all the char object-arrays. */
+    ammo: []
+};
 let hitables = {
-    traps: [],  /** @var traps is the array of the traps */
-    enemies: [], /** @var enemies is the array of the enemies */
-    flyables: [] /** @var flyables is the array of the ammo of the enemies */
-}; /** @var {JSON} hitables is the JSON for all traps, enemies and enemies ammos */
+    traps: [],
+    enemies: [],
+    flyables: []
+};
 let items = {
-    lifeIncreasing: [], /** @var lifeIncreasing is the array of the heart-items */
-    specialAmmo: [] /** @var specialAmmo is the array of the special-ammo-parts */
-}; /** @var {JSON} items is the JSON for all the items */
-let body = document.querySelector('body'); /** @var {DOM} body is the documents body */
-let menuBar = document.querySelector('.menu-bar'); /** @var {DOM} menuBar is the documents body */
-let controlsBar = document.querySelector('.canvas-cont .controls'); /** @var {DOM} controlsBar is the controls-bar */
-let description = document.querySelector('.description'); /** @var {DOM} description is the game-description */
-let openDescription = document.querySelector('.open-description'); /** @var {DOM} openDescription is the button to open the description */
-let closeDescription = document.querySelector('.close-description'); /** @var {DOM} openDescription is the button to close the description */
-let rotateDeviceScreen = document.querySelector('.rotate-device-screen'); /** @var {DOM} rotateDeviceScreen is the advice-screen to rotate the screen */
-let gameReloaded; /** @var {boolean} gameReloaded says wether the game has been loaded in the past or not. If not, the description is shown automatically. Otherwise its hidden. */
+    lifeIncreasing: [],
+    specialAmmo: []
+};
+let gameJson = {
+    screenDimensions: {
+        width: 0,
+        height: 0
+    },
+    char: {},
+    hitables: {
+        traps: [],
+        enemies: [],
+        flyables: []
+    },
+    items: {
+        lifeIncreasing: [],
+        specialAmmo: [],
+    }
+};
+let body = document.querySelector('body');
+let menuBar = document.querySelector('.menu-bar');
+let controlsBar = document.querySelector('.canvas-cont .controls');
+let description = document.querySelector('.description');
+let openDescription = document.querySelector('.open-description');
+let closeDescription = document.querySelector('.close-description');
+let gameReloaded;
 
-/**
- * 
- * @function initFunction invokes all the functions that set up the game
- */
 function initFunctions() {
+    gamePaused = true;
     loadBasicValues();
     creator();
     if(!gameReloaded) { showDescription(); }
     addEventListeners();
-    pausePlayGameToggle();
+    gamePaused = false;
 }
 
-/**
- * 
- * @function autoStartMovingWithPlatform lets the char move with the platform when the chars last position before closing the game was on a moving platform.
- */
-function autoStartMovingWithPlatform() {
-    if(platforms[char.standingPlatformIndex].sideways) {
-        char.onMovingPlatform = true;
-        char.x = platforms[char.standingPlatformIndex].x;
-    }else { char.y = platforms[char.standingPlatformIndex].y; }
-    char.movingWithPlatformAnimationId = setInterval(()=>{ char.movingWithPlatform(); }, standardFrameRate);
-}
-
-/**
- * 
- * @function loadBasicValues sets the @var gamePaused to true the @var gameReloaded (when no value for gameReloaded is saved in the browsers local storage, its value is false by default)
- */
 function loadBasicValues() {
-    gamePaused = true;
+    if(screen.width < screen.height) { document.querySelector('.rotate-device-screen').classList.remove('disNone'); }
+    afterRotatingDevice = localStorage.afterRotatingDevice ? true : false;
     gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
-    if(screen.width < screen.height) { rotateDeviceScreen.classList.remove('disNone'); }
 }
 
-/**
- * 
- * @function creator invokes all the functions that create the game elements
- */
 function creator() {
     createScreen();
     setScreenProperties();
+    setSizeUnits();
     createBackgrounds();
     if(!char) { createChar(); }
     addKeypressMovingCommands();
@@ -92,35 +97,24 @@ function creator() {
     drawElements();
 }
 
-/**
- * 
- * @function addEventListeners sets all the event-listeners to the @var body
- */
 function addEventListeners() {
-    document.addEventListener('click', ()=>{ if(!bgPlayer) { loadBackgroundPlayer(); }}); /** for chrome because in chrome a sound is not played before the user interacts with the browser */
-    document.addEventListener('blur', ()=>{ pauseGame(); }); /** when the browsers window is not focused, the game pauses. Because of popups in windows */
+    window.addEventListener('click', ()=>{ if(!bgPlayer) { loadPlayer(); }});
+    document.addEventListener('blur', ()=>{ pauseGame(); });
     document.addEventListener('focus', ()=>{
         if(document.querySelector('.controls').classList.contains('disNone') && document.querySelector('.description').classList.contains('disNone')) { unpauseGame(); }
         unholdAllKeys();
     });
-    window.addEventListener('resize', showRotateScreen);
+    window.addEventListener('resize', showHideRotateScreen);
 }
 
-/** 
- * 
- * @function showRotateScreen shows the advice-screen that the 
- */
-function showRotateScreen() {
-    if(window.innerWidth < screen.height) {
+function showHideRotateScreen() {
+    if(screen.width < screen.height) {
         pausePlayGameToggle();
-        rotateDeviceScreen.classList.remove('disNone');
-    }
+        setScreenProperties();
+        document.querySelector('.rotate-device-screen').classList.remove('disNone');
+    }else if(oldWindowHeight >= window.innerHeight) { location.reload(); }
 }
 
-/**
- * 
- * @function clearLocalStorage removes all stored items (except the value of gameReloaded) from the browsers local-storage.
- */
 function clearLocalStorage() {
     return new Promise((resolve, reject)=>{
         localStorage.removeItem('char');
@@ -132,66 +126,60 @@ function clearLocalStorage() {
     })
 }
 
-/**
- * 
- * @function setSizeUnits sets the width- and height-unit.
- */
-function setSizeUnits() {
-    heightUnit = canCont.offsetHeight/27;
-    widthUnit = heightUnit;
+function loadGameJson() {
+    gameJson = JSON.parse(localStorage.gameJson);
+    items = gameJson.items;
+    hitables.enemies = [];
+    hitables.enemies = gameJson.hitables.enemies;
 }
 
-/**
- * 
- * @function loadBackgroundPlayer loads the DOM-element for the background-music into the @var bgPlayer and sets the players attributes
- * and finally plays the player.
- */
-function loadBackgroundPlayer() {
+function createGameJson() {
+    gameJson = {
+        screenDimensions: gameJson.screenDimensions,
+        hitables: {
+            enemies: hitables.enemies
+        },
+        items: items
+    };
+}
+
+function setSizeUnits() {
+    aspectRatio = screen.height/screen.width;
+    heightUnit = canCont.offsetHeight/27;
+    widthUnit = heightUnit;
+    ratioSmallBigScreenHeight = canCont.offsetHeight/screen.height;
+}
+
+function loadPlayer() {
     bgPlayer = new Audio();
     bgPlayer.src = './sounds/background.mp3';
     bgPlayer.volume = gameVolume;
+    bgPlayer.play();
     bgPlayer.loop = true;
     bgPlayer.volume = 0.125;
-    bgPlayer.play();
+    audioPlayer.push(bgPlayer);
 }
 
-/**
- * 
- * @function createScreen loads the canvas parent DOM into @var canCont and the canvas into @var canvas and sets the sizes of the canvas
- * according to the width and height of @var canCont
- */
 function createScreen() {
     canCont = document.querySelector('.canvas-cont');
     canvas = document.querySelector('canvas');
     canvas.setAttribute('width', 2*canCont.offsetWidth);
     canvas.setAttribute('height', canCont.offsetHeight);
     ctx = canvas.getContext('2d');
+    canContWidthSmall = canCont.offsetWidth;
 }
 
-/**
- * 
- * @function createBackgrounds creates the backgrounds
- */
 function createBackgrounds() {
     backgrounds.push(new Background(0, 0, canCont.offsetWidth, canCont.offsetHeight, './graphics/background/background.jpg'));
 }
 
-/**
- * 
- * @function createChar creates the char
- */
 function createChar() {
-    let charObject; /** @var {JSON} charObject contains the JSON element of the char when the respective char-attributes are saved in the browsers local storage.
-                    It stores the chars coordinates, life-amount and the amount of collected special-ammo-parts */
+    let charObject;
     if(localStorage.char) { charObject = JSON.parse(localStorage.char); }
-    char = new Char(widthUnit, heightUnit, localStorage.char ? charObject.x : widthUnit, localStorage.char ? charObject.y : 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4.5*heightUnit, charObject ? charObject.specialAmmoParts : 0, charObject ? charObject.healthAmount : 200, charObject ? charObject.onMovingPlatform : false, charObject ? charObject.standingPlatformIndex : 0);
+    char = new Char(widthUnit, heightUnit, widthUnit, 25*heightUnit, './graphics/main-char/run/run-right-0.png', widthUnit/6, 4.5*heightUnit, charObject ? charObject.specialAmmoParts : 0, charObject ? charObject.healthAmount : 200);
     createHittingCharImagesArrays();
 }
 
-/** 
- * 
- * @function createHittingCharImagesArrays stores the images of the hit char into the arrays. Two array because the char can look either left or right.
- */
 function createHittingCharImagesArrays() {
     for(let i=0; i<char.hitImagesAmount; i++) {
         hitImageLeft = new Image();
@@ -204,11 +192,6 @@ function createHittingCharImagesArrays() {
     createRunningCharImagesArrays();
 }
 
-/**
- * 
- * @function createRunningCharImagesArrays stores the images of the running char into the chars @var {JSON} runImages.left and @var {JSON} runImages.right
- * because the char can look either left or right
- */
 function createRunningCharImagesArrays() {
     for(let i=0; i<12; i++) {
         runImageLeft = new Image();
@@ -221,11 +204,6 @@ function createRunningCharImagesArrays() {
     createJumpingCharImages();
 }
 
-/**
- * 
- * @function createRunningCharImagesArrays stores the images of the jumping char into the chars @var {JSON} jumpImages.left and @var {JSON} jumpImages.right
- * because the char can look either left or right 
- */
 function createJumpingCharImages() {
     let jumpLeft = new Image();
     let jumpRight = new Image();
@@ -235,10 +213,7 @@ function createJumpingCharImages() {
     char.jumpingImages.right = jumpRight;
     createCharAmmoImages();
 }
-/**
- * 
- * @function createRunningCharImagesArrays stores the images of the chars ammo into the chars @var {JSON} ammoImages.ammo and @var {JSON} ammoImages.specialAmmo
- */
+
 function createCharAmmoImages() {
     let ammoImage = new Image();
     let specialAmmoImage = new Image();
@@ -249,33 +224,16 @@ function createCharAmmoImages() {
     setMenuBarProperties("char");
 }
 
-/**
- * 
- * @param {number} x is the starting x-coordinate of the chars ammo
- * @param {number} y is the y-coordinate of the chars ammo
- * @param {number} width is the ammos width
- * @param {number} height is the ammos height
- * @param {string} image is the image-path of the ammo-image
- * @param {number} decreaseLifeAmount is the life-amount the ammo subtracts from an enemy when the ammo hits one
- */
 function createCharAmmo(x, y, width, height, image, decreaseLifeAmount) {
     charObjects.ammo.push(new Ammo(x, y, width, height, image, decreaseLifeAmount));
 }
 
-/**
- * 
- * @function createPlatforms invokes all the platform-creating functions
- */
 function createPlatforms() {
     createBottomPlatforms();
     createNonMovingPlatforms();
     createMovingPlatforms();
 }
 
-/**
- * 
- * @function createBottomPlatforms creates the bottom-elements
- */
 function createBottomPlatforms() {
     platforms.push(new Platform(0, 26*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
     platforms.push(new Platform(5*widthUnit, 26*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
@@ -293,10 +251,6 @@ function createBottomPlatforms() {
     platforms.push(new Platform(5*widthUnit, 26*heightUnit, widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-1.png'));
 }
 
-/**
- * 
- * @function createNonMovingPlatforms creates the platforms that are not moving
- */
 function createNonMovingPlatforms() {
     platforms.push(new Platform(10*widthUnit, 20*heightUnit, 2*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-2.png'));
     platforms.push(new Platform(20*widthUnit, 20*heightUnit, 5*widthUnit, heightUnit, './graphics/platforms/non-moving-length-5.png'));
@@ -321,10 +275,6 @@ function createNonMovingPlatforms() {
     platforms.push(new Platform(70*widthUnit, 19*heightUnit, 5*widthUnit, heightUnit, './graphics/walls/ground/ground-tile-length-5.png'));
 }
 
-/**
- * 
- * @function createNonMovingPlatforms creates the platforms that are moving
- */
 function createMovingPlatforms() {
     platforms.push(new MovingPlatform(3*widthUnit, heightUnit, 11*widthUnit, 19*widthUnit, 17*heightUnit, 17*heightUnit, 17*heightUnit, './graphics/walls/ground/ground-tile-length-3.png', true));
     platforms.push(new MovingPlatform(3*widthUnit, 0.5*heightUnit, widthUnit, widthUnit, 5*heightUnit, 15*heightUnit, 5*heightUnit, './graphics/walls/ground/ground-tile-length-3.png'));
@@ -336,20 +286,12 @@ function createMovingPlatforms() {
     platforms.push(new MovingPlatform(2*widthUnit, heightUnit, 59*widthUnit, 65*widthUnit, 12*heightUnit, 12*heightUnit, 12*heightUnit, './graphics/walls/ground/ground-tile-length-2.png', true));
 }
 
-/**
- * 
- * @function createPlatforms invokes all the trap-creating functions
- */
 function createTraps() {
     createStingingTraps();
     createSaws();
-    createStingTrapAnimationImages();
+    createTrapAnimationImages();
 }
 
-/**
- * 
- * @function createStingingTraps creates the sting-traps
- */
 function createStingingTraps() {
     hitables.traps.push(new Trap(5*widthUnit, 25*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
     hitables.traps.push(new Trap(6*widthUnit, 25*heightUnit, widthUnit, heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 15, false, false, 0, 8, 2));
@@ -362,25 +304,16 @@ function createStingingTraps() {
     hitables.traps.push(new Trap(2.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/stings/sting-coming-out-btt-0.png', 'sting-coming-out', "btt", 25, true, true, 36, 8, 0));
 }
 
-/**
- * 
- * @function createStingingTraps creates the saws
- */
 function createSaws() {
     hitables.traps.push(new Trap(5.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
     hitables.traps.push(new Trap(8.125*widthUnit, 10.25*heightUnit, 0.75*widthUnit, 0.75*heightUnit, './graphics/traps/saws/round.png', 'round-saw', '', 25, true, false, -1));
 }
 
-/**
- * 
- * @function createStingTrapAnimationImages stores the animation-images of each sting-trap into the respective sting-trap (@var {number} i is the index of the trap-array)
- * @var {number} j is the index of each animation index (there are always 8)
- */
-function createStingTrapAnimationImages() {
+function createTrapAnimationImages() {
     for(let i=0; i<hitables.traps.length; i++) {
         if(hitables.traps[i].trapType === "sting-coming-out") {
             for(let j=0; j<8; j++) {
-                let animationImage = new Image(); /** @var {Image} is the DOM-element of the sting-image for animation-index @var {number} j */
+                let animationImage = new Image();
                 animationImage.src = `./graphics/traps/stings/sting-coming-out-${hitables.traps[i].orientation}-${j}.png`;
                 hitables.traps[i].animationImages[hitables.traps[i].orientation].push(animationImage);
             }
@@ -388,10 +321,6 @@ function createStingTrapAnimationImages() {
     }
 }
 
-/**
- * 
- * @function createEnemies creates the enemies
- */
 function createEnemies() {
     hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
@@ -402,4 +331,68 @@ function createEnemies() {
     hitables.enemies.push(new Shooter(24*widthUnit, 2.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'shooter', 60, true, 'right', 100, 5*widthUnit, true, 5, 7));
     bigBoss = hitables.enemies[3];
     createEnemiesHitImagesArrays();
+}
+
+function createEnemiesHitImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].hitImagesAmount; j++) {
+            let hitImageLeft = new Image();
+            hitImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-left-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.left.push(hitImageLeft);
+            let hitImageRight = new Image();
+            hitImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-right-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.right.push(hitImageRight);
+        }
+    }
+    createEnemiesAttackingImagesArrays();
+}
+
+function createEnemiesAttackingImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].attackingImagesAmount; j++) {
+            let attackingImageLeft = new Image();
+            attackingImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-left-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.left.push(hitImageLeft);
+            let attackingImageRight = new Image();
+            attackingImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-right-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.right.push(attackingImageRight);
+        }
+    }
+    setEnemiesAliveAndDangerousProperties();
+}
+
+function setEnemiesAliveAndDangerousProperties() {
+    if(localStorage.enemies) {
+        alive = JSON.parse(localStorage.enemies);
+        for(let i=0; i<hitables.enemies.length; i++) {
+            hitables.enemies[i].isAlive = alive[i];
+            hitables.enemies[i].isDangerous = alive[i];
+        }
+    }
+}
+
+function createItems() {
+    let collected;
+    createLifeIncreasingItems();
+    createSpecialAmmoKitParts();
+    if(localStorage.items) {
+        collected = JSON.parse(localStorage.items);
+        for(let i=0; i<items.lifeIncreasing.length; i++) { items.lifeIncreasing[i].collected = collected.lifeIncreasing[i]; }
+        for(let i=0; i<items.specialAmmo.length; i++) { items.specialAmmo[i].collected = collected.specialAmmo[i]; }
+    }
+    createSpecialAmmosAnimationImages();
+}
+
+function createLifeIncreasingItems() {
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
+    items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+    items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+}
+
+function createSpecialAmmoKitParts() {
+    items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(22*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(58*widthUnit, 18*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
 }

@@ -1,17 +1,8 @@
 class SpecialAmmoKit extends Item {
-    rotateAnimationId; /** the id of the rotating-animation */
-    rotationImages; /** an array for all images of the rotating-animation */
-    rotationIndex; /** the index of @var rotationImages */
+    rotationIndex;
+    rotateAnimationId;
+    rotationImages;
 
-    /**
-     * 
-     * @param {number} x the x-coordinate of @this Item
-     * @param {number} y the y-coordinate of @this Item
-     * @param {number} width the width of @this Item
-     * @param {number} height the height of @this Item
-     * @param {*} imagePath the path to the image of @this Item
-     * @param {*} itemType the type of @this Item
-     */
     constructor(x, y, width, height, imagePath, itemType) {
         super();
         this.x = x;
@@ -32,10 +23,6 @@ class SpecialAmmoKit extends Item {
         this.checkCharPos();
     }
 
-    /**
-     * 
-     * @method rotateAnimation lets @this Item rotate.
-     */
     rotateAnimation() {
         if(!this.collected) {
             this.image = this.rotationImages[this.rotationIndex % 6];
