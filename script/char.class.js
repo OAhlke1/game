@@ -214,7 +214,7 @@ class Char {
      */
     moveRightTouch(key) {
         startSavingChar();
-        if(controller['right'].pressed && !gamePause && this.isAlive) {
+        if(controller['right'].pressed && !gamePaused && this.isAlive) {
             if (this.standingPlatformIndex > -1 && this.standingPlatformIndex < platforms.length && this.checkPlatformEnd()) { this.checkIfFalling(); }
             this.setMovingState(key);
             checkForScrolling();

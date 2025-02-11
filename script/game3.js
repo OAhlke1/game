@@ -34,7 +34,7 @@ function goLeftPressed() {
  */
 function goRightPressed() {
     if (!controller['right'].pressed) {
-        controller["right"].pressed = true;
+        controller['right'].pressed = true;
         controller['right'].func();
     }
 }
@@ -57,10 +57,13 @@ function jumpPressed() {
  * (Both only, when the left key is not pressed already)
  */
 function runningKeyHeld() {
-    if(!controller['run'].pressed) {
+    /* if(!controller['run'].pressed) {
         controller['run'].pressed = true;
         controller['run'].func();
-    }
+    } */
+    
+        controller['run'].pressed = true;
+        controller['run'].func();
 }
 
 /**
@@ -130,7 +133,9 @@ function initJump() {
  */
 function initStepLeft() {
     if (controller['left'].pressed) {
-        char.movingAnimationId = setInterval(() => { char.moveLeft("ArrowLeft"); }, char.walkingFrameRate);
+        char.movingAnimationId = setInterval(() => {
+            char.moveLeft("ArrowLeft");
+        }, char.walkingFrameRate);
     }
 }
 
@@ -150,7 +155,8 @@ function initStepLeftTouch() {
  */
 function initStepRight() {
     if (controller['right'].pressed) {
-        char.movingAnimationId = setInterval(() => { char.moveRight("ArrowRight"); }, char.walkingFrameRate);
+        char.movingAnimationId = setInterval(() => {
+            char.moveRight("ArrowRight"); }, char.walkingFrameRate);
     }
 }
 
@@ -169,17 +175,29 @@ function initStepRightTouch() {
  * @function speedUpChar makes the char run by increasing the chars @var {number} walkingFrameRate
  */
 function speedUpChar() {
-    if (char.walkingFrameRate === 8) { return; }
-    char.stepLength /= 1.5;
+    if (char.walkingFrameRate <= 12) { return; }
+    clearInterval(char.movingAnimationId);
+    char.walkingFrameRate = 12;
+    if(controller['left'].pressed) {
+        char.movingAnimationId = setInterval(() => { char.moveLeftTouch("ArrowLeft"); }, char.walkingFrameRate);    
+    }else if(controller['right'].pressed) {
+        char.movingAnimationId = setInterval(() => { char.moveRightTouch("ArrowRight"); }, char.walkingFrameRate);
+    }
 }
 
 /**
  * 
- * @function speedUpChar makes the char run by increasing the chars @var {number} walkingFrameRate to the standard value
+ * @function slowDownChar makes the char run by increasing the chars @var {number} walkingFrameRate to the standard value
  */
 function slowDownChar() {
-    if (char.walkingFrameRate === 12) { return; }
-    char.stepLength *= 1.5;
+    if (char.walkingFrameRate >= 18) { return; }
+    clearInterval(char.movingAnimationId);
+    char.walkingFrameRate = 18;
+    if(controller['left'].pressed) {
+        char.movingAnimationId = setInterval(() => { char.moveLeftTouch("ArrowLeft"); }, char.walkingFrameRate);    
+    }else if(controller['right'].pressed) {
+        char.movingAnimationId = setInterval(() => { char.moveRightTouch("ArrowRight"); }, char.walkingFrameRate);
+    }
 }
 
 /**
