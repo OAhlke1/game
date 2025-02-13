@@ -245,6 +245,25 @@ function checkIfBigBossVisible() {
 
 /**
  * 
+ * @function setWholeVolume sets the entire game-volume
+ * @param {event} event is the mousemove event fired to the volume-bar.
+ * When the mouse/finger is moved to the right, the width of the inner-volume-bar increases.
+ * That width devided by the width of the volume-bar (the parent of the inner-volume-bar) is the
+ * factor the whole game volume (@var {number} gameVolume) is multiplied.
+ */
+
+let setWholeVolume = function setWholeVolumeFunc(event) {
+    let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
+    let volumeBarWidth = event.target.closest('.volumebar-cont').offsetWidth;
+    let x = event.clientX;
+    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
+    gameVolume = gameVolume > 1 ? 1 : gameVolume;
+    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
+    unmuteAllPlayers();
+}
+
+/**
+ * 
  * @param {event} event is the mousedown or touchstart event fired to the volume-bar
  * After that event is fired a mouse-move event is added to that element so that the volume
  * changes via mousemove / swiping.
@@ -262,36 +281,21 @@ function checkVolumeBarEvent(event) {
 
 /**
  * 
- * @function setWholeVolume sets the entire game-volume
- * @param {event} event is the mousemove event fired to the volume-bar.
- * When the mouse/finger is moved to the right, the width of the inner-volume-bar increases.
- * That width devided by the width of the volume-bar (the parent of the inner-volume-bar) is the
- * factor the whole game volume (@var {number} gameVolume) is multiplied.
- */
-let setWholeVolume = function setWholeVolumeFunc(event) {
-    let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
-    let volumeBarWidth = event.target.closest('.volumebar-cont').offsetWidth;
-    let x = event.clientX;
-    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
-    gameVolume = gameVolume > 1 ? 1 : gameVolume;
-    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
-}
-
-/**
- * 
  * @function gameSoundToggle toggles the muting of the game sound.
  * It shows/hides the respective image (speaker for unmuted scratched speaker for muted)
  * and invokes the @function muteAllPlayers or @function unmuteAllPlayers
  */
 function gameSoundToggle() {
-    if (!gameMuted) {
-        document.querySelector('.mute-game').classList.add('muted');
-        muteAllPlayers();
+    if (!document.querySelector('.mute-game').classList.contains('disNone')) {
+        document.querySelector('.mute-game').classList.add('disNone');
+        document.querySelector('.unmute-game').classList.remove('disNone');
         gameMuted = true;
-    } else {
-        document.querySelector('.mute-game').classList.remove('muted');
-        unmuteAllPlayers();
+        muteAllPlayers();
+    } else if(document.querySelector('.mute-game').classList.contains('disNone')) {
+        document.querySelector('.mute-game').classList.remove('disNone');
+        document.querySelector('.unmute-game').classList.add('disNone');
         gameMuted = false;
+        unmuteAllPlayers();
     }
 }
 
@@ -316,13 +320,13 @@ function muteAllPlayers() {
  */
 function unmuteAllPlayers() {
     hitables.enemies.forEach((elem) => {
-        elem.hittingSound.volume = 0.5;
-        if (elem.shootingSound) { elem.shootingSound.volume = 0.5; }
-        if (elem.fallingSound) { elem.fallingSound.volume = 0.5; }
+        elem.hittingSound.volume = gameVolume;
+        if (elem.shootingSound) { elem.shootingSound.volume = gameVolume; }
+        if (elem.fallingSound) { elem.fallingSound.volume = gameVolume; }
     });
-    char.hittingSound.volume = 0.5;
-    char.shootingSound.volume = 0.5;
-    bgPlayer.volume = 0.125;
+    char.hittingSound.volume = gameVolume/2;
+    char.shootingSound.volume = gameVolume/2;
+    bgPlayer.volume = gameVolume/4;
 }
 
 /**
@@ -340,7 +344,6 @@ function pauseAllPlayers() {
     });
     if (char.hittingSound.currentTime > 0) { char.hittingSound.pause(); }
     if (char.shootingSound.currentTime > 0) { char.shootingSound.pause(); }
-    if (bgPlayer) { bgPlayer.pause(); }
 }
 
 /**

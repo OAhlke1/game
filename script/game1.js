@@ -149,9 +149,8 @@ function setSizeUnits() {
 function loadBackgroundPlayer() {
     bgPlayer = new Audio();
     bgPlayer.src = './sounds/background.mp3';
-    bgPlayer.volume = gameVolume;
     bgPlayer.loop = true;
-    bgPlayer.volume = 0.125;
+    bgPlayer.volume = 0.125*gameVolume;
     bgPlayer.play();
 }
 

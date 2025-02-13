@@ -294,16 +294,19 @@ p {
     background-color: orange;
 }
 
-.mute-game {
+.mute-game, .unmute-game {
     width: 40px;
     height: 40px;
-    background-image: url('../graphics/controls/speaker.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: 100% 100%;
 }
 
-.mute-game.muted {
+.mute-game {
+    background-image: url('../graphics/controls/speaker.svg');
+}
+
+.unmute-game {
     background-image: url('../graphics/controls/speaker-dashed.svg');
 }
 

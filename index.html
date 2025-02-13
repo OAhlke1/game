@@ -82,7 +82,8 @@
                     <div class="volumebar-inner"></div>
                 </div>
             </div>
-            <button class="mute-game" onclick="pauseAllPlayers()"></button>
+            <button class="mute-game" onclick="gameSoundToggle()"></button>
+            <button class="unmute-game disNone" onclick="gameSoundToggle()"></button>
             <!-- <div class="pause-game disNone">
                 <img src="./graphics/controls/pause-game.svg" class="fullscreen-off-svg" alt="" onclick="pausePlayGameToggle()">
             </div> -->
@@ -111,8 +112,6 @@
 <script src="script/char.class.js"></script>
 <script src="script/ammo.class.js"></script>
 <script src="script/wall.class.js"></script>
-<script src="script/menubar.class.js"></script>
-<script src="script/menubar-background.class.js"></script>
 <script src="script/platforms.class.js"></script>
 <script src="script/moving-platform.class.js"></script>
 <script src="script/enemies.class.js"></script>
