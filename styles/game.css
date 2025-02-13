@@ -277,7 +277,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
+    width: 15%;
     height: 40px;
 }
 
@@ -303,11 +303,11 @@ p {
 }
 
 .mute-game {
-    background-image: url('../graphics/controls/speaker.svg');
+    background-image: url('../graphics/controls/speaker-dashed.svg');
 }
 
 .unmute-game {
-    background-image: url('../graphics/controls/speaker-dashed.svg');
+    background-image: url('../graphics/controls/speaker.svg');
 }
 
 .turn-fullscreen-on,

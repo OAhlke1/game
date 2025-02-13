@@ -253,13 +253,30 @@ function checkIfBigBossVisible() {
  */
 
 let setWholeVolume = function setWholeVolumeFunc(event) {
+    console.log(event.target);
     let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
-    let volumeBarWidth = event.target.closest('.volumebar-cont').offsetWidth;
+    let volumeBarWidth = document.querySelector('.volumebar').offsetWidth;
     let x = event.clientX;
     gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
     gameVolume = gameVolume > 1 ? 1 : gameVolume;
+    gameSoundToggleByVolume();
     volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
     unmuteAllPlayers();
+}
+
+/**
+ * 
+ * @function gameSoundToggleByVolume shows hides the mute-/unmute-icon depending on if the @var {number} gameVolume is <= 0 or greater than 0
+ */
+function gameSoundToggleByVolume() {
+    if(gameVolume <= 0) {
+        gameVolume = 0;
+        document.querySelector('.mute-game').classList.remove('disNone');
+        document.querySelector('.unmute-game').classList.add('disNone');
+    }else {
+        document.querySelector('.mute-game').classList.remove('disNone');
+        document.querySelector('.unmute-game').classList.add('disNone');
+    }
 }
 
 /**
