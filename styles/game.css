@@ -19,6 +19,7 @@
 
 body {
     margin: 0;
+    overflow: hidden;
 }
 
 button {
@@ -353,6 +354,10 @@ p {
     top: 0;
     left: 0;
     z-index: 500;
+}
+
+.rotate-device-screen {
+    z-index: 6000;
 }
 
 .you-win-screen h1, .game-over-screen h1, .rotate-device-screen h1 {

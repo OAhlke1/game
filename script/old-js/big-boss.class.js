@@ -3,26 +3,10 @@ class BigBoss extends Shooter {
     isVisible; /** a boolean for whether the bigBoss is visible or not */
     gotHit; /** a boolean for whether the bigBoss got hit or not */
     isDefeated; /** a boolean for whether the bigBoss got defeated or not */
-    fallingSound; /** DOM-element for the falling-sound. */
-    fallingEnded; /** a boolean, whether the the BigBoss has left the canvas. */
+    fallingSound; /** HTML-element for the falling-sound. */
+    fallingEnded; /** a boolean, whether the the big-boss has left the canvas. */
     fallingAnimationId; /** the id of the falling-animation of the @this BigBoss */
 
-    /**
-     * 
-     * @param {number} x the x-coordinate of the BigBoss
-     * @param {number} y the y-coordinate of the BigBoss
-     * @param {number} width the width of the Bigboss
-     * @param {number} height the height of the Bigboss
-     * @param {string} enemyType the enemy-type of the Bigboss
-     * @param {number} decreaseLifeAmount the amount of life, the BigBoss can take away from char
-     * @param {boolean} canShoot says that the BigBoss can shoot
-     * @param {string} lookingDirection the looking-direction of the Bigboss
-     * @param {number} lifeAmount the life-amount of the Bigboss
-     * @param {number} distanceToSeeChar the furthermost distance to the char, so that the char is still visible for the BigBoss
-     * @param {boolean} canWalk says that the BigBoss can not walk
-     * @param {number} hitImagesAmount the amounts of images the animation for hitting the BigBoss has
-     * @param {number} attackingImagesAmount the amounts of images the animation for attacking the BigBoss has
-     */
     constructor(x, y, width, height, enemyType, decreaseLifeAmount, canShoot, lookingDirection, lifeAmount, distanceToSeeChar, canWalk, hitImagesAmount, attackingImagesAmount) {
         super();
         this.x = x;
@@ -60,63 +44,44 @@ class BigBoss extends Shooter {
         this.fallingSound.volume = 0.5;
         this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3 * standardFrameRate);
         this.image = new Image();
-        this.image.src = './graphics/enemies/big-boss/attack/attack-left-0.png';
-        this.image.width = this.width;
-        this.image.height = this.height;
+        this.image.src = './graphics/enemies/green/attack/attack-left-0.png';
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/big-boss/shoot.svg';
-        this.shootingSoundPath = './sounds/enemy-shoots.mp3';
     }
 
-    /** @method levitateDown animates the downwards levitation. */
+    /** @function levitateDown animates the downwards levitation. */
     levitateDown() {
         if (!this.isDefeated) {
-            if(this.checkCharYCoords()) { this.animateShooting(); }
             this.y += 0.125 * heightUnit;
             if (this.y + this.height >= canCont.offsetHeight) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(() => { this.levitateUp(); }, 1.5 * standardFrameRate);
+                this.animateLevitationId = setInterval(() => { this.levitateUp(); }, 3 * standardFrameRate);
                 return;
             }
         } else {
             clearInterval(this.animateLevitationId);
-            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 1.5 * standardFrameRate);
+            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 3 * standardFrameRate);
         }
     }
 
-    /** @method levitateUp animates the upwards levitation. */
+    /** @function levitateUp animates the upwards levitation. */
     levitateUp() {
         if (!this.isDefeated) {
-            if(this.checkCharYCoords()) { this.animateShooting(); }
             this.y -= 0.125 * heightUnit;
             if (this.y <= 0) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(() => { this.levitateDown(); }, 1.5 * standardFrameRate);
+                this.animateLevitationId = setInterval(() => { this.levitateDown(); }, 3 * standardFrameRate);
                 return;
             }
         } else {
             clearInterval(this.animateLevitationId);
-            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 1.5 * standardFrameRate);
+            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 3 * standardFrameRate);
         }
     }
 
     /**
      * 
-     * @function checkCharYCoords checks the y-coordinates of the char so that @this BigBoss aiming at the char.
-     */
-    checkCharYCoords() {
-        if(this.y >= char.y && this.y <= char.y + char.height) {
-            this.isTargeting = true;
-            return true;
-        }else {
-            this.isTargeting = false;
-            return false;
-        }
-    }
-
-    /**
-     * 
-     * @method animateBigBossGotHit animates the hitting of the BigBoss.
+     * @function animateBigBossGotHit animates the hitting of the BigBoss.
      */
     animateBigBossGotHit() {
         if (this.gotHit) {
@@ -141,7 +106,7 @@ class BigBoss extends Shooter {
 
     /** 
      * 
-     * @method whenBigBossIsDead sets the @var lifeAmount of the BigBoss to 0,
+     * @function whenBigBossIsDead sets the @var lifeAmount of the big-boss to 0,
      * sets its @var isDangerous to false and its @var isDefeated to true,
      * stops the levitation animation,
      * starts the falling-sound if it is paused (otherwise it is already playing)
@@ -157,8 +122,8 @@ class BigBoss extends Shooter {
 
     /**
      * 
-     * @method animateFalling animates the BigBosses falling.
-     * When the BigBoss leaves the canvas, @var fallingEnded is set to true,
+     * @function animateFalling animates the big-bosses falling.
+     * When the big-boss leaves the canvas, @var fallingEnded is set to true,
      * the game is being paused, the falling-animation cleared,
      * the games elements saved to local-storage are deleted,
      * and the winning-screen is being displayed.
@@ -177,21 +142,19 @@ class BigBoss extends Shooter {
 
     /**
      * 
-     * @method animateShooting animates the trajectory of the BigBosses ammo
-     * when the BigBoss is visible, it begins shooting
+     * @function animateShooting animates the trajectory of the big-bosses ammo
+     * when the big-boss is visible, it begins shooting
      */
     animateShooting() {
-        if (this.isTargeting && this.isVisible) {
-            this.setupShoot(0.125*this.width, 0.125*this.height);
-            /* setTimeout(() => {
-                this.animateShooting();
-            }, standardFrameRate); */
+        if (this.isVisible) {
+            this.setupShoot(2.5 * widthUnit, 2.5 * heightUnit);
+            setTimeout(() => { this.animateShooting(); }, 1000);
         }
     }
 
     /**
      * 
-     * @method playFallingSound plays the sound of the falling of the BigBoss.
+     * @function playFallingSound plays the sound of the falling of the big-boss.
      * For not being automatically repeated, it pauses after its player has ended.
      */
     playFallingSound() {

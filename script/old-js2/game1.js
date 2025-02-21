@@ -39,7 +39,6 @@ let openDescription = document.querySelector('.open-description'); /** @var {DOM
 let closeDescription = document.querySelector('.close-description'); /** @var {DOM} openDescription is the button to close the description */
 let rotateDeviceScreen = document.querySelector('.rotate-device-screen'); /** @var {DOM} rotateDeviceScreen is the advice-screen to rotate the screen */
 let gameReloaded; /** @var {boolean} gameReloaded says wether the game has been loaded in the past or not. If not, the description is shown automatically. Otherwise its hidden. */
-let loadedInWidescreen; /** @var {boolean} loadedInWidescreen says wether the game has been loaded in widescreen-mode or not */
 
 /**
  * 
@@ -72,13 +71,7 @@ function autoStartMovingWithPlatform() {
 function loadBasicValues() {
     gamePaused = true;
     gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
-    if(screen.width < screen.height) {
-        loadedInWidescreen = false;
-        rotateDeviceScreen.classList.remove('disNone');
-        pauseGame();
-    }else {
-        loadedInWidescreen = true;
-    }
+    if(screen.width < screen.height) { rotateDeviceScreen.classList.remove('disNone'); }
 }
 
 /**
@@ -118,23 +111,9 @@ function addEventListeners() {
  * @function showRotateScreen shows the advice-screen that the 
  */
 function showRotateScreen() {
-    if(!loadedInWidescreen) {
-        if(window.innerWidth < screen.height) {
-            rotateDeviceScreen.classList.remove('disNone');
-            pauseGame();
-        }
-    }else { whenLoadedInWideScreen(); }
-}
-
-function whenLoadedInWideScreen() {
     if(window.innerWidth < screen.height) {
-        pauseGame();
-        rotateDeviceScreen.querySelector('.reset-button').classList.add('disNone');
-        rotateDeviceScreen.querySelector('.not-loaded-in-widescreen').classList.add('disNone');
+        pausePlayGameToggle();
         rotateDeviceScreen.classList.remove('disNone');
-    }else {
-        unpauseGame();
-        rotateDeviceScreen.classList.add('disNone');
     }
 }
 
@@ -170,8 +149,9 @@ function setSizeUnits() {
 function loadBackgroundPlayer() {
     bgPlayer = new Audio();
     bgPlayer.src = './sounds/background.mp3';
+    bgPlayer.volume = gameVolume;
     bgPlayer.loop = true;
-    bgPlayer.volume = 0.125*gameVolume;
+    bgPlayer.volume = 0.125;
     bgPlayer.play();
 }
 
@@ -416,10 +396,108 @@ function createEnemies() {
     hitables.enemies.push(new GreenEnemy(25*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new GreenEnemy(35*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
     hitables.enemies.push(new GreenEnemy(40*widthUnit, 24*heightUnit, 2*widthUnit, 2*heightUnit, 'green', 25, false, 'left', 150, 15*widthUnit, true, 5, 12));
-    hitables.enemies.push(new BigBoss(86*widthUnit, 0, widthUnit, 4*heightUnit/3, 'big-boss', 120, true, 'left', 1000, 70*widthUnit/3, false, 5, 7));
+    hitables.enemies.push(new BigBoss(86*widthUnit, 0, 10*widthUnit, 20*heightUnit, 'big-boss', 120, true, 'left', 1000, 70*widthUnit/3, false, 5, 7));
     hitables.enemies.push(new Shooter(21*widthUnit, 19*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 2*widthUnit, true, 5, 7));
     hitables.enemies.push(new Shooter(41*widthUnit, 16*heightUnit, widthUnit, heightUnit, 'shooter', 60, true, 'left', 100, 4*widthUnit, false, 5, 7));
     hitables.enemies.push(new Shooter(24*widthUnit, 2.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, 'shooter', 60, true, 'right', 100, 5*widthUnit, true, 5, 7));
     bigBoss = hitables.enemies[3];
     createEnemiesHitImagesArrays();
+}
+
+/**
+ * 
+ * @function createEnemiesHitImagesArrays stores the hitting-animation-images of each enemy into the respective @var {array} hitImagesArrays.left and @var {array} hitImagesArrays.right
+ * because the enemy can either look left or right.
+ * (@var {number} i is the index of the enemy) and
+ * @var {number} j is the index of each animation index (there are always 8)
+ */
+function createEnemiesHitImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].hitImagesAmount; j++) {
+            let hitImageLeft = new Image();
+            hitImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-left-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.left.push(hitImageLeft);
+            let hitImageRight = new Image();
+            hitImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/hit/hit-right-${j}.png`;
+            hitables.enemies[i].hitImagesArrays.right.push(hitImageRight);
+        }
+    }
+    createEnemiesAttackingImagesArrays();
+}
+
+/**
+ * 
+ * @function createEnemiesAttackingImagesArrays stores the hitting-animation-images of each enemy into the respective @var {array} attackingImagesArrays.left and @var {array} attackingImagesArrays.right
+ * because the enemy can either look left or right.
+ * (@var {number} i is the index of the enemy) and
+ * @var {number} j is the index of each animation index (there are always 8)
+ */
+function createEnemiesAttackingImagesArrays() {
+    for(let i=0; i<hitables.enemies.length; i++) {
+        for(let j=0; j<hitables.enemies[i].attackingImagesAmount; j++) {
+            let attackingImageLeft = new Image();
+            attackingImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-left-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.left.push(hitImageLeft);
+            let attackingImageRight = new Image();
+            attackingImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-right-${j}.png`;
+            hitables.enemies[i].attackingImagesArrays.right.push(attackingImageRight);
+        }
+    }
+    setEnemiesAliveAndDangerousProperties();
+}
+
+/**
+ * 
+ * @function setEnemiesAliveAndDangerousProperties checks the enemies @var {boolean} alive and @var {boolean} dangerous stored to the browsers local-storage
+ * because only the alive and dangerous enemies are considered.
+ */
+function setEnemiesAliveAndDangerousProperties() {
+    if(localStorage.enemies) {
+        alive = JSON.parse(localStorage.enemies);
+        for(let i=0; i<hitables.enemies.length; i++) {
+            hitables.enemies[i].isAlive = alive[i];
+            hitables.enemies[i].isDangerous = alive[i];
+        }
+    }
+}
+
+/**
+ * 
+ * @function createItems invokes the items-creating functions.
+ * It then sets the @var {boolean} collected of each @var {Item} item to true or false, depending on the value in @var collected
+ * The reason is that the already collected items shall not be collectable again after reloading the game, because only the´items
+ * that are not collected are considered.
+ */
+function createItems() {
+    let collected; /** @var {JSON} collected stores the item-JSON when it is set to the browsers local-storage */
+    createLifeIncreasingItems();
+    createSpecialAmmoKitParts();
+    if(localStorage.items) {
+        collected = JSON.parse(localStorage.items);
+        for(let i=0; i<items.lifeIncreasing.length; i++) { items.lifeIncreasing[i].collected = collected.lifeIncreasing[i]; }
+        for(let i=0; i<items.specialAmmo.length; i++) { items.specialAmmo[i].collected = collected.specialAmmo[i]; }
+    }
+    createSpecialAmmosAnimationImages();
+}
+
+/**
+ * 
+ * @function createLifeIncreasingItems creates the heart-items
+ */
+function createLifeIncreasingItems() {
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
+    items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+    items.lifeIncreasing.push(new LifeIncreaser(43*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
+}
+
+/**
+ * 
+ * @function createLifeIncreasingItems creates the special-ammo-parts
+ */
+function createSpecialAmmoKitParts() {
+    items.specialAmmo.push(new SpecialAmmoKit(1.5*widthUnit, 0.5*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(22*widthUnit, 3*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
+    items.specialAmmo.push(new SpecialAmmoKit(58*widthUnit, 18*heightUnit, widthUnit, heightUnit, './graphics/items/special-ammo/rotation-0.png', 'ammo-kit'));
 }

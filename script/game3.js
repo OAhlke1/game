@@ -237,9 +237,8 @@ function checkForScrolling(movingDirection = char.movingDirection) {
  * @function checkIfBigBossVisible checks wether the last-enemy is in the screen or not
  */
 function checkIfBigBossVisible() {
-    if (bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width / 3) {
+    if (canvas.offsetLeft <= canCont.offsetWidth - bigBoss.x) {
         bigBoss.isVisible = true;
-        bigBoss.animateShooting();
     } else { bigBoss.isVisible = false; }
 }
 
@@ -253,7 +252,6 @@ function checkIfBigBossVisible() {
  */
 
 let setWholeVolume = function setWholeVolumeFunc(event) {
-    console.log(event.target);
     let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
     let volumeBarWidth = document.querySelector('.volumebar').offsetWidth;
     let x = event.clientX;
@@ -373,7 +371,7 @@ function playAllPlayers() {
         if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
         if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
     });
-    if (char.hittingSound.currentTime > 0) { char.hittingSound.play(); }
+    if (char.hittingSound.currentTime > 0 && char.gotHit) { char.hittingSound.play(); }
     if (char.shootingSound.currentTime > 0) { char.shootingSound.play(); }
     if (bgPlayer) { bgPlayer.play(); };
 }

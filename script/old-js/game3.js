@@ -1,7 +1,140 @@
-/**
- * 
- * @function fullScreenButtonToggle toggles the button-image for the fullscreen.
- */
+function checkIfBigBossVisible() {
+    if (bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width / 3) {
+        bigBoss.isVisible = true;
+        bigBoss.animateShooting();
+    } else { bigBoss.isVisible = false; }
+}
+
+function setMenubarPosition() {
+    menubar.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+    menubarBackground.x = canvas.offsetLeft - canCont.offsetLeft + canCont.offsetWidth;
+}
+
+function setCanvasSize() {
+    canvas.style.width = `${2 * canCont.offsetWidth}px`;
+    canvas.style.height = `${canCont.offsetHeight}px`;
+}
+
+function checkVolumeBarEvent(event) {
+    if (event.type === "mousedown" || event.type === "touchstart") {
+        controller['volume'].pressed = true;
+        document.querySelector('.controls .volumebar-cont').addEventListener('mousemove', setWholeVolume);
+    } else if (event.type === "mouseup" || event.type === "touchend") {
+        controller['volume'].pressed = false;
+        event.target.closest('.volumebar-cont').removeEventListener('mousemove', setWholeVolume);
+        event.target.closest('.volumebar-cont').addEventListener('mouseup', setWholeVolume);
+    }
+}
+
+let setWholeVolume = function setWholeVolumeFunc(event) {
+    let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
+    let volumeBarWidth = event.target.closest('.volumebar-cont').offsetWidth;
+    let x = event.clientX;
+    gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
+    gameVolume = gameVolume > 1 ? 1 : gameVolume;
+    volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
+    if (!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem) => { elem.volume = gameVolume; }); }
+}
+
+function gameSoundToggle() {
+    if (!gameMuted) {
+        document.querySelector('.mute-game').classList.add('muted');
+        audioPlayer.forEach((elem) => { elem.volume = 0; });
+        muteAllPlayers();
+        gameMuted = true;
+    } else {
+        document.querySelector('.mute-game').classList.remove('muted');
+        unmuteAllPlayers();
+        gameMuted = false;
+    }
+}
+
+function muteAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        elem.hittingSound.volume = 0;
+        if (elem.shootingSound) { elem.shootingSound.volume = 0; }
+        if (elem.fallingSound) { elem.fallingSound.volume = 0; }
+    });
+    char.hittingSound.volume = 0;
+    char.shootingSound.volume = 0;
+    bgPlayer.volume = 0;
+}
+
+function unmuteAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        elem.hittingSound.volume = 0.5;
+        if (elem.shootingSound) { elem.shootingSound.volume = 0.5; }
+        if (elem.fallingSound) { elem.fallingSound.volume = 0.5; }
+    });
+    char.hittingSound.volume = 0.5;
+    char.shootingSound.volume = 0.5;
+    bgPlayer.volume = 0.125;
+}
+
+function pauseAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.pause(); }
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.pause(); }
+    });
+    hitables.flyables.forEach((elem) => {
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
+    });
+    if (char.hittingSound.currentTime > 0) { char.hittingSound.pause(); }
+    if (char.shootingSound.currentTime > 0) { char.shootingSound.pause(); }
+    if (bgPlayer) { bgPlayer.pause(); }
+}
+
+function playAllPlayers() {
+    hitables.enemies.forEach((elem) => {
+        if (elem.hittingSound.currentTime > 0) { elem.hittingSound.play(); }
+        if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
+        if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
+    });
+    if (char.hittingSound.currentTime > 0) { char.hittingSound.play(); }
+    if (char.shootingSound.currentTime > 0) { char.shootingSound.play(); }
+    if (bgPlayer) { bgPlayer.play(); };
+}
+
+async function turnOnFullScreen() {
+    inFullscreen = true;
+    setScreenProperties();
+    document.querySelector('.canvas-cont .controls').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
+    document.querySelector('.game-headline').classList.add('disNone');
+    await body.requestFullscreen().then(() => {
+        fullscreenButtonPressed = false;
+        fullScreenButtonToggle();
+    })
+}
+
+async function turnOffFullScreen() {
+    inFullscreen = false;
+    setScreenProperties();
+    document.querySelector('.canvas-cont .controls').classList.add('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
+    document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
+    document.querySelector('.game-headline').classList.remove('disNone');
+    await document.exitFullscreen().then(() => {
+        fullscreenButtonPressed = false;
+        fullScreenButtonToggle();
+    })
+}
+
+function setScreenProperties() {
+    if(inFullscreen) {
+        canCont.style.width = `${window.innerWidth}px`;
+        canCont.style.height = `${screen.height}px`;
+    }else {
+        canCont.style.width = `${0.7 * window.innerWidth}px`;
+        canCont.style.height = `${0.7 * screen.height}px`;
+    }
+    setSizeUnits();
+    canvas.setAttribute('width', 96*widthUnit);
+    canvas.setAttribute('height', 27*heightUnit);
+}
+
 function fullScreenButtonToggle() {
     if (inFullscreen) {
         document.querySelector('.turn-fullscreen-on').classList.add('disNone');
@@ -13,10 +146,6 @@ function fullScreenButtonToggle() {
     resizeCanvasProperties();
 }
 
-/**
- * 
- * @function resizeCanvasProperties resizes the canvas depending on the the fullscreen-state of the game
- */
 function resizeCanvasProperties() {
     canvas.setAttribute("width", 96*widthUnit);
     canvas.setAttribute("height", 27*heightUnit);
@@ -26,10 +155,6 @@ function resizeCanvasProperties() {
     resizePlatformsProperties();
 }
 
-/**
- * 
- * @function resizePlatformsProperties resizes the platforms depending on the the fullscreen-state of the game
- */
 function resizePlatformsProperties() {
     platforms.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -46,10 +171,6 @@ function resizePlatformsProperties() {
     resizeBackgroundsProperties();
 }
 
-/**
- * 
- * @function resizeBackgroundsProperties resizes the background depending on the the fullscreen-state of the game
- */
 function resizeBackgroundsProperties() {
     backgrounds.forEach((elem)=>{
         elem.width *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -58,10 +179,6 @@ function resizeBackgroundsProperties() {
     resizeHitablesProperties();
 }
 
-/**
- * 
- * @function resizeCanvasProperties invokes the functions that resizes the hitables
- */
 function resizeHitablesProperties() {
     resizeEnemies();
     resizeTraps();
@@ -69,10 +186,6 @@ function resizeHitablesProperties() {
     resizeCharProperties();
 }
 
-/**
- * 
- * @function resizeEnemies resizes the enemies depending on the the fullscreen-state of the game
- */
 function resizeEnemies() {
     hitables.enemies.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -87,10 +200,6 @@ function resizeEnemies() {
     })
 }
 
-/**
- * 
- * @function resizeTraps resizes the traps depending on the the fullscreen-state of the game
- */
 function resizeTraps() {
     hitables.traps.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -105,10 +214,6 @@ function resizeTraps() {
     })
 }
 
-/**
- * 
- * @function resizeFlyables resizes the flyables depending on the the fullscreen-state of the game
- */
 function resizeFlyables() {
     hitables.flyables.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -120,10 +225,6 @@ function resizeFlyables() {
     })
 }
 
-/**
- * 
- * @function resizeCharProperties resizes the char depending on the the fullscreen-state of the game
- */
 function resizeCharProperties() {
     char.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
     char.y *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -137,19 +238,11 @@ function resizeCharProperties() {
     resizeItemsProperties();
 }
 
-/**
- * 
- * @function resizeItemsProperties invokes the functions that resize the items
- */
 function resizeItemsProperties() {
     resizeLifeIncreaser();
     resizeSpecialAmmoParts();
 }
 
-/**
- * 
- * @function resizeLifeIncreaser resizes the heart-items depending on the the fullscreen-state of the game
- */
 function resizeLifeIncreaser() {
     items.lifeIncreasing.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -161,10 +254,6 @@ function resizeLifeIncreaser() {
     })
 }
 
-/**
- * 
- * @function resizeSpecialAmmoParts resizes the special-ammo-parts depending on the the fullscreen-state of the game
- */
 function resizeSpecialAmmoParts() {
     items.specialAmmo.forEach((elem)=>{
         elem.x *= inFullscreen ? (1/ratioSmallBigScreenHeight) : ratioSmallBigScreenHeight;
@@ -176,10 +265,6 @@ function resizeSpecialAmmoParts() {
     })
 }
 
-/**
- * 
- * @function sizeMenuBarProperties resizes the menu-bar depending on the the fullscreen-state of the game
- */
 function sizeMenuBarProperties() {
     document.querySelector('.canvas-cont .menu-bar').style.width = `${10*widthUnit}px`;
     document.querySelector('.canvas-cont .menu-bar').style.height = `${heightUnit}px`;
@@ -188,11 +273,6 @@ function sizeMenuBarProperties() {
     })
 }
 
-/**
- * 
- * @function pausePlayGameToggle sets the corresponding variables depending on and invokes the respective
- * @var {boolean} gamePaused
- */
 function pausePlayGameToggle() {
     if (gamePaused) {
         gamePaused = false;
@@ -206,26 +286,16 @@ function pausePlayGameToggle() {
     }
 }
 
-/**
- * 
- * @function pauseGame pauses the game
- */
 function pauseGame() {
     gamePaused = true;
     keysUnheld = true;
-    char.isImmune = false;
     pauseAllPlayers();
     unholdAllKeys();
 }
 
-/**
- * 
- * @function unpauseGame unpauses the game
- */
 function unpauseGame() {
     gamePaused = false;
     keysUnheld = false;
-    char.isImmune = true;
     playAllPlayers();
 }
 
@@ -241,34 +311,21 @@ function timer() {
     return;
 }
 
-/**
- * 
- * @function shiftCanvasBack shifts the canvas back to the right.
- * That happens, when the char fell into the big hole.
- */
 function shiftCanvasBack() {
-    keysUnheld = true;
-    keysBlockedForShifting = true;
     let startingOffset = parseFloat(canvas.style.left);
     if(char.isAlive) {
         if(parseFloat(canvas.style.left) === startingOffset) { unholdAllKeys(); }
+        keysBlockedForShifting = true;
         canvas.style.left = `${parseFloat(canvas.style.left) + widthUnit/3}px`;
         pauseGame();
         if(parseFloat(canvas.style.left) >= 0) {
-            keysUnheld = false;
-            keysBlockedForShifting = false;
             whenCanvasIsShiftedBack();
             return;
         }
     }else {clearInterval(shiftingCanvasBackAnimationId); }
-    checkIfBigBossVisible();
     return;
 }
 
-/**
- * 
- * @function whenCanvasIsShiftedBack sets the left-property of the canvas back to 
- */
 function whenCanvasIsShiftedBack() {
     canvas.style.left = '0px';
     resetCharPosition();
@@ -278,30 +335,18 @@ function whenCanvasIsShiftedBack() {
     clearInterval(shiftingCanvasBackAnimationId);
 }
 
-/**
- * 
- * @function resetCharPosition places the char at the starting-point of the game
- */
 function resetCharPosition() {
     char.x = widthUnit;
     char.y = 25*heightUnit;
     slowDownChar();
 }
 
-/**
- * 
- * @function resetGame clears the local-storage (except the value of @var {boolean} gameReloaded) and refreshes the page after it
- */
 async function resetGame() {
     await clearLocalStorage().then(()=>{
         location.reload();
     }).catch((err)=>{ throw err; });
 }
 
-/**
- * 
- * @function resetChar resets the char-properties back to beginning-state
- */
 function resetChar() {
     char.x = widthUnit;
     char.y = 25*heightUnit;
@@ -315,10 +360,6 @@ function resetChar() {
     char.movingDirection = 'right';
 }
 
-/**
- * 
- * @function clearEnemies clears all enemies
- */
 function clearEnemies() {
     hitables.enemies.forEach((elem)=>{
         elem.isDangerous = false;
@@ -332,10 +373,6 @@ function clearEnemies() {
     hitables.flyables = [];
 }
 
-/**
- * 
- * @function unholdAllKeys sets the pressed-state of the left-, right-, jump- and run-key back to false
- */
 function unholdAllKeys() {
     controller['left'].pressed = false;
     controller['right'].pressed = false;
@@ -343,11 +380,6 @@ function unholdAllKeys() {
     controller['run'].pressed = false;
 }
 
-/**
- * 
- * @function startSavingChar invokes the @function saveCharProperties after the chars first movement.
- * To prevent double-execution of saveCharProperties the chars @var {boolean} hasDoneAnything is directly set to true.
- */
 function startSavingChar() {
     if(char && !char.hasDoneAnything) {
         char.hasDoneAnything = true;
@@ -355,11 +387,6 @@ function startSavingChar() {
     }
 }
 
-/**
- * 
- * @function saveCharProperties saves every second the chars actual health-amount, the actual amounts of collected special-ammo-parts
- * and the actual coordinates of the char (when the game is in fullscreen, the x- and y-coordinates are scaled down by the amount of @var {number} ratioSmallBigScreenHeight)
- */
 function saveCharProperties() {
     let charProps = {
         healthAmount: char.healthAmount,
@@ -369,14 +396,10 @@ function saveCharProperties() {
         onMovingPlatform: char.onMovingPlatform,
         standingPlatformIndex: char.standingPlatformIndex
     }
-    localStorage.setItem("char", JSON.stringify(charProps));
-    if(char.hasDoneAnything && char.hasDoneAnything != "char is dead now!") { setTimeout(saveCharProperties, 1000); }
+    localStorage.setItem("char", JSON.stringify(charProps));    
+    setTimeout(saveCharProperties, 1000);
 }
 
-/**
- * 
- * @function saveNotCollectedItems saves the properties of the not yet collected Items
- */
 function saveNotCollectedItems() {
     let collected = {
         lifeIncreasing: [],
@@ -389,75 +412,4 @@ function saveNotCollectedItems() {
         collected.lifeIncreasing.push(elem.collected);
     });
     localStorage.setItem("items", JSON.stringify(collected));
-}
-
-/**
- * 
- * @function saveNotDefeatedEnemies saves the not defeated enemies to the local storage.
- */
-function saveNotDefeatedEnemies() {
-    let alive = []; /** @var {array} alive saves the alive state of each enemy */
-    hitables.enemies.forEach((elem)=>{
-        alive.push(elem.isAlive);
-    });
-    localStorage.setItem("enemies", JSON.stringify(alive));
-    for(let i=0; i<hitables.enemies.length; i++) { hitables.enemies[i].isAlive = alive[i]; }
-}
-
-/**
- * 
- * @function allAmmoKitsCollected checks wether all special-ammo-parts are collected
- */
-function allAmmoKitsCollected() {
-    if(char.specialAmmoParts === 3) {
-        char.shootingSound = './sounds/special-shooting-sound.png';
-    }
-}
-
-/**
- * 
- * @function canContControlsToggle shows or hides the controls-bar for game volume, fullscreen and unpausing the game
- */
-function canContControlsToggle() {
-    if(controlsBar.classList.contains('disNone')) {
-        controlsBar.classList.remove('disNone');
-        if(!description.classList.contains('disNone')) {
-            hideDescription();
-            return;
-        }else if(!gamePaused) { pausePlayGameToggle(); }
-    }else {
-        controlsBar.classList.add('disNone');
-        if(!description.classList.contains('disNone')) {
-            pauseGame();
-            return;
-        }else if(description.classList.contains('disNone')){ unpauseGame(); }
-    }
-}
-
-/**
- * 
- * @function showDescription shows the game-description
- */
-function showDescription() {
-    openDescription.classList.add('disNone');
-    closeDescription.classList.remove('disNone');
-    description.classList.remove('disNone');
-    if(!controlsBar.classList.contains('disNone')) {
-        canContControlsToggle();
-        return;
-    }else { pausePlayGameToggle(); }
-}
-
-/**
- * 
- * @function hideDescription hides the game-description
- */
-function hideDescription() {
-    openDescription.classList.remove('disNone');
-    closeDescription.classList.add('disNone');
-    description.classList.add('disNone');
-    if(!controlsBar.classList.contains('disNone')) {
-        return;
-    }else { pausePlayGameToggle(); }
-    localStorage.setItem('reloaded', JSON.stringify(true));
 }

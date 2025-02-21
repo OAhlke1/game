@@ -13,7 +13,7 @@ class Cannonball extends Enemy {
      * @param {string} flyingDirection the flying-direction of @this Cannonball (which is actually based on the looking-direction of @this enemy )
      * @param {string} ammoImage the path to the image of @this Cannonball
      */
-    constructor(width, height, x, y, flyingDirection, ammoImage, shootingSoundPath) {
+    constructor(width, height, x, y, flyingDirection, ammoImage) {
         super();
         this.x = x;
         this.y = y;
@@ -24,10 +24,6 @@ class Cannonball extends Enemy {
         this.decreaseLifeAmount = 5;
         this.enemyType = "flyable";
         this.trajectoryIntervalId = setInterval(()=>{ this.animateTrajectory() }, standardFrameRate);
-        this.shootingSound = new Audio();
-        this.shootingSound.src = shootingSoundPath;
-        this.shootingSound.volume = 0.5;
-        this.playShootingSound();
     }
 
     /**
@@ -40,7 +36,7 @@ class Cannonball extends Enemy {
      * shooter is being invoked.
      */
     animateTrajectory() {
-        if(this.inCanvas){
+        if(this.inCanvas && !gamePaused){
             switch(this.flyingDirection) {
                 case "left":
                     if(this.x + this.width <= 0) { return; }
@@ -69,13 +65,5 @@ class Cannonball extends Enemy {
      */
     checkIfCannonballLeftCanvas () {
         if(this.x + this.width <= 0 || this.x > canvas.offsetWidth+widthUnit) { return true; }
-    }
-
-    /**
-     * 
-     * @method playShootingSound plays the shooting sound of @this enemy
-     */
-    playShootingSound() {
-        this.shootingSound.play();
     }
 }

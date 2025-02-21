@@ -10,14 +10,17 @@
 
 <body onload="initFunctions()">
     <h1 class="game-headline">SPACE JUMPER</h1>
+    <div class="rotate-device-screen disNone" onclick="pauseGame()">
+        <h1>Rotate your device</h1>
+        <p>
+            <br>Game only works properly in widescreen-mode!
+        </p>
+        <p class="not-loaded-in-widescreen">
+            Because you did not load your game from widescreen-mode, you have to reload the game (in widescreen-mode).
+        </p>
+        <button class="reset-button" onclick="location.reload()">Reload game</button>
+    </div>
     <div class="canvas-cont" fullscreen="allow">
-        <div class="rotate-device-screen disNone">
-            <h1>Rotate your device</h1>
-            <p>
-                <br>Game only works properly in widescreen-mode!
-            </p>
-                <button class="reset-button" onclick="location.reload()">Reload game</button>
-        </div>
         <button class="open-description" onclick="showDescription()" ontouch="descriptionToggle()">
             <p>?</p>
         </button>
