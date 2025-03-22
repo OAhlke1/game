@@ -1,5 +1,3 @@
-
-
 function createSpecialAmmosAnimationImages() {
     for(let i=0; i<items.specialAmmo.length; i++) {
         for(let j=0; j<7; j++) {
@@ -42,6 +40,7 @@ function drawElements() {
     drawChar();
     drawCharObjects();
     requestAnimationFrame(()=>{ drawElements(); });
+    if(char.onMovingPlatform) { char.movingWithPlatform(); }
 }
 
 function drawBackgrounds() {
@@ -232,13 +231,17 @@ function goRightPressed() {
 }
 
 function jumpPressed() {
-    controller['jump'].pressed = true;
-    controller['jump'].func();
+    if(!controller['jump'].pressed) {
+        controller['jump'].pressed = true;
+        controller['jump'].func();
+    }
 }
 
 function runningKeyHeld() {
-    controller['run'].pressed = true;
-    controller['run'].func();
+    if(!controller['run'].pressed) {
+        controller['run'].pressed = true;
+        controller['run'].func();
+    }
 }
 
 function setKeyUpEvents() {
@@ -364,16 +367,6 @@ function touchShooting() {
     }
 }
 
-function playSound(fileName) {
-    if (!gameMuted) {
-        let audio = new Audio();
-        audio.src = fileName;
-        audio.volume = gameVolume;
-        audioPlayer.push(audio);
-        audio.play();
-    }
-}
-
 function checkIfAllEnemiesAreDead() {
     if (hitables.enemies.length === char.enemiesKilled) {
         setTimeout(this.resetEnemies, 30000);
@@ -394,7 +387,7 @@ function checkForScrolling(movingDirection = char.movingDirection) {
         return;
     } else {
         if (movingDirection === "right" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x >= 2 * canCont.offsetWidth / 3) {
-            if (canvas.offsetLeft + canCont.offsetWidth <= 0) { return; }
+            if (parseFloat(canvas.style.left) <= canCont.offsetWidth - canvas.offsetWidth) { return; }
             char.scrollingStepAmount++;
         } else if (movingDirection === "left" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x <= canCont.offsetWidth / 3) {
             if (parseFloat(canvas.style.left) >= 0) { return; }

@@ -365,16 +365,6 @@ function touchShooting() {
     }
 }
 
-function playSound(fileName) {
-    if (!gameMuted) {
-        let audio = new Audio();
-        audio.src = fileName;
-        audio.volume = gameVolume;
-        audioPlayer.push(audio);
-        audio.play();
-    }
-}
-
 function checkIfAllEnemiesAreDead() {
     if (hitables.enemies.length === char.enemiesKilled) {
         setTimeout(this.resetEnemies, 30000);
@@ -395,7 +385,7 @@ function checkForScrolling(movingDirection = char.movingDirection) {
         return;
     } else {
         if (movingDirection === "right" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x >= 2 * canCont.offsetWidth / 3) {
-            if (canvas.offsetLeft + canCont.offsetWidth <= 0) { return; }
+            if (parseFloat(canvas.style.left) <= canCont.offsetWidth - canvas.offsetWidth) { return; }
             char.scrollingStepAmount++;
         } else if (movingDirection === "left" && canCont.offsetLeft + parseFloat(canvas.style.left) + char.x <= canCont.offsetWidth / 3) {
             if (parseFloat(canvas.style.left) >= 0) { return; }

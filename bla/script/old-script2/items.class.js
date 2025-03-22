@@ -26,6 +26,11 @@ class Item {
         this.checkCharPos();
     }
 
+    /**
+     * 
+     * @function checkCharPos checks the position of the char.
+     * When the char is directly at @this item it is being collected.
+     */
     checkCharPos() {
         if(!this.collected) {
             if(char.x + char.width >= this.x && this.x + this.width >= char.x && char.y + char.height >= this.y && this.y + this.height >= char.y) {
@@ -38,6 +43,12 @@ class Item {
         }else { return; }
     }
 
+    /**
+     * 
+     * @function collectItem collects the item.
+     * When the item-type (@var itemType) is life-increaser, the @function collectHeart is invoked.
+     * When its type is ammo-kit, the @function collectSpecialAmmoKit is invoked.
+     */
     collectItem() {
         if(!this.collected) {
             switch(this.itemType) {
@@ -53,6 +64,13 @@ class Item {
         return;
     }
 
+    /**
+     * 
+     * @function collectHeart sets the items @var collected to true, so that it es collected and not drawn to canvas anymore.
+     * Then the chars @var healthAmount is being increased (but not more than the chars maximum healthAmount @var maxHealthAmount)
+     * At the end, the remaining items and the chars properties are being saved to the browsers local storage via
+     * @function saveNotCollectedItems and @function saveCharProperties
+     */
     collectHeart() {
         if(char.healthAmount < char.maxHealthAmount) {
             this.collected = true;
@@ -66,6 +84,13 @@ class Item {
         saveCharProperties();
     }
 
+    /**
+     * 
+     * @function collectSpecialAmmoKit collects @this item when it is a special-ammo-part.
+     * It sets the @var collected to true, incremts the chars @var specialAmmoParts,
+     * saves the not collected items, sets the menu-bar propertis, saves the properties of the char
+     * and invokes the @function allAmmoKitsCollected to check wether all special-ammo-parts are collected.
+     */
     collectSpecialAmmoKit() {
         this.collected = true;
         char.specialAmmoParts = char.specialAmmoParts < 3 ? char.specialAmmoParts+1 : 3;

@@ -1,5 +1,3 @@
-
-
 function saveNotDefeatedEnemies() {
     let alive = [];
     hitables.enemies.forEach((elem)=>{

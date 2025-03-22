@@ -54,7 +54,7 @@ class Char {
     ammoImages;
     underGround;
     floorPosition;
-    hasDoneAnything = false;
+    hadDoneAnythin;
 
     constructor(width, height, x, y, standardImgPath, stepLength, maxJumpHeight, specialAmmoParts = 0, healthAmount, onMovingPlatform, standingPlatformIndex) {
         this.width = width;
@@ -124,6 +124,7 @@ class Char {
             specialAmmo: ""
         }
         this.onMovingPlatform = onMovingPlatform;
+        this.hasDoneAnything = false;
     }
 
     moveLeft(key) {

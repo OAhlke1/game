@@ -33,13 +33,11 @@ let setWholeVolume = function setWholeVolumeFunc(event) {
     gameVolume = ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) >= 0 ? ((x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth) : 0;
     gameVolume = gameVolume > 1 ? 1 : gameVolume;
     volumeBarInner.style.width = `${100 * (x - volumeBarInner.getBoundingClientRect().left) / volumeBarWidth}%`;
-    if (!document.querySelector('.mute-game').classList.contains('muted')) { audioPlayer.forEach((elem) => { elem.volume = gameVolume; }); }
 }
 
 function gameSoundToggle() {
     if (!gameMuted) {
         document.querySelector('.mute-game').classList.add('muted');
-        audioPlayer.forEach((elem) => { elem.volume = 0; });
         muteAllPlayers();
         gameMuted = true;
     } else {
@@ -99,7 +97,6 @@ function playAllPlayers() {
 async function turnOnFullScreen() {
     inFullscreen = true;
     setScreenProperties();
-    window.removeEventListener('resize', showHideRotateScreen);
     document.querySelector('.canvas-cont .controls').classList.add('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
@@ -125,14 +122,15 @@ async function turnOffFullScreen() {
 
 function setScreenProperties() {
     if(inFullscreen) {
-        canCont.style.width = `${screen.width}px`;
+        canCont.style.width = `${window.innerWidth}px`;
         canCont.style.height = `${screen.height}px`;
     }else {
-        canCont.style.width = `${0.7 * screen.width}px`;
+        canCont.style.width = `${0.7 * window.innerWidth}px`;
         canCont.style.height = `${0.7 * screen.height}px`;
     }
-    canvas.setAttribute('width', 32*canCont.offsetHeight/9);
-    canvas.setAttribute('height', canCont.offsetHeight);
+    setSizeUnits();
+    canvas.setAttribute('width', 96*widthUnit);
+    canvas.setAttribute('height', 27*heightUnit);
 }
 
 function fullScreenButtonToggle() {
@@ -147,8 +145,8 @@ function fullScreenButtonToggle() {
 }
 
 function resizeCanvasProperties() {
-    canvas.setAttribute("width", inFullscreen ? 2*screen.width : 2*canCont.offsetWidth);
-    canvas.setAttribute("height", inFullscreen ? screen.height : canCont.offsetHeight);
+    canvas.setAttribute("width", 96*widthUnit);
+    canvas.setAttribute("height", 27*heightUnit);
     if(inFullscreen) {
         canvas.style.left = `${parseFloat(canvas.style.left)/0.7}px`;
     }else { canvas.style.left = `${parseFloat(canvas.style.left)*0.7}px`; }
@@ -336,9 +334,8 @@ function whenCanvasIsShiftedBack() {
 }
 
 function resetCharPosition() {
-    console.log(widthUnit, heightUnit);
     char.x = widthUnit;
-    char.y = char.floorPosition;
+    char.y = 25*heightUnit;
     slowDownChar();
 }
 
@@ -381,12 +378,24 @@ function unholdAllKeys() {
     controller['run'].pressed = false;
 }
 
+function startSavingChar() {
+    if(char && !char.hasDoneAnything) {
+        char.hasDoneAnything = true;
+        saveCharProperties();
+    }
+}
+
 function saveCharProperties() {
     let charProps = {
         healthAmount: char.healthAmount,
-        specialAmmoParts: char.specialAmmoParts
+        specialAmmoParts: char.specialAmmoParts,
+        x: inFullscreen ? char.x * ratioSmallBigScreenHeight : char.x,
+        y: inFullscreen ? char.y * ratioSmallBigScreenHeight : char.y,
+        onMovingPlatform: char.onMovingPlatform,
+        standingPlatformIndex: char.standingPlatformIndex
     }
     localStorage.setItem("char", JSON.stringify(charProps));    
+    if(char.hasDoneAnything && char.hasDoneAnything != "char is dead now!") { setTimeout(saveCharProperties, 1000); }
 }
 
 function saveNotCollectedItems() {

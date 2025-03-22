@@ -124,14 +124,15 @@ async function turnOffFullScreen() {
 
 function setScreenProperties() {
     if(inFullscreen) {
-        canCont.style.width = `${screen.width}px`;
+        canCont.style.width = `${window.innerWidth}px`;
         canCont.style.height = `${screen.height}px`;
     }else {
-        canCont.style.width = `${0.7 * screen.width}px`;
+        canCont.style.width = `${0.7 * window.innerWidth}px`;
         canCont.style.height = `${0.7 * screen.height}px`;
     }
-    canvas.setAttribute('width', 32*canCont.offsetHeight/9);
-    canvas.setAttribute('height', canCont.offsetHeight);
+    setSizeUnits();
+    canvas.setAttribute('width', 96*widthUnit);
+    canvas.setAttribute('height', 27*heightUnit);
 }
 
 function fullScreenButtonToggle() {
@@ -146,8 +147,8 @@ function fullScreenButtonToggle() {
 }
 
 function resizeCanvasProperties() {
-    canvas.setAttribute("width", inFullscreen ? 2*screen.width : 2*canCont.offsetWidth);
-    canvas.setAttribute("height", inFullscreen ? screen.height : canCont.offsetHeight);
+    canvas.setAttribute("width", 96*widthUnit);
+    canvas.setAttribute("height", 27*heightUnit);
     if(inFullscreen) {
         canvas.style.left = `${parseFloat(canvas.style.left)/0.7}px`;
     }else { canvas.style.left = `${parseFloat(canvas.style.left)*0.7}px`; }
@@ -335,8 +336,8 @@ function whenCanvasIsShiftedBack() {
 }
 
 function resetCharPosition() {
-    char.x = inFullscreen ? widthUnit/0.7 : widthUnit;
-    char.y = inFullscreen ? 25*heightUnit/0.7 : 25*heightUnit;
+    char.x = widthUnit;
+    char.y = 25*heightUnit;
     slowDownChar();
 }
 

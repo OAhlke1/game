@@ -14,7 +14,7 @@ let canContWidthSmall;
 let standardFrameRate = 12;
 let gameVolume = 0.5;
 let t = -1;
-let ratioSmallBigScreenHeight = 1;
+let ratioSmallBigScreenHeight = 0.7;
 let oldWindowHeight = window.innerHeight;
 let gamePaused = false;
 let gameMuted = false;
@@ -43,7 +43,7 @@ let items = {
     lifeIncreasing: [],
     specialAmmo: []
 };
-let gameJson = {
+/* let gameJson = {
     screenDimensions: {
         width: 0,
         height: 0
@@ -58,7 +58,7 @@ let gameJson = {
         lifeIncreasing: [],
         specialAmmo: [],
     }
-};
+}; */
 let body = document.querySelector('body');
 let menuBar = document.querySelector('.menu-bar');
 let controlsBar = document.querySelector('.canvas-cont .controls');
@@ -66,9 +66,10 @@ let description = document.querySelector('.description');
 let openDescription = document.querySelector('.open-description');
 let closeDescription = document.querySelector('.close-description');
 let gameReloaded;
+let screenWidth = window.innerWidth;
+let screenHeight = screen.height;
 
 function initFunctions() {
-    gamePaused = true;
     loadBasicValues();
     creator();
     if(!gameReloaded) { showDescription(); }
@@ -85,15 +86,15 @@ function autoStartMovingWithPlatform() {
 }
 
 function loadBasicValues() {
-    if(screen.width < screen.height) { document.querySelector('.rotate-device-screen').classList.remove('disNone'); }
-    afterRotatingDevice = localStorage.afterRotatingDevice ? true : false;
+    gamePaused = true;
     gameReloaded = localStorage.reloaded ? JSON.parse(localStorage.reloaded) : false;
+    if(screen.width < screen.height) { document.querySelector('.rotate-device-screen').classList.remove('disNone'); }
 }
 
 function creator() {
     createScreen();
     setScreenProperties();
-    setSizeUnits();
+    //setSizeUnits();
     createBackgrounds();
     if(!char) { createChar(); }
     addKeypressMovingCommands();
@@ -116,11 +117,10 @@ function addEventListeners() {
 }
 
 function showHideRotateScreen() {
-    if(screen.width < screen.height) {
+    if(window.innerWidth < screen.height) {
         pausePlayGameToggle();
-        setScreenProperties();
         document.querySelector('.rotate-device-screen').classList.remove('disNone');
-    }else if(oldWindowHeight >= window.innerHeight) { location.reload(); }
+    }
 }
 
 function clearLocalStorage() {
@@ -134,7 +134,7 @@ function clearLocalStorage() {
     })
 }
 
-function loadGameJson() {
+/* function loadGameJson() {
     gameJson = JSON.parse(localStorage.gameJson);
     items = gameJson.items;
     hitables.enemies = [];
@@ -149,23 +149,21 @@ function createGameJson() {
         },
         items: items
     };
-}
+} */
 
 function setSizeUnits() {
-    aspectRatio = screen.height/screen.width;
+    //aspectRatio = screen.height/screen.width;
     heightUnit = canCont.offsetHeight/27;
     widthUnit = heightUnit;
-    ratioSmallBigScreenHeight = canCont.offsetHeight/screen.height;
 }
 
 function loadPlayer() {
     bgPlayer = new Audio();
     bgPlayer.src = './sounds/background.mp3';
     bgPlayer.volume = gameVolume;
-    bgPlayer.play();
     bgPlayer.loop = true;
     bgPlayer.volume = 0.125;
-    audioPlayer.push(bgPlayer);
+    bgPlayer.play();
 }
 
 function createScreen() {
@@ -178,7 +176,7 @@ function createScreen() {
 }
 
 function createBackgrounds() {
- {}    backgrounds.push(new Background(0, 0, canCont.offsetWidth, canCont.offsetHeight, './graphics/background/background.jpg'));
+    backgrounds.push(new Background(0, 0, canCont.offsetWidth, canCont.offsetHeight, './graphics/background/background.jpg'));
 }
 
 function createChar() {
