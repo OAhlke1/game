@@ -213,7 +213,7 @@ function pausePlayGameToggle() {
 function pauseGame() {
     gamePaused = true;
     keysUnheld = true;
-    pauseAllPlayers();
+    pauseAllPlayers(); 
     unholdAllKeys();
 }
 
