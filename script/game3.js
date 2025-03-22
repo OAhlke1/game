@@ -56,14 +56,9 @@ function jumpPressed() {
  * @function runningKeyHeld sets the @var {object} run of the @var {JSON} controller to true and invokes the function connected to it.
  * (Both only, when the left key is not pressed already)
  */
-function runningKeyHeld() {
-    /* if(!controller['run'].pressed) {
-        controller['run'].pressed = true;
-        controller['run'].func();
-    } */
-    
-        controller['run'].pressed = true;
-        controller['run'].func();
+function runningKeyHeld() {    
+    controller['run'].pressed = true;
+    controller['run'].func();
 }
 
 /**
@@ -82,8 +77,8 @@ function setKeyUpEvents() {
             } else if (event.key === "Shift") {
                 controller['run'].pressed = false;
                 slowDownChar();
-            } else if (event.key.toLowerCase() === "e" && char.isAlive) {
-                createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.75 * widthUnit, 0.25 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
+            } else if (event.key.toLowerCase() === "e" && char.isAlive && !gamePaused) {
+                createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.75 * widthUnit, 0.25 * heightUnit, char.specialAmmoParts === 3 ? 200 : 30);
             } else if (event.key === "Escape") { turnOffFullScreen(); }
         }
     });
@@ -133,6 +128,7 @@ function initJump() {
  */
 function initStepLeft() {
     if (controller['left'].pressed) {
+        clearInterval(char.movingAnimationId);
         char.movingAnimationId = setInterval(() => {
             char.moveLeft("ArrowLeft");
         }, char.walkingFrameRate);
@@ -145,6 +141,7 @@ function initStepLeft() {
  */
 function initStepLeftTouch() {
     if (controller['left'].pressed) {
+        clearInterval(char.movingAnimationId);
         char.movingAnimationId = setInterval(() => { char.moveLeftTouch("ArrowLeft"); }, char.walkingFrameRate);
     }
 }
@@ -155,6 +152,7 @@ function initStepLeftTouch() {
  */
 function initStepRight() {
     if (controller['right'].pressed) {
+        clearInterval(char.movingAnimationId);
         char.movingAnimationId = setInterval(() => {
             char.moveRight("ArrowRight"); }, char.walkingFrameRate);
     }
@@ -166,6 +164,7 @@ function initStepRight() {
  */
 function initStepRightTouch() {
     if (controller['right'].pressed) {
+        clearInterval(char.movingAnimationId);
         char.movingAnimationId = setInterval(() => { char.moveRightTouch("ArrowRight"); }, char.walkingFrameRate);
     }
 }
@@ -206,7 +205,7 @@ function slowDownChar() {
  */
 function touchShooting() {
     if (controller['shoot'].pressed) {
-        createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.5 * widthUnit, 0.125 * heightUnit, char.specialAmmoParts === 3 ? char.ammoImages.specialAmmo : char.ammoImages.ammo, char.specialAmmoParts === 3 ? 200 : 30);
+        createCharAmmo(char.movingDirection === "left" ? char.x : char.x + char.width, char.y + 0.35 * widthUnit, 0.5 * widthUnit, 0.125 * heightUnit, char.specialAmmoParts === 3 ? 200 : 30);
         document.querySelector('.touch-control.shoot').classList.remove('pressed');
         controller['shoot'].pressed = false;
     }
@@ -237,9 +236,8 @@ function checkForScrolling(movingDirection = char.movingDirection) {
  * @function checkIfBigBossVisible checks wether the last-enemy is in the screen or not
  */
 function checkIfBigBossVisible() {
-    if (bigBoss.x + canvas.offsetLeft - canCont.offsetWidth <= bigBoss.width / 3) {
+    if (canvas.offsetLeft <= canCont.offsetWidth - bigBoss.x) {
         bigBoss.isVisible = true;
-        bigBoss.animateShooting();
     } else { bigBoss.isVisible = false; }
 }
 
@@ -253,7 +251,6 @@ function checkIfBigBossVisible() {
  */
 
 let setWholeVolume = function setWholeVolumeFunc(event) {
-    console.log(event.target);
     let volumeBarInner = event.target.closest('.volumebar-cont').querySelector('.volumebar-inner');
     let volumeBarWidth = document.querySelector('.volumebar').offsetWidth;
     let x = event.clientX;
@@ -326,14 +323,14 @@ function muteAllPlayers() {
         if (elem.shootingSound) { elem.shootingSound.volume = 0; }
         if (elem.fallingSound) { elem.fallingSound.volume = 0; }
     });
+    if(bgPlayer) { bgPlayer.volume = 0; }
     char.hittingSound.volume = 0;
     char.shootingSound.volume = 0;
-    bgPlayer.volume = 0;
 }
 
 /**
  * 
- * @function muteAllPlayers sets the volume of all players (that of the enemies, the char, and the game) to 50%
+ * @function unmuteAllPlayers sets the volume of all players (that of the enemies, the char, and the game) to 50%
  */
 function unmuteAllPlayers() {
     hitables.enemies.forEach((elem) => {
@@ -343,7 +340,7 @@ function unmuteAllPlayers() {
     });
     char.hittingSound.volume = gameVolume/2;
     char.shootingSound.volume = gameVolume/2;
-    bgPlayer.volume = gameVolume/4;
+    if(bgPlayer) { bgPlayer.volume = gameVolume/4; }
 }
 
 /**
@@ -359,8 +356,8 @@ function pauseAllPlayers() {
     hitables.flyables.forEach((elem) => {
         if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.pause(); }
     });
-    if (char.hittingSound.currentTime > 0) { char.hittingSound.pause(); }
-    if (char.shootingSound.currentTime > 0) { char.shootingSound.pause(); }
+    if (char && char.hittingSound.currentTime > 0) { char.hittingSound.pause(); }
+    if (char && char.shootingSound.currentTime > 0) { char.shootingSound.pause(); }
 }
 
 /**
@@ -373,7 +370,7 @@ function playAllPlayers() {
         if (elem.shootingSound && elem.shootingSound.currentTime > 0) { elem.shootingSound.play(); }
         if (elem.fallingSound && elem.fallingSound.currentTime > 0) { elem.fallingSound.play(); }
     });
-    if (char.hittingSound.currentTime > 0) { char.hittingSound.play(); }
+    if (char.hittingSound.currentTime > 0 && char.gotHit) { char.hittingSound.play(); }
     if (char.shootingSound.currentTime > 0) { char.shootingSound.play(); }
     if (bgPlayer) { bgPlayer.play(); };
 }
@@ -388,6 +385,7 @@ async function turnOnFullScreen() {
     document.querySelector('.canvas-cont .controls').classList.add('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.add('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.remove('disNone');
+    document.querySelector('.terms-and-conditions').classList.add('disNone');
     document.querySelector('.game-headline').classList.add('disNone');
     await body.requestFullscreen().then(() => {
         fullscreenButtonPressed = false;
@@ -406,6 +404,7 @@ async function turnOffFullScreen() {
     document.querySelector('.canvas-cont .turn-fullscreen-on').classList.remove('disNone');
     document.querySelector('.canvas-cont .turn-fullscreen-off').classList.add('disNone');
     document.querySelector('.game-headline').classList.remove('disNone');
+    document.querySelector('.terms-and-conditions').classList.remove('disNone');
     await document.exitFullscreen().then(() => {
         fullscreenButtonPressed = false;
         fullScreenButtonToggle();

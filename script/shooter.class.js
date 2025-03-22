@@ -3,7 +3,9 @@ class Shooter extends Enemy {
     hasShot;
     walks;
     player;
-    ammoImage;
+    ammoImage = new Image();
+    shootingSoundPath = './sounds/enemy-shoots.mp3';
+    isVisible = true;
 
     /**
      * 
@@ -45,9 +47,6 @@ class Shooter extends Enemy {
         this.targeting = false;
         this.hasShot = false;
         this.walks = false;
-        this.shootingSound = new Audio();
-        this.shootingSound.src = './sounds/enemy-shoots.mp3';
-        this.shootingSound.volume = 0.5;
         this.hittingSound = new Audio();
         this.hittingSound.src = './sounds/enemy-got-hit.mp3';
         this.hittingSound.volume = 0.5;
@@ -61,6 +60,7 @@ class Shooter extends Enemy {
             left: [],
             right: []
         }
+        this.shootingSoundPath = './sounds/enemy-shoots.mp3';
     }
 
     /**
@@ -72,14 +72,13 @@ class Shooter extends Enemy {
      * It invokes @method createNewShoot based on @this enemys looking direction.
      */
     setupShoot(width = 0.5*widthUnit, height = 0.5*heightUnit) {
-        if (!gamePaused && this.targeting && this.isDangerous && !this.hasShot) {
-            if(!gameMuted) { this.playShootingSound(); }
+        if (!gamePaused && this.isDangerous && !this.hasShot && this.isVisible) {
             switch (this.lookingDirection) {
                 case "left":
-                    this.createNewShoot(width, height, this.enemyType != "big-boss" ? this.x - widthUnit : this.x + this.width/4, this.y + 5*this.height/32, this.lookingDirection, this.ammoImage);
+                    this.createNewShoot(width, height, this.enemyType != "big-boss" ? this.x - widthUnit : this.x + this.width/4, this.enemyType != "big-boss" ? this.y + 5*this.height/32 : this.y + this.height/2, this.lookingDirection, this.ammoImage);
                     break;
                 case "right":
-                    this.createNewShoot(width, height, this.x + widthUnit, this.y + 5*this.height/32, this.lookingDirection, this.ammoImage);
+                    this.createNewShoot(width, height, this.x + widthUnit, this.enemyType != "big-boss" ? this.y + 5*this.height/32 : this.y, this.lookingDirection, this.ammoImage);
                     break;
             }
             this.whenShooterHasShot();
@@ -94,7 +93,9 @@ class Shooter extends Enemy {
         this.hasShot = true;
         setTimeout(()=>{
             this.hasShot = false;
-            this.setupShoot();
+            if(this.enemyType != "big-boss") {
+                if(this.isTargeting && this.isVisible) { this.setupShoot(); }
+            }else { if(this.isVisible) { this.setupShoot(); } }
         }, 1000);
     }
 
@@ -108,14 +109,6 @@ class Shooter extends Enemy {
      * @param {string} ammoImage a string with the image-path of the ammo
      */
     createNewShoot(width, height, x, y, flyDirection, ammoImage) {
-        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection, ammoImage));
-    }
-
-    /**
-     * 
-     * @method playShootingSound plays the shooting sound of @this enemy
-     */
-    playShootingSound() {
-        this.shootingSound.play();
+        hitables.flyables.push(new Cannonball(width, height, x, y, flyDirection, ammoImage, this.shootingSoundPath));
     }
 }

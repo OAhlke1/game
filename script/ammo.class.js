@@ -3,6 +3,7 @@ class Ammo extends Char {
     decreaseLifeAmount; /** the amount of life @this ammo can take subtract. */
     shootingSound; /** the audio player for @this ammo */
     leftCanvas; /** a boolean whether @this ammo left canvas. */
+    image = new Image(); /** the image for the ammo */
 
     /**
      * 
@@ -13,20 +14,20 @@ class Ammo extends Char {
      * @param {Image} image the image of @this Ammo
      * @param {number} decreaseLifeAmount the life-amount @this ammo can take away from the char
      */
-    constructor(x, y, width, height, image, decreaseLifeAmount) {
-        super();
+    constructor(x, y, width, height, decreaseLifeAmount, image) {
+        super(x, y, width, height);
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.image = image;
         this.flyingDirection = char.movingDirection;
         this.decreaseLifeAmount = decreaseLifeAmount;
         this.leftCanvas = false;
+        this.image = image;
         this.shootingSound = new Audio();
         this.shootingSound.src = './sounds/enemy-shoots.mp3';
-        if (!gameMuted) { this.playShootingSound(); }
         this.trajectoryAnimationId = setInterval(() => { this.animateTrajectory(); }, standardFrameRate);
+        if (!gameMuted) { this.playShootingSound(); }
     }
 
     /**
@@ -116,6 +117,7 @@ class Ammo extends Char {
      */
     playShootingSound() {
         if (!gameMuted && char.isAlive) {
+            this.shootingSound.volume = gameVolume*0.5;
             this.shootingSound.play();
         }
     }

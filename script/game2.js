@@ -31,7 +31,7 @@ function createEnemiesAttackingImagesArrays() {
         for(let j=0; j<hitables.enemies[i].attackingImagesAmount; j++) {
             let attackingImageLeft = new Image();
             attackingImageLeft.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-left-${j}.png`;
-            hitables.enemies[i].attackingImagesArrays.left.push(hitImageLeft);
+            hitables.enemies[i].attackingImagesArrays.left.push(attackingImageLeft);
             let attackingImageRight = new Image();
             attackingImageRight.src = `./graphics/enemies/${hitables.enemies[i].enemyType}/attack/attack-right-${j}.png`;
             hitables.enemies[i].attackingImagesArrays.right.push(attackingImageRight);
@@ -79,7 +79,7 @@ function createItems() {
  * @function createLifeIncreasingItems creates the heart-items
  */
 function createLifeIncreasingItems() {
-    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 25*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
+    items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 21.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
     items.lifeIncreasing.push(new LifeIncreaser(6.25*widthUnit, 9.5*heightUnit, 1.5*widthUnit, 1.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 75));
     items.lifeIncreasing.push(new LifeIncreaser(41.25*widthUnit, 22.5*heightUnit, 0.5*widthUnit, 0.5*heightUnit, './graphics/items/heart.png', 'life-increaser', 25));
     items.lifeIncreasing.push(new LifeIncreaser(39*widthUnit, 12*heightUnit, widthUnit, heightUnit, './graphics/items/heart.png', 'life-increaser', 50));
@@ -157,9 +157,9 @@ function drawElements() {
     drawHitables();
     drawItems();
     drawChar();
-    drawCharObjects();
+    if(charObjects.ammo.length) { drawCharObjects(); }
     requestAnimationFrame(()=>{ drawElements(); });
-    if(char.onMovingPlatform) { char.movingWithPlatform(); }
+    //if(char.onMovingPlatform) { char.movingWithPlatform(); }
 }
 
 /**
@@ -227,7 +227,7 @@ function drawItems() {
  * @function drawMenuBar draws the char to the canvas
  */
 function drawChar() {
-    if (char.isAlive) { ctx.drawImage(char.figImage, char.x, char.y, char.width, char.height); }
+    if (char.isAlive) { ctx.drawImage(char.charImage, char.x, char.y, char.width, char.height); }
 }
 
 function drawCharObjects() {
@@ -376,16 +376,20 @@ function setKeyDownEvents() {
         t = 0;
         if (event.key.toLowerCase() === "p") {
             if (!gamePaused) {
-                pausePlayGameToggle();
+                pauseGame();
             } else {
-                pausePlayGameToggle();
+                unpauseGame();
                 timer();
             }
         } else if (event.key.toLowerCase() === "f" && !fullscreenButtonPressed) {
             fullscreenButtonPressed = true;
             if (inFullscreen) {
+                body.style.overflow = "hidden";
                 turnOffFullScreen();
-            } else { turnOnFullScreen(); }
+            } else {
+                body.style.overflow = "visible";
+                turnOnFullScreen();
+            }
         } else if (event.key.toLowerCase() === "m") {
             gameSoundToggle();
         }

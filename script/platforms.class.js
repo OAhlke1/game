@@ -1,4 +1,4 @@
-class Platform extends Wall {
+class Platform {
     imgPath;
     platformImage;
     isMoving;
@@ -12,7 +12,6 @@ class Platform extends Wall {
      * @param {string} imgPath the path of the platform image
      */
     constructor(x, y, width, height, imgPath) {
-        super();
         this.x = x;
         this.y = y;
         this.width = width;

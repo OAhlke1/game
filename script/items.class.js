@@ -6,7 +6,7 @@ class Item {
     standardWidth;
     standardHeight;
     imagePath;
-    image;
+    image = new Image();
     collected;
     itemType;
     muted = false;
@@ -28,8 +28,6 @@ class Item {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.imagePath = imagePath;
-        this.image = new Image();
         this.image.src = imagePath;
         this.itemType = itemType;
         this.increaseLifeAmount = increaseLifeAmount;
@@ -42,15 +40,15 @@ class Item {
      * When the char is directly at @this Item it is being collected.
      */
     checkCharPos() {
-        if(!this.collected) {
+        if(!this.collected && !gamePaused) {
             if(char.x + char.width >= this.x && this.x + this.width >= char.x && char.y + char.height >= this.y && this.y + this.height >= char.y) {
                 if(this.itemType === "ammo-kit") {
                     
                 }
                 this.collectItem();
             }
-            requestAnimationFrame(()=>{this.checkCharPos()});
-        }else { return; }
+        }//else { return; }
+        requestAnimationFrame(()=>{this.checkCharPos()});
     }
 
     /**
@@ -64,7 +62,7 @@ class Item {
             switch(this.itemType) {
                 case "life-increaser":
                     this.collectHeart();
-                    if(char.healthAmount < char.maxHealthAmount) { this.playSound(); }
+                    if(char.healthAmount < char.maxHealthAmount && !gameMuted) { this.playSound(); }
                     break;
                 case "ammo-kit":
                     this.collectSpecialAmmoKit();

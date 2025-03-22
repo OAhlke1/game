@@ -1,25 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Jumper</title>
     <link rel="stylesheet" href="./styles/game.css">
-    <link rel="icon" href="graphics/main-char/run/run-right-0.png" type="image/x-icon">
+    <link rel="icon" href="./graphics/main-char/run/run-right-0.png" type="image/x-icon">
 </head>
 
-<body onload="initFunctions()">
-    <h1 class="game-headline">SPACE JUMPER</h1>
-    <div class="canvas-cont" fullscreen="allow">
-        <div class="rotate-device-screen disNone">
-            <h1>Rotate your device</h1>
+<body onload="initFunctions()" oncontextmenu="false">
+    <div class="to-read disNone">
+        <h1>
+            Bitte einmal lesen,
+            <br>weil ich euch nicht erreichen kann
+        </h1>
+        <p>
+            Zum Konsolenfehler: ich habe keine Ahnung, wo der herkommt. Ich hab versucht mir mit Chat-GPT helfen zu
+            lassen. Er wusste es auch nicht.
+            <br>Dann hab ich es selber nochmal versucht. Nichts.
+            <br>Der kommt eben immer genau einmal am Anfang, wenn man das Spiel lädt, und dann immer, wenn man schießt.
+            <br>Alle angegebenen Pfade sind korrekt hinterlegt. Und es steht ja im Fehler
+            <br>"GET https://oscar-ahlke.developerakademie.net/space-jumper/undefined [HTTP/2 404 1001ms]"
+            <br>sprich es wird irgendwas nicht gefunden, obwohl, wie man sieht, alle Spielinhalte gefunden und angezeigt
+            werden.
+            <br>Vielleicht starte ich gleich mal ein "Attentat" auf die DA-Community und lass mal noch andere danach
+            suchen..,
+            <br>Denn irgendwas wird nicht richtig geladen - nur weiß ich halt nicht was, wegen undefined.
+            <br>Sieht wohl so aus, als ob der gesamte Game-Content nicht definiert wäre...
+            <br>Oder fällt dir noch was ein?
+        </p>
+        <div class="close-read" style="margin-top: 50px; cursor: pointer;" onclick="closeRead()">
             <p>
-                <br>Game only works properly in widescreen-mode!
+                close
             </p>
-                <button class="reset-button" onclick="location.reload()">Reload game</button>
         </div>
+    </div>
+    <h1 class="game-headline">SPACE JUMPER</h1>
+    <div class="rotate-device-screen disNone" onclick="pauseGame()">
+        <h1>Rotate your device</h1>
+        <p>
+            <br>Game only works properly in widescreen-mode<span class="loaded-in-widescreen" style="font: inherit;">,
+                so rotate your device back</span>!
+        </p>
+        <p class="not-loaded-in-widescreen">
+            Because you did not load your game from widescreen-mode, you have to reload the game (in widescreen-mode).
+        </p>
+        <button class="reset-button" onclick="location.reload()">Reload game</button>
+    </div>
+    <div class="canvas-cont" fullscreen="allow">
         <button class="open-description" onclick="showDescription()" ontouch="descriptionToggle()">
-            <p>?</p>
+            <p style="font-size: 25px;">?</p>
         </button>
         <button class="close-description disNone" onclick="hideDescription()">
             <img src="./graphics/close.svg" alt="">
@@ -28,33 +59,66 @@
             <div class="description-inner">
                 <h2>What's this game about?</h2>
                 <p>
-                    You have to collect all three ammo-crystals <img src="./graphics/items/special-ammo/rotation-0.png" alt=""> to get the special ammo
-                    <br>so that you can defeat the main boss.
+                    You have to collect all three ammo-crystals <img src="./graphics/items/special-ammo/rotation-0.png"
+                        alt=""> to get the special ammo so that you can defeat the main boss.
                 </p>
-                <p>
-                    <b>Controls:</b>
-                    <br>go left: left key / touch the go-left-touchbutton
-                    <br>go left: right key / touch the go-right-touchbutton
-                    <br>run: hold SHIFT / touch the running-button
-                    <br>jump: the spacebar / touch the go-jump-touchbutton
-                    <br>shoot: 'e' / touch the screen everywhere above the moving-buttons
-                    <br>turn fullscreen on/off: 'f' / the button in the controls-bar
+                <div style="width: 100%; height: 20px;"></div>
+                <p><b>Controls:</b></p>
+                <p><br>fullscreen on/off: <span class="show-at-1201"
+                        style="width: 15%; border: 1px solid black; box-sizing: border-box; padding: 3px; border-radius: 2px;">F</span>
+                    <span class="show-at-1201"> / </span><img style="width: 17px; height: 17px;"
+                        src="./graphics/controls/fullscreen-on-black.svg" alt="">
                 </p>
+                <p>mute: <span class="show-at-1201"
+                        style="width: 15%; border: 1px solid black; box-sizing: border-box; padding: 3px; border-radius: 2px;">M</span>
+                    <span class="show-at-1201"> / </span><img src="./graphics/controls/speaker-black.svg" alt="">
+                </p>
+                <p><br><span class="show-at-1201">go left: </span><img class="show-at-1201" src="./graphics/controls/key-left.png" alt=""
+                        style="width: 26px; height: auto;">
+                    <!-- <span class="hide-at-1201" style="font-family: 'space-armor', Verdana, sans-serif; color: white; background-color: black; padding: 2px 5px;">◄</span> -->
+                </p>
+                <p><br><span class="show-at-1201">go right: </span> <img class="show-at-1201" src="./graphics/controls/key-right.png" alt=""
+                        style="width: 26px; height: auto;">
+                    <!-- <span class="hide-at-1201" style="font-family: 'space-armor', Verdana, sans-serif; color: white; background-color: black; padding: 2px 5px;">►</span> -->
+                </p>
+                <p class="show-at-1201"><br>run: hold <span
+                        style="width: 10%; border: 1px solid black; box-sizing: border-box; padding: 3px; border-radius: 2px;">SHIFT</span>
+                </p>
+                <p><br><span class="show-at-1201">jump: </span> <span class="show-at-1201"
+                        style="width: 15%; border: 1px solid black; box-sizing: border-box; padding: 3px; border-radius: 2px;">SPACE</span>
+                    <!-- <span class="hide-at-1201" style="width: 10%; font-family: 'space-armor', Verdana, sans-serif; color: yellow; background-color: black; font-size: 14px; padding: 3px;">JUMP</span> -->
+                </p>
+                <p><br><span class="show-at-1201">shoot: </span> <span class="show-at-1201"
+                        style="width: 15%; border: 1px solid black; box-sizing: border-box; padding: 3px; border-radius: 2px;">E</span>
+                    <!-- <span class="hide-at-1201">touch game-screen</span> -->
+                </p>
+                <img src="./graphics/controls/touch-controls-map.png" class="hide-at-1201" style="width: 60%; height: auto;" alt="">
             </div>
         </div>
         <canvas width="1600" height="450" style="left: 0px;" lo></canvas>
-        <div class="touch-control shoot" button-type="e" button-code="69" onmousedown="dispatchKeypressShoot(event)" onmouseup="dispatchKeypressStopShoot(event)" ontouchstart="dispatchKeypressShoot(event)" ontouchend="dispatchKeypressStopShoot(event)"></div>
+        <div class="touch-control shoot" button-type="e" button-code="69" onmousedown="dispatchKeypressShoot(event)"
+            onmouseup="dispatchKeypressStopShoot(event)"></div><!--  ontouchstart="dispatchKeypressShoot(event)"
+            ontouchend="dispatchKeypressStopShoot(event)" -->
         <div class="touch-controls-bar">
-            <div class="touch-control left" button-type="ArrowLeft" button-code="37" onmousedown="dispatchKeypressLeft(event)" onmouseup="dispatchKeypressStopLeft(event)" ontouchstart="dispatchKeypressLeft(event)" ontouchend="dispatchKeypressStopLeft(event)">
-                <img src="./graphics/controls/run-left.svg" alt="">
+            <div class="touch-control left" button-type="ArrowLeft" button-code="37"
+                onmousedown="dispatchKeypressLeft(event)" onmouseup="dispatchKeypressStopLeft(event)"
+                ontouchstart="dispatchKeypressLeft(event)" ontouchend="dispatchKeypressStopLeft(event)">
+                <div class="arrow-left">
+                    <p>◄</p>
+                </div>
             </div>
-            <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypressJump(event)" onmouseup="dispatchKeypressStopJump(event)">
+            <div class="touch-control jump" button-type=" " button-code="32" onclick="dispatchKeypressJump(event)"
+                onmouseup="dispatchKeypressStopJump(event)">
                 <div class="jump-inner">
                     <p>jump</p>
                 </div>
             </div>
-            <div class="touch-control right" button-type="ArrowRight" button-code="39" onmousedown="dispatchKeypressRight(event)" onmouseup="dispatchKeypressStopRight(event)" ontouchstart="dispatchKeypressRight(event)" ontouchend="dispatchKeypressStopRight(event)">
-                <img src="./graphics/controls/run-right.svg" alt="">
+            <div class="touch-control right" button-type="ArrowRight" button-code="39"
+                onmousedown="dispatchKeypressRight(event)" onmouseup="dispatchKeypressStopRight(event)"
+                ontouchstart="dispatchKeypressRight(event)" ontouchend="dispatchKeypressStopRight(event)">
+                <div class="arrow-right">
+                    <p>►</p>
+                </div>
             </div>
         </div>
         <div class="menu-bar">
@@ -76,26 +140,25 @@
         <button class="canvas-cont-controls-toggle" onclick="canContControlsToggle()">
             <img src="./graphics/open-menu-bar.svg" alt="">
         </button>
-        <div class="controls disNone">
-            <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
+        <div class="controls">
+            <div class="volumebar-cont" onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)"
+                onmousedown="checkVolumeBarEvent(event)" onmouseup="checkVolumeBarEvent(event)">
                 <div class="volumebar">
                     <div class="volumebar-inner"></div>
                 </div>
             </div>
             <button class="mute-game" onclick="gameSoundToggle()"></button>
             <button class="unmute-game disNone" onclick="gameSoundToggle()"></button>
-            <!-- <div class="pause-game disNone">
-                <img src="./graphics/controls/pause-game.svg" class="fullscreen-off-svg" alt="" onclick="pausePlayGameToggle()">
-            </div> -->
             <button class="play-game">
-                <img src="./graphics/controls/play-game.svg" class="fullscreen-off-svg" alt="" onclick="canContControlsToggle()">
+                <img src="./graphics/controls/play-game.svg" class="fullscreen-off-svg" alt="" onclick="unpauseGame()">
             </button>
             <button class="turn-fullscreen-off disNone">
                 <img src="./graphics/fullscreen-off.svg" class="fullscreen-off-svg" alt=""
                     onclick="turnOffFullScreen(event)">
             </button>
             <button class="turn-fullscreen-on">
-                <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt="" onclick="turnOnFullScreen(event)">
+                <img src="./graphics/fullscreen-on.svg" class="fullscreen-on-svg" alt=""
+                    onclick="turnOnFullScreen(event)">
             </button>
         </div>
         <div class="you-win-screen disNone">
@@ -107,26 +170,31 @@
             <button class="reset-button" onclick="resetGame()">Restart game</button>
         </div>
     </div>
+    <div class="terms-and-conditions">
+        <a href="./agb.html">AGB</a>
+        <a href="./datenschutz.html">Datenschutz</a>
+        <a href="./impressum.html">Impressum</a>
+    </div>
 </body>
 
-<script src="script/char.class.js"></script>
-<script src="script/ammo.class.js"></script>
-<script src="script/wall.class.js"></script>
-<script src="script/platforms.class.js"></script>
-<script src="script/moving-platform.class.js"></script>
-<script src="script/enemies.class.js"></script>
-<script src="script/shooter.class.js"></script>
-<script src="script/cannonball.class.js"></script>
-<script src="script/green-enemy.class.js"></script>
-<script src="script/big-boss.class.js"></script>
-<script src="script/background.class.js"></script>
-<script src="script/traps.class.js"></script>
-<script src="script/items.class.js"></script>
-<script src="script/special-ammo-kit.class.js"></script>
-<script src="script/life-increaser.class.js"></script>
-<script src="script/game1.js"></script>
-<script src="script/game2.js"></script>
-<script src="script/game3.js"></script>
-<script src="script/game4.js"></script>
+<script src="./script/char.class.js"></script>
+<script src="./script/ammo.class.js"></script>
+<script src="./script/wall.class.js"></script>
+<script src="./script/platforms.class.js"></script>
+<script src="./script/moving-platform.class.js"></script>
+<script src="./script/enemies.class.js"></script>
+<script src="./script/shooter.class.js"></script>
+<script src="./script/cannonball.class.js"></script>
+<script src="./script/green-enemy.class.js"></script>
+<script src="./script/big-boss.class.js"></script>
+<script src="./script/background.class.js"></script>
+<script src="./script/traps.class.js"></script>
+<script src="./script/items.class.js"></script>
+<script src="./script/special-ammo-kit.class.js"></script>
+<script src="./script/life-increaser.class.js"></script>
+<script src="./script/game1.js"></script>
+<script src="./script/game2.js"></script>
+<script src="./script/game3.js"></script>
+<script src="./script/game4.js"></script>
 
 </html>

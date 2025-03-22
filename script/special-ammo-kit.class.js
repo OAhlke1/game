@@ -13,7 +13,7 @@ class SpecialAmmoKit extends Item {
      * @param {*} itemType the type of @this Item
      */
     constructor(x, y, width, height, imagePath, itemType) {
-        super();
+        super(x, y, width, height, imagePath, itemType);
         this.x = x;
         this.standardX = x;
         this.y = y;

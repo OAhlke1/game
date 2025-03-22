@@ -13,12 +13,29 @@
     src: url('../fonts/nexion.otf');
 }
 
+.to-read {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    z-index: 50000000;
+}
+
+.to-read h1, .to-read p {
+    color: white;
+}
+
 * {
     user-select: none;
 }
 
 body {
     margin: 0;
+    overflow: hidden scroll;
 }
 
 button {
@@ -118,6 +135,11 @@ p {
     top: -9%;
 }
 
+.touch-control .arrow-left p, .touch-control .arrow-right p {
+    font-size: 12px;
+    color: white;
+}
+
 .touch-controls.hidden {
     animation: hide-touch-controls 0.5s linear;
     top: -21%;
@@ -127,6 +149,19 @@ p {
     width: 100%;
     height: 5px;
     background-color: red;
+}
+
+.terms-and-conditions {
+    display: flex;
+    column-gap: 20px;
+    width: 70vw;
+    margin: 20px auto 0 auto;
+}
+
+.terms-and-conditions a {
+    font-family: 'nexion', Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    color: black !important;
 }
 
 @keyframes show-touch-controls {
@@ -160,7 +195,6 @@ p {
 
 .canvas-cont .shoot {
     width: 100%;
-    height: calc(2200%/27);
     position: absolute;
     top: 0;
     left: 0;
@@ -196,7 +230,7 @@ p {
 }
 
 .canvas-cont .canvas-cont-controls-toggle {
-    width: 28px;
+    min-width: 40px !important;
     height: fit-content;
     position: absolute;
     top: 10px;
@@ -207,6 +241,7 @@ p {
 
 .canvas-cont .controls {
     justify-content: space-evenly;
+    min-width: 40px;
     width: calc(100% - 48px);
     background-color: black;
     position: absolute;
@@ -219,7 +254,8 @@ p {
     display: flex;
     align-items: center;
     justify-content: space-evenly;
-    width: 60%;
+    width: 50%;
+    min-height: 30px;
     aspect-ratio: 20 / 1;
     position: absolute;
     top: 0;
@@ -242,7 +278,7 @@ p {
 
 .canvas-cont .menu-bar p {
     color: white;
-    font-size: calc(2200%/15);
+    font-size: 16px;
     margin: 0;
 }
 
@@ -303,11 +339,11 @@ p {
 }
 
 .mute-game {
-    background-image: url('../graphics/controls/speaker-dashed.svg');
+    background-image: url('../graphics/controls/speaker.svg');
 }
 
 .unmute-game {
-    background-image: url('../graphics/controls/speaker.svg');
+    background-image: url('../graphics/controls/speaker-dashed.svg');
 }
 
 .turn-fullscreen-on,
@@ -355,6 +391,10 @@ p {
     z-index: 500;
 }
 
+.rotate-device-screen {
+    z-index: 6000;
+}
+
 .you-win-screen h1, .game-over-screen h1, .rotate-device-screen h1 {
     font-size: 30px;
     margin: 0;
@@ -369,14 +409,14 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 27px;
+    width: 40px;
     aspect-ratio: 1 / 1;
     background-color: rgba(0 0 0 / 0.8);
     position: absolute;
     left: 10px;
     top: 10px;
     border-radius: 100%;
-    z-index: 10;
+    z-index: 10000;
 }
 
 .close-description img {
@@ -403,6 +443,30 @@ p {
     left: 23.5px;
     z-index: 9;
     padding: 1% 0;
+    --scrollbar-width: thin;
+    --scrollbar-width-legacy: 15px;
+}
+
+.description::-webkit-scrollbar {
+    width: 8px; /* Konkrete Breite angeben */
+}
+
+.description::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Hintergrund der Leiste */
+}
+
+.description::-webkit-scrollbar-thumb {
+    background: #888; /* Farbe des Scrollbalkens */
+    border-radius: 4px;
+}
+
+.description::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Farbe beim Hover */
+}
+
+.description::-webkit-scrollbar {
+    --scrollbar-width: var(--scrollbar-width);
+    --scrollbar-width-legacy: var(--scrollbar-width-legacy);
 }
 
 .description .description-inner {
@@ -414,29 +478,52 @@ p {
     width: 80%;
 }
 
-.description p, .description h2 {
+.description h2, .description p {
     text-align: center;
+}
+
+.description h2 {
+    font-size: 20px;
+    line-height: 23px;
+}
+
+.description p {
+    font-size: 14px;
+    line-height: 17px;
+}
+
+.description p:nth-child(2) {
+    font-size: 18px;
+    line-height: 21px;
+}
+
+.description-inner p img {
+    vertical-align: middle;
 }
 
 .description h2 {
     margin: 0 0 2% 0;
 }
 
-.description p:nth-child(2) {
-    margin-bottom: 1%;
-}
-
 .shoot {
     display: none;
 }
 
-@media only screen and (max-width: 800px) {
+.show-at-1201 {
+    display: inline;
+}
+
+.hide-at-1201 {
+    display: none;
+}
+
+@media only screen and (max-width: 1400px) {
     .touch-controls-bar {
         display: flex;
-        align-items: flex-end;
-        justify-content: center;
+        align-items: center;
+        justify-content: space-evenly;
         width: 100%;
-        height: calc(100%/27);
+        height: 50%;
         background-color: transparent;
         position: absolute;
         bottom: 0;
@@ -447,45 +534,57 @@ p {
 
     .shoot {
         display: flex;
+        width: 100%;
+        height: calc(800%/9);
     }
 
     .touch-controls-bar .left,
     .touch-controls-bar .right {
-        display: flex !important;
-        align-items: flex-end;
+        /* display: flex !important;
+        align-items: center;
+        justify-content: center; */
+        width: 15% !important;
+        height: 100% !important;
+        position: relative;
+    }
+
+    .touch-control .arrow-left, .touch-control .arrow-right {
+        display: flex;
+        align-items: center;
         justify-content: center;
-        min-width: calc(100%/3) !important;
-        height: 500% !important;
-    }
-
-    .touch-controls-bar img {
-        height: 20% !important;
-        margin-bottom: 5px;
-    }
-
-    .touch-controls-bar .left img {
-        transform: rotate(-90deg);
-    }
-
-    .touch-controls-bar .right img {
-        transform: rotate(90deg);
+        width: 100%;
+        height: 5%;
+        min-height: 20px;
+        background-color: black;
+        border: 2px solid white;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, -33%);
+        box-sizing: border-box;
     }
 
     .touch-controls-bar .jump {
-        display: flex !important;
-        align-items: flex-end;
-        justify-content: center;
-        min-width: 50%;
-        height: 500% !important;
+        /* display: flex !important;
+        align-items: center;
+        justify-content: center; */
+        width: 60%;
+        height: 100%;
+        position: relative;
     }
 
     .touch-controls-bar .jump .jump-inner {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
-        height: 15% !important;
-        background-color: rgba(0 0 0 / 0.6);
+        width: 80%;
+        height: 5% !important;
+        min-height: 20px;
+        background-color: rgba(0 0 0 / 1);
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, -33%);
     }
 
     .touch-controls-bar .jump p {
@@ -501,5 +600,13 @@ p {
     .canvas-cont {
         width: 100vw;
         height: 56.25vw;
+    }
+
+    .show-at-1201 {
+        display: none !important;
+    }
+    
+    .hide-at-1201 {
+        display: inline;
     }
 }

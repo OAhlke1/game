@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="violettGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ff0000; stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff0000; stop-opacity:1" />
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="80" fill="url(#violettGradient)" />
+</svg>

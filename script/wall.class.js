@@ -21,7 +21,7 @@ class Wall {
         this.height = height;
         this.wallImage = new Image();
         this.wallImageSrc = wallImageSrc;
-        this.setWallImageProps();
+        //this.setWallImageProps();
     }
 
     setWallImageProps() {

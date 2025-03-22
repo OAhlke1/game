@@ -26,8 +26,11 @@ class Enemy {
     canWalk; /** @var {boolean} canWalk says wether @this Enemy is able to walk or not */
     muted; /** @var {boolean} muted says wether @this Enemy is muted or not. (For muting the entire game-sound) */
     hitImagesArrays; /** @var {Array} hitImagesArrays is a two dimensional array that saves the hitting-images for both left and right looking-directions */
+    attackingImagesArrays; /** @var {Array} attackingImagesArrays is a two dimensional array that saves the attacking-images for both left and right looking-directions */
     standardX; /** @var {number} standardX is the the first x-coordinate of the char. It is the x-coordinate of @this Enemy that is being saved to the browsers local storage */
     standardY; /** @var {number} standardY is the the first y-coordinate of the char. It is the y-coordinate of @this Enemy that is being saved to the browsers local storage */
+    animateWalkingId; /** @var {number} animateWalkingId is the id for the walking animation of @this Enemy */
+    walkingFramerate;
 
     /**
      * 
@@ -72,6 +75,7 @@ class Enemy {
         this.hitable = true;
         this.canWalk = true;
         this.muted = false;
+        this.walkingFramerate = 2*standardFrameRate;
         this.checkCharPos();
     }
 
@@ -88,9 +92,9 @@ class Enemy {
                 if (this.checkIfGotHit() && this.isDangerous) {
                     this.isDangerous = false;
                     this.lifeAmount -= char.headJumpAmount;
-                    if (this.hitable) { this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, 250 / this.hitImagesAmount); }
+                    if (this.hitable) { this.hittingAnimationId = setInterval(() => { this.animateEnemyGotHit(); }, standardFrameRate*8); }
                 } else {
-                    this.walks = false;
+                    // this.walks = false;
                     this.targeting = false;
                 }
             }
@@ -145,15 +149,15 @@ class Enemy {
     atLookingAtChar() {
         if (Math.abs(char.x + char.width - this.x) <= this.distanceToSeeChar / 2 || Math.abs(this.x + this.width - char.x) <= this.distanceToSeeChar / 2) {
             this.targeting = false;
-            if (this.canWalk && !this.walks) {
+            if (this.canWalk && !this.walks && !this.animateWalkingId) {
                 this.walks = true;
-                if (this.enemyType != "flyable") { this.animateWalking(); }
-                this.animateWalkingId = setInterval(() => { this.animateWalking(); }, standardFrameRate);
+                // if (this.enemyType != "flyable") { this.animateWalking(); }
+                this.animateWalkingId = setInterval(this.animateWalking.bind(this), this.walkingFramerate);
             }
         } else if (Math.abs(char.x + char.width - this.x) > this.distanceToSeeChar / 2 || Math.abs(this.x + this.width - char.x) >= this.distanceToSeeChar / 2) {
             this.targeting = true;
             this.walks = false;
-            if (this.animateWalkingId) { clearInterval(this.animateWalkingId); }
+            if (this.animateWalkingId) { this.stopWalking(); }
             if (this.canShoot) { this.setupShoot(); }
         }
     }
@@ -200,7 +204,7 @@ class Enemy {
     animateWalking() {
         if (this.walks && this.isDangerous) {
             this.x = this.lookingDirection === "right" ? this.x += widthUnit / 5 : this.x -= widthUnit / 5;
-            this.image.src = `./graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
+            this.image = this.attackingImagesArrays[this.lookingDirection][this.walkingIndex]; // `./graphics/enemies/${this.enemyType}/attack/attack-${this.lookingDirection}-${this.walkingIndex}.png`;
             this.walkingIndex++;
             if (this.walkingIndex === this.attackingImagesAmount) { this.walkingIndex = 0; }
         }
@@ -208,9 +212,22 @@ class Enemy {
 
     /**
      * 
+     * @method stopWalking stops the walking animation of @this Enemy
+     */
+    stopWalking() {
+        if(this.animateWalkingId) {
+            clearInterval(this.animateWalkingId);
+            this.animateWalkingId = null;
+        }
+        this.walks = false;
+    }
+
+    /**
+     * 
      * @method animateEnemyGotHit animates the hitting of @this Enemy as long as its type is not flyable and its not the big boss.
      */
     animateEnemyGotHit() {
+        this.stopWalking();
         if (this.enemyType != "flyable" && this.enemyType != "big-boss") { this.image = this.hitImagesArrays[this.lookingDirection][this.hittingIndex] }
         this.hittingIndex++;
         if (this.hittingIndex === this.hitImagesAmount) {
@@ -235,6 +252,7 @@ class Enemy {
      * Then every not defeated enemy is being saved to the browsers local storage and the animation cleared.
      */
     atEndOfHittingEnemyAnimation() {this.hittingAnimationIndex = 0;
+        clearInterval(this.hittingAnimationId);
         if (this.lifeAmount <= 0) {
             this.lifeAmount = 0;
             this.isDangerous = false;
@@ -249,7 +267,6 @@ class Enemy {
             saveNotDefeatedEnemies();
             setMenuBarProperties("enemy");
         } else if (this.lifeAmount > 0) { this.isDangerous = true; }
-        clearInterval(this.hittingAnimationId);
     }
 
     /**

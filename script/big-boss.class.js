@@ -58,40 +58,58 @@ class BigBoss extends Shooter {
         this.fallingSound = new Audio();
         this.fallingSound.src = './sounds/big-boss-falling.wav';
         this.fallingSound.volume = 0.5;
-        this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3 * standardFrameRate);
         this.image = new Image();
-        this.image.src = './graphics/enemies/green/attack/attack-left-0.png';
+        this.image.src = './graphics/enemies/big-boss/attack/attack-left-0.png';
+        this.image.style.width = this.width;
+        this.image.style.height = this.height;
         this.ammoImage = new Image();
         this.ammoImage.src = './graphics/enemies/big-boss/shoot.svg';
+        this.animateLevitationId = setInterval(() => { this.levitateDown() }, 3 * standardFrameRate);
     }
 
     /** @method levitateDown animates the downwards levitation. */
     levitateDown() {
         if (!this.isDefeated) {
+            if(this.checkCharYCoords()) { this.animateShooting(); }
             this.y += 0.125 * heightUnit;
             if (this.y + this.height >= canCont.offsetHeight) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(() => { this.levitateUp(); }, 3 * standardFrameRate);
+                this.animateLevitationId = setInterval(() => { this.levitateUp(); }, 1.5 * standardFrameRate);
                 return;
             }
         } else {
             clearInterval(this.animateLevitationId);
-            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 3 * standardFrameRate);
+            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 1.5 * standardFrameRate);
         }
     }
 
     /** @method levitateUp animates the upwards levitation. */
     levitateUp() {
         if (!this.isDefeated) {
+            if(this.checkCharYCoords()) { this.animateShooting(); }
             this.y -= 0.125 * heightUnit;
             if (this.y <= 0) {
                 clearInterval(this.animateLevitationId);
-                this.animateLevitationId = setInterval(() => { this.levitateDown(); }, 3 * standardFrameRate);
+                this.animateLevitationId = setInterval(() => { this.levitateDown(); }, 1.5 * standardFrameRate);
                 return;
             }
         } else {
             clearInterval(this.animateLevitationId);
-            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 3 * standardFrameRate);
+            this.fallingAnimationId = setInterval(() => { this.animateFalling(); }, 1.5 * standardFrameRate);
+        }
+    }
+
+    /**
+     * 
+     * @function checkCharYCoords checks the y-coordinates of the char so that @this BigBoss aiming at the char.
+     */
+    checkCharYCoords() {
+        if(this.y >= char.y && this.y <= char.y + char.height) {
+            this.isTargeting = true;
+            return true;
+        }else {
+            this.isTargeting = false;
+            return false;
         }
     }
 
@@ -162,9 +180,11 @@ class BigBoss extends Shooter {
      * when the BigBoss is visible, it begins shooting
      */
     animateShooting() {
-        if (this.isVisible) {
-            this.setupShoot(2.5 * widthUnit, 2.5 * heightUnit);
-            setTimeout(() => { this.animateShooting(); }, 1000);
+        if (this.isTargeting && this.isVisible) {
+            this.setupShoot(0.125*this.width, 0.5*this.height + this.y);
+            /* setTimeout(() => {
+                this.animateShooting();
+            }, standardFrameRate); */
         }
     }
 

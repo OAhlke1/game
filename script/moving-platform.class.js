@@ -20,7 +20,7 @@ class MovingPlatform extends Platform {
      * @param {boolean} sideways tells wether the platform moves sideways or not. When its value is false, the platform moves vertically.
      */
     constructor(width, height, startingXPos, endingXPos, highestPoint, lowestPoint, y, imgPath, sideways) {
-        super();
+        super(startingXPos, y, width, height, imgPath);
         this.width = width;
         this.height = height;
         this.height = heightUnit;

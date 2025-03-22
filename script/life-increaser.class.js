@@ -13,7 +13,7 @@ class LifeIncreaser extends Item {
      * @param {number} increaseLifeAmount the life-amount that @this Item can add to the char
      */
     constructor(x, y, width, height, imagePath, itemType, increaseLifeAmount) {
-        super();
+        super(x, y, width, height, imagePath, itemType, increaseLifeAmount);
         this.x = x;
         this.standardX = x;
         this.y = y;
@@ -29,7 +29,7 @@ class LifeIncreaser extends Item {
         this.increaseLifeAmount = increaseLifeAmount;
         this.collected = false;
         this.player = new Audio();
-        this.player.src = "sounds/got-life.mp3";
+        this.player.src = "./sounds/got-life.mp3";
     }
 
     /**
@@ -37,7 +37,7 @@ class LifeIncreaser extends Item {
      * @method playSound plays the sound of @this Item
      */
     playSound() {
+        this.player.volume = 1;
         this.player.play();
-        this.player.volume = 0.5;
     }
 }
