@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
-  <!-- Schwarzer Kreis -->
-  <circle cx="80" cy="80" r="80" fill="black"/>
-
-  <!-- Weißes Dreieck nach rechts zeigend, um 180° gedreht, rechte Seite angepasst -->
-  <polygon points="80,20 120,80 40,80" fill="white"/>
-</svg>
